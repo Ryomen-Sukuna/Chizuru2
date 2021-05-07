@@ -128,6 +128,7 @@ StartTime = time.time()
 updater = tg.Updater(TOKEN, workers=min(32, os.cpu_count() + 4), request_kwargs={"read_timeout": 10, "connect_timeout": 10}, persistence=PostgresPersistence(SESSION))
 client = TelegramClient(MemorySession(), APP_ID, API_HASH)
 dispatcher = updater.dispatcher
+telethn = client
 
 kp = Client(":memory:", api_id=APP_ID, api_hash=API_HASH, bot_token=TOKEN, workers=min(32, os.cpu_count() + 4))
 apps = []
