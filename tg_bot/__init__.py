@@ -70,6 +70,7 @@ class KigyoINIT:
         self.NO_LOAD = list(map(str, self.NO_LOAD))
         self.spamwatch_api = self.parser.get('spamwatch_api', None)
         self.WALL_API = self.parser.get('WALL_API', None)
+        self.CF_API_KEY =  self.parser.get("CF_API_KEY", None)
 
     def init_sw(self):
         if self.spamwatch_api is None:
@@ -114,6 +115,7 @@ SARDEGNA_USERS = get_user_list("sardegnas")
 WHITELIST_USERS = get_user_list("whitelists")
 spamwatch_api = KInit.spamwatch_api
 WALL_API = KInit.WALL_API
+CF_API_KEY = KInit.CF_API_KEY
 
 # SpamWatch
 sw = KInit.init_sw()
