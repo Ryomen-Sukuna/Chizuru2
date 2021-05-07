@@ -4,7 +4,7 @@ import os
 class Config(object):
 
 	API_ID = int(os.environ.get('API_ID'))
-	API_HASH = int(os.environ.get('API_HASH'))
+	API_HASH = os.environ.get('API_HASH')
 	TOKEN = os.environ.get('TOKEN', None)
 	OWNER_ID = int(os.environ.get('OWNER_ID', 1669575731))
 	OWNER_USERNAME = os.environ.get("OWNER_USERNAME", "LustPriest")
