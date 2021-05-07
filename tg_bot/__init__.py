@@ -44,7 +44,7 @@ class RentalBot:
 		self.SYS_ADMIN = self.rent.SYS_ADMIN
 		self.OWNER_ID = self.rent.OWNER_ID
 		self.OWNER_USERNAME = self.rent.OWNER_USERNAME
-		self.APP_ID = self.rent.APP_ID
+		self.APP_ID = self.rent.API_ID
 		self.API_HASH = self.rent.API_HASH
 		self.WEBHOOK = self.rent.WEBHOOK
 		self.URL = self.rent.URL
