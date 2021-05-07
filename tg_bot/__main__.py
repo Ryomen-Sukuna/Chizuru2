@@ -279,7 +279,6 @@ def help_button(update, context):
     next_match = re.match(r"help_next\((.+?)\)", query.data)
     back_match = re.match(r"help_back", query.data)
     chat = update.effective_chat
-    print(query.message.chat.id)
 
     try:
         if mod_match:
@@ -562,17 +561,6 @@ def get_settings(update: Update, context: CallbackContext):
     else:
         send_settings(chat.id, user.id, True)
 
-@kigcmd(command='donate')
-def donate(update: Update, context: CallbackContext):
-    '''#TODO
-
-    Params:
-        update: Update           -
-        context: CallbackContext -
-    '''
-
-    update.effective_message.reply_text("I'm free for everyone! >_<")
-
 @kigmsg((Filters.status_update.migrate))
 def migrate_chats(update: Update, context: CallbackContext):
     '''#TODO
@@ -614,7 +602,7 @@ def main():
             updater.bot.set_webhook(url=URL + TOKEN)
 
     else:
-        log.info(f"Kigyo started, Using long polling. | BOT: [@{dispatcher.bot.username}]")
+        log.info(f"Using long polling. | BOT: [@{dispatcher.bot.username}]")
         updater.start_polling(timeout=15, read_latency=4, drop_pending_updates=True)
     if len(argv) not in (1, 3, 4):
         telethn.disconnect()
@@ -624,7 +612,7 @@ def main():
 
 if __name__ == "__main__":
     kp.start()
-    log.info("[KIGYO] Successfully loaded modules: " + str(ALL_MODULES))
+    log.info("Successfully loaded modules: " + str(ALL_MODULES))
     telethn.start(bot_token=TOKEN)
     main()
     idle()
