@@ -25,9 +25,9 @@ class Config(object):
 	DB_URI = os.environ.get('DB_URI', "")
 	LOAD = os.environ.get("LOAD", "")
 	NO_LOAD = os.environ.get("NO_LOAD", "")
-      STRICT_GBAN = bool(os.environ.get("STRICT_GBAN", True))
 	WEBHOOK = bool(os.environ.get('WEBHOOK', False))
 	INFOPIC = bool(os.environ.get('INFOPIC', False))
+        STRICT_GBAN = bool(os.environ.get("STRICT_GBAN", True))
 	URL = os.environ.get('URL', None)
 	SPAMWATCH_API = os.environ.get('SPAMWATCH_API', None)
 
