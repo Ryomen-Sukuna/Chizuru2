@@ -16,9 +16,14 @@ from ptbcontrib.postgres_persistence import PostgresPersistence
 StartTime = time.time()
 
 def get_user_list(key):
-    with open('{}/tg_bot/{}'.format(os.getcwd(), 'elevated_users.json'),
-              'r') as json_file:
-        return json.load(json_file)[key]
+    try: # Import here to evade a circular import
+        from tg_bot.modules.sql import nation_sql
+        royals = nation_sql.get_royals(key)
+        return [a.user_id for a in royals]
+    except:
+        with open('{}/tg_bot/{}'.format(os.getcwd(), 'elevated_users.json'),
+                  'r') as royals:
+            return json.load(royals)[key]
 
 # enable logging
 FORMAT = "[Enterprise] %(message)s"
@@ -26,15 +31,10 @@ logging.basicConfig(handlers=[RichHandler()], level=logging.INFO, format=FORMAT,
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 log = logging.getLogger("rich")
 
-log.info("[KIGYO] Kigyo is starting. | An Eagle Union Project. | Licensed under GPLv3.")
-
-log.info("[KIGYO] Not affiliated to Azur Lane or Yostar in any way whatsoever.")
-log.info("[KIGYO] Project maintained by: github.com/Dank-del (t.me/dank_as_fuck)")
-
-# if version < 3.6, stop bot.
-if sys.version_info[0] < 3 or sys.version_info[1] < 7:
+# if version < 3.9, stop bot.
+if sys.version_info[0] < 3 or sys.version_info[1] < 9:
     log.error(
-        "[KIGYO] You MUST have a python version of at least 3.7! Multiple features depend on this. Bot quitting."
+        "[@LustPriest] You MUST have a python version of at least 3.9! Multiple features depend on this. Bot quitting."
     )
     quit(1)
 
@@ -69,11 +69,7 @@ class KigyoINIT:
         self.NO_LOAD = self.parser.get("NO_LOAD").split()
         self.NO_LOAD = list(map(str, self.NO_LOAD))
         self.spamwatch_api = self.parser.get('spamwatch_api', None)
-        self.CASH_API_KEY = self.parser.get('CASH_API_KEY', None)
-        self.TIME_API_KEY = self.parser.get('TIME_API_KEY', None)
         self.WALL_API = self.parser.get('WALL_API', None)
-        self.LASTFM_API_KEY = self.parser.get('LASTFM_API_KEY', None)
-        self.CF_API_KEY =  self.parser.get("CF_API_KEY", None)
 
     def init_sw(self):
         if self.spamwatch_api is None:
@@ -116,13 +112,8 @@ DEV_USERS = [OWNER_ID] + get_user_list("devs")
 SUPPORT_USERS = get_user_list("supports")
 SARDEGNA_USERS = get_user_list("sardegnas")
 WHITELIST_USERS = get_user_list("whitelists")
-SPAMMERS = get_user_list("spammers")
 spamwatch_api = KInit.spamwatch_api
-CASH_API_KEY = KInit.CASH_API_KEY
-TIME_API_KEY = KInit.TIME_API_KEY
 WALL_API = KInit.WALL_API
-LASTFM_API_KEY = KInit.LASTFM_API_KEY
-CF_API_KEY = KInit.CF_API_KEY
 
 # SpamWatch
 sw = KInit.init_sw()
@@ -169,12 +160,3 @@ from tg_bot.modules.helper_funcs.handlers import CustomCommandHandler
 
 if CUSTOM_CMD and len(CUSTOM_CMD) >= 1:
     tg.CommandHandler = CustomCommandHandler
-
-
-def spamfilters(text, user_id, chat_id):
-    # print("{} | {} | {}".format(text, user_id, chat_id))
-    if int(user_id) in SPAMMERS:
-        print("This user is a spammer!")
-        return True
-    else:
-        return False
