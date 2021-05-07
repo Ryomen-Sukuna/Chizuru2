@@ -25,6 +25,7 @@ class Config(object):
 	DB_URI = os.environ.get('DB_URI', "")
 	LOAD = os.environ.get("LOAD", "")
 	NO_LOAD = os.environ.get("NO_LOAD", "")
+        STRICT_GBAN = bool(os.environ.get('STRICT_GBAN', True))
 	WEBHOOK = bool(os.environ.get('WEBHOOK', False))
 	INFOPIC = bool(os.environ.get('INFOPIC', False))
 	URL = os.environ.get('URL', None)
@@ -33,7 +34,7 @@ class Config(object):
 	# OPTIONAL
 	CERT_PATH = os.environ.get('CERT_PATH')
 	PORT = int(os.environ.get('PORT', 5000))
-	DEL_CMDS = bool(os.environ.get('DEL_CMDS', False))
+	DEL_CMDS = bool(os.environ.get('DEL_CMDS', True))
 	BAN_STICKER = os.environ.get('BAN_STICKER',
 	                             'CAADAgADOwADPPEcAXkko5EB3YGYAg')
 	ALLOW_EXCL = bool(os.environ.get('ALLOW_EXCL', False))
