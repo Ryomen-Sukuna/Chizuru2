@@ -6,7 +6,6 @@ from pyrogram.errors import BadRequest
 import aiohttp, json, asyncio
 from tg_bot.modules.antispam import SPB_MODE
 import tg_bot.modules.sql.nlp_detect_sql as sql
-from tg_bot.modules.language import gs
 
 from pyrogram.types import Message
 
@@ -27,11 +26,6 @@ async def admin_check(message: Message) -> bool:
         "administrator"
     ]
     return check_status.status in admin_strings
-
-__mod_name__ = "NLP"
-
-def get_help(chat):
-    return gs(chat, "nlp_help")
 
 
 @kp.on_message(filters.command("nlpstat"), group=8)
