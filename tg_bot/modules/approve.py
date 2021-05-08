@@ -194,4 +194,4 @@ from tg_bot.modules.language import gs
 def get_help(chat):
     return gs(chat, "approve_help")
 
-__mod_name__ = "Approvals"
+__mod_name__ = "Approval"
