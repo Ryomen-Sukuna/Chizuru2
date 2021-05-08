@@ -178,14 +178,14 @@ def start(update: Update, context: CallbackContext):
             first_name = update.effective_user.first_name
             update.effective_message.reply_text(
                     gs(chat.id, "pm_start_text").format(
-                    escape_markdown(context.bot.first_name),
-                    START_IMG,
-                    START_IMG,
-                    "ElitesOfSupport",
-                ),
-                parse_mode=ParseMode.MARKDOWN,
-                reply_markup=InlineKeyboardMarkup(buttuns),
-        )
+                           escape_markdown(context.bot.first_name),
+                           START_IMG,
+                           START_IMG,
+                           "ElitesOfSupport",
+                    ),
+                    parse_mode=ParseMode.MARKDOWN,
+                    reply_markup=InlineKeyboardMarkup(buttuns),
+            )
     else:
         update.effective_message.reply_text(gs(chat.id, "grp_start_text"))
 
@@ -316,7 +316,12 @@ def about_callback(update, context):
 
     elif query.data == "aboutmanu_back":
         query.message.edit_text(
-                PM_START_TEXT,
+                gs(chat.id, "pm_start_text").format(
+                     escape_markdown(context.bot.first_name),
+                     START_IMG,
+                     START_IMG,
+                     "ElitesOfSupport",
+                ),
                 reply_markup=InlineKeyboardMarkup(buttons),
                 parse_mode=ParseMode.MARKDOWN,
                 timeout=60, 
@@ -329,12 +334,11 @@ def about_callback(update, context):
                 f"\nTo Add {dispatcher.bot.first_name} To Your Chats, Simply [Click Here](http://t.me/{dispatcher.bot.username}?startgroup=true) And Select Chat. \n", 
             parse_mode=ParseMode.MARKDOWN,
             disable_web_page_preview=True,
-            reply_markup=InlineKeyboardMarkup([[
-                InlineKeyboardButton(text="Admins Settings", callback_data="aboutmanu_permis"),
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton(text="Admins Settings", callback_data="aboutmanu_permis"),
                 InlineKeyboardButton(text="Anti-Spam", callback_data="aboutmanu_spamprot")],
-                [
-                InlineKeyboardButton(text="Back", callback_data="aboutmanu_")]
-                                               ]),
+                [InlineKeyboardButton(text="Back", callback_data="aboutmanu_")]
+            ]),
         )
         query.answer("How To Use")
 
@@ -343,7 +347,7 @@ def about_callback(update, context):
             text=f"*{dispatcher.bot.first_name} Is A Powerful Bot For Managing Groups With Additional Features.*"
                  f"\n\nFork Of [Marie](https://github.com/PaulSonOfLars/tgbot)."
                  f"\n\n{dispatcher.bot.first_name}'s Licensed Under The GNU _(General Public License v3.0)_"
-                 f"\n\nHere Is The [Source Code]({REPOSITORY})."
+                 f"\n\nHere Is The [Source Code](t.me/elitesofsupport)."
                  f"\n\nIf Any Suggestions About {dispatcher.bot.first_name}, \nLet Us Know At @{SUPPORT_CHAT}.",
             parse_mode=ParseMode.MARKDOWN,
             disable_web_page_preview=True,
