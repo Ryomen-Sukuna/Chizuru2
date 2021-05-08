@@ -49,7 +49,7 @@ def untag(chat_id, user_id):
             return False
 
 
-def list_tagger(chat_id):
+def tag_list(chat_id):
     try:
         return (SESSION.query(Tagger).filter(
             Tagger.chat_id == str(chat_id)).order_by(
