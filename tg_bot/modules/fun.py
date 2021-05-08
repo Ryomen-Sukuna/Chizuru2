@@ -5,7 +5,7 @@ import time
 import urllib.request
 import urllib.parse
 import requests
-from telegram import ParseMode, Update, ChatPermissions
+from telegram import ParseMode, Update, ChatPermissions, InlineKeyboardButton                                     
 from telegram.ext import CallbackContext
 from telegram.error import BadRequest
 
@@ -163,5 +163,14 @@ from tg_bot.modules.language import gs
 
 def get_help(chat):
     return gs(chat, "fun_help")
+
+
+def get_help(chat):
+     buttuns = [
+        [InlineKeyboardButton(text="AFK", callback_data="sunhelp_afk"),
+        InlineKeyboardButton(text="Sticker", callback_data="subhelp_stick"),
+        InlineKeyboardButton(text="Translation", callback_data="subhelp_tans"),],
+        [InlineKeyboardButton(text="Back", callback_data="help_back"),],
+     ]
 
 __mod_name__ = "Fun"
