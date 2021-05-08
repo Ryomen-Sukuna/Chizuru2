@@ -234,6 +234,6 @@ def untagall_btn(update: Update, context: CallbackContext):
 from tg_bot.modules.language import gs
 
 def get_help(chat):
-    return gs(chat, "approve_help")
+    return gs(chat, "tagger_help")
 
 __mod_name__ = "Tagger"
