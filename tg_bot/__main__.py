@@ -185,6 +185,7 @@ def start(update: Update, context: CallbackContext):
                 ),
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=InlineKeyboardMarkup(buttuns),
+        )
     else:
         update.effective_message.reply_text(gs(chat.id, "grp_start_text"))
 
