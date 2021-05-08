@@ -1,7 +1,7 @@
 # Language name in their native
 language: "日本語 🇯🇵"
 # name of people(s) who worked on this translation
-authors: "@dank_as_fuck"
+authors: "@LustPriest"
 
 # languages
 curr_chat_lang: "ねえ。現在の言語は {} です。下のボタンから、必要な言語を選択してください"
@@ -9,29 +9,26 @@ set_chat_lang: "すばらしい、{} これからです!"
 
 
 pm_start_text: |
-   こんにちは{}、私の名前は{}です！
+   ちょっと、そこ！ 私の名前は{}です！
    私はアニメをテーマにしたグループ管理ボットで、楽しい機能がいくつかあります;）
 
    使用可能なコマンドのリストは /help で見つけることができます。
 grp_start_text: 「こんにちは、キギョです。」
 
 pm_help_text: |
-   Hello there! My name is *Kigyo*. A part of *Eagle Union*.
-   I'm a modular group management bot with a few fun extras! Have a look at the following for an idea of some of
-   the things I can help you with.
-   *Main* commands available:
-    • /start: Starts me, can be used to check I'm alive or not.
-    • /help: PM's you this message.
-    • /language: Change bot language.
-    • /settings:
-      - in PM: will send you your settings for all supported modules.
-      - in a group: will redirect you to pm, with all that chat's settings.
-    Click on the buttons below to get documentation about specific modules!
+   *Helpful Commands:*
+   ✧ /start: Starts me! You've probably
+        already used this.
+   ✧ /help: Sends this message; I'll tell
+        you more about myself!
+   ✧ /language: Change bot language.
+   ✧ /settings: 
+      ∘ in PM: will send you your settings
+        for all supported modules.
+      ∘ in a GROUP: will redirect you to pm,
+        with all that chat's settings.
 
 add_bot_to_group_btn:  "私を追加してください"
-support_chat_link_btn:  "サポート"
-updates_channel_link_btn: "更新"
-src_btn:  "ソース"
 
 admin_help: |
    • `/admins`*:* list of admins in the chat
@@ -43,11 +40,6 @@ admin_help: |
    • `/promote`*:* promotes the user replied to
    • `/demote`*:* demotes the user replied to
    • `/title <title here>`*:* sets a custom title for an admin that the bot promoted
-
-afk_help: |
-   - /afk <reason>: mark yourself as AFK(away from keyboard).
-   - brb <reason>: same as the afk command - but not a command.
-   When marked as AFK, any mentions will be replied to with a message to say you're not available!
 
 anilist_help: |
     *AniList*
@@ -112,11 +104,6 @@ blacklist_help: |
      • `/unblacklist <triggers>`*:* Remove triggers from the blacklist. Same newline logic applies here, so you can remove multiple triggers at once.
      • `/blacklistmode <off/del/warn/ban/kick/mute/tban/tmute>`*:* Action to perform when someone sends blacklisted words.
 
-cleaner_help: |
-    - /cleanbluetext <on/off/yes/no> - clean commands after sending
-    - /ignorecleanbluetext <word> - prevent auto cleaning of the command
-    - /unignorecleanbluetext <word> - remove prevent auto cleaning of the command
-    - /listcleanbluetext - list currently whitelisted commands
 
 connections_help: |
     - /connect: connect a chat (Can be done in a group by /connect or /connect <chat id> in PM)
@@ -157,32 +144,6 @@ disable_help: |
      • /disable <cmd name>: Disable that command
      • /listcmds: List all possible disablable commands
 
-feds_help: |
-    Ah, group management. Everything is fun, until the spammer starts entering your group, and you have to block it. Then you need to start banning more, and more, and it hurts.
-    But then you have many groups, and you don't want this spammer to be in one of your groups - how can you deal? Do you have to manually block it, in all your groups?
-
-    No longer! With Federation, you can make a ban in one chat overlap with all other chats.
-    You can even designate admin federations, so your trusted admin can ban all the chats you want to protect.
-
-    *Commands Available*:
-
-     • /newfed <fedname>: Create a new Federation with the name given. Users are only allowed to have one Federation. This method can also be used to rename the Federation. (max. 64 characters)
-     • /delfed: Delete your Federation, and any information related to it. Will not cancel blocked users.
-     • /fedinfo <FedID>: Information about the specified Federation.
-     • /joinfed <FedID>: Join the current chat to the Federation. Only chat owners can do this. Every chat can only be in one Federation.
-     • /leavefed <FedID>: Leave the Federation given. Only chat owners can do this.
-     • /fpromote <user>: Promote Users to give fed admin. Fed owner only.
-     • /fdemote <user>: Drops the User from the admin Federation to a normal User. Fed owner only.
-     • /fban <user>: Prohibits users from all federations where this chat takes place, and executors have control over.
-     • /unfban <user>: Cancel User from all federations where this chat takes place, and that the executor has control over.
-     • /setfrules: Arrange Federation rules.
-     • /frules: See Federation regulations.
-     • /chatfed: See the Federation in the current chat.
-     • /fedadmins: Show Federation admin.
-     • /fbanlist: Displays all users who are victimized at the Federation at this time.
-     • /fednotif <on / off>: Federation settings not in PM when there are users who are fban / unfban.
-     • /fedchats: Get all the chats that are connected in the Federation.
-     • /importfbans: Reply to the Federation backup message file to import the banned list to the Federation now. (disabled for now.)
 
 fun_help: |
      • /runs: reply a random string from an array of replies.
@@ -351,11 +312,23 @@ rules_help: |
       • `/setrules <your rules here>`*:* set the rules for this chat.
       • `/clearrules`*:* clear the rules for this chat.
 
+tagger_help: |
+   Tagger is an essential feature to mention all subscribed members in the group. Any chat members can subscribe to tagger.
+
+   • `/tagme`*:* registers to the chat tag list.
+   • `/untagme`*:* unsubscribes from the chat tag list.
+
+   Admin only:
+   • `/tag <userhandle>`*:* add a user to chat tag list. (via handle, or reply)
+   • `/untag <userhandle>`*:* remove a user to chat tag list. (via handle, or reply)
+   • `/tagall`*:* mention all subscribed members.
+   • `/untagall`*:* clears all subscribed members. 
+
 userinfo_help: |
-      - /setbio <text>: while replying, will save another user's bio
-      - /bio: will get your or another user's bio. This cannot be set by yourself.
-      - /setme <text>: will set your info
-      - /me: will get your or another user's info
+      • /setbio <text>: while replying, will save another user's bio
+      • /bio: will get your or another user's bio. This cannot be set by yourself.
+      • /setme <text>: will set your info
+      • /me: will get your or another user's info
 
 warns_help: |
       • `/warns <userhandle>`*:* get a user's number, and reason, of warns.
