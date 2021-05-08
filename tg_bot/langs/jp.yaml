@@ -1,19 +1,20 @@
 # Language name in their native
-language: "日本語 🇯🇵"
-# name of people(s) who worked on this translation
+language: "English 🇺🇲 (Memes Edition)"
+# name of people(s) who re-worked on this translation
 authors: "@LustPriest"
 
 # languages
-curr_chat_lang: "ねえ。現在の言語は {} です。下のボタンから、必要な言語を選択してください"
-set_chat_lang: "すばらしい、{} これからです!"
+curr_chat_lang: "Hey. Your current language is {}, select the one you want from the buttons below :)"
+set_chat_lang: "Great, {} it is from now on!"
 
 
 pm_start_text: |
-   ちょっと、そこ！ 私の名前は{}です！
-   私はアニメをテーマにしたグループ管理ボットで、楽しい機能がいくつかあります;）
-
-   使用可能なコマンドのリストは /help で見つけることができます。
-grp_start_text: 「こんにちは、キギョです。」
+   Hey There! I'm *{}* 
+   [✧]({}) I'm Here To Help You Manage \n    Your Groups!
+   [✧]({}) Hit /help To Find Out More About\n    How To Use Me.
+   Join My [Support Chat](t.me/{}) To Get Information & Help.
+   
+grp_start_text: "Hmm??"
 
 pm_help_text: |
    *Helpful Commands:*
@@ -27,8 +28,6 @@ pm_help_text: |
         for all supported modules.
       ∘ in a GROUP: will redirect you to pm,
         with all that chat's settings.
-
-add_bot_to_group_btn:  "私を追加してください"
 
 admin_help: |
    • `/admins`*:* list of admins in the chat
@@ -50,7 +49,7 @@ anilist_help: |
      - /manga <manga>: returns information about the manga.
 
 antiflood_help: |
-    Antiflood allows you to take action on users that send more than x messages in a row. Exceeding the set flood \
+    Antiflood allows you to take action on users that send more than x messages in a row. Exceeding the set flood
     will result in restricting that user.
      This will mute users if they send more than 10 messages in a row, bots are ignored.
      • `/flood`*:* Get the current flood control setting
@@ -104,7 +103,6 @@ blacklist_help: |
      • `/unblacklist <triggers>`*:* Remove triggers from the blacklist. Same newline logic applies here, so you can remove multiple triggers at once.
      • `/blacklistmode <off/del/warn/ban/kick/mute/tban/tmute>`*:* Action to perform when someone sends blacklisted words.
 
-
 connections_help: |
     - /connect: connect a chat (Can be done in a group by /connect or /connect <chat id> in PM)
     - /connection: list connected chats
@@ -144,7 +142,6 @@ disable_help: |
      • /disable <cmd name>: Disable that command
      • /listcmds: List all possible disablable commands
 
-
 fun_help: |
      • /runs: reply a random string from an array of replies.
      • /pat: pat a person, cool thing to have for cute ones :3
@@ -169,11 +166,15 @@ antispam_help: |
      you and your groups by removing spam flooders as quickly as possible.
      *Note:* Users can appeal gbans or report spammers at @YorkTownEagleUnion
 
-     Kigyo also integrates @Spamwatch API to remove Spammers as much as possible from your chatroom!
+     Kigyo also integrates @Spamwatch and @Intellivoid's SpamProtectionBot API to remove Spammers as much as possible from your chatroom!
      *What is SpamWatch?*
-     SpamWatch maintains a large constantly updated ban-list of spambots, trolls, bitcoin spammers and unsavoury characters[.](https://telegra.ph/file/c1051d264a5b4146bd71e.jpg)
+     SpamWatch maintains a large constantly updated ban-list of spambots, trolls, bitcoin spammers and unsavoury characters.
      Constantly help banning spammers off from your group automatically So, you wont have to worry about spammers storming your group.
      *Note:* Users can appeal spamwatch bans at @SpamwatchSupport
+
+     *What is Spam protection?*
+     SpamProtection is the new AI antispam service which makes sure that your chat is free of spambots, scammers, and pedophiles.
+     Uses @Intellivoid's Coffeehouse Artificial Engine. Every ban is checked by real trusty people before being finalized.
 
 gtranslate_help: |
      Use this module to translate stuff... duh!
@@ -220,7 +221,7 @@ log_help: |
       • forwarding the `/setlog` to the group
 
 markdown_help_text: |
-      Markdown is a very powerful formatting tool supported by telegram. {dispatcher.bot.first_name} has some enhancements, to make sure that
+      Markdown is a very powerful formatting tool supported by telegram. Kigyo has some enhancements, to make sure that
       saved messages are correctly parsed, and to allow you to create buttons.
 
       - <code>_italic_</code>: wrapping text with '_' will produce italic text
@@ -314,21 +315,19 @@ rules_help: |
 
 tagger_help: |
    Tagger is an essential feature to mention all subscribed members in the group. Any chat members can subscribe to tagger.
-
    • `/tagme`*:* registers to the chat tag list.
    • `/untagme`*:* unsubscribes from the chat tag list.
-
    Admin only:
    • `/tag <userhandle>`*:* add a user to chat tag list. (via handle, or reply)
    • `/untag <userhandle>`*:* remove a user to chat tag list. (via handle, or reply)
    • `/tagall`*:* mention all subscribed members.
-   • `/untagall`*:* clears all subscribed members. 
+   • `/untagall`*:* clears all subscribed members.
 
 userinfo_help: |
-      • /setbio <text>: while replying, will save another user's bio
-      • /bio: will get your or another user's bio. This cannot be set by yourself.
-      • /setme <text>: will set your info
-      • /me: will get your or another user's info
+      - /setbio <text>: while replying, will save another user's bio
+      - /bio: will get your or another user's bio. This cannot be set by yourself.
+      - /setme <text>: will set your info
+      - /me: will get your or another user's info
 
 warns_help: |
       • `/warns <userhandle>`*:* get a user's number, and reason, of warns.
@@ -337,7 +336,7 @@ warns_help: |
       *Admins only:*
       • `/warn <userhandle>`*:* warn a user. After 3 warns, the user will be banned from the group. Can also be used as a reply.
       • `/resetwarn <userhandle>`*:* reset the warns for a user. Can also be used as a reply.
-      • `/addwarn <keyword> <reply message>`*:* set a warning filter on a certain keyword. If you want your keyword to \
+      • `/addwarn <keyword> <reply message>`*:* set a warning filter on a certain keyword. If you want your keyword to
       be a sentence, encompass it with quotes, as such: `/addwarn "very angry" This is an angry user`.
       • `/nowarn <keyword>`*:* stop a warning filter
       • `/warnlimit <num>`*:* set the warning limit
@@ -361,6 +360,15 @@ greetings_help: |
 
       *Welcome markdown:*
        • `/welcomehelp`*:* view more formatting information for custom welcome/goodbye messages.
+
+nation_help: |
+      - /eagle - Lists all Eagle Union members.
+      - /royals - Lists all Royal Nations.
+      - /sakuras - Lists all Sakura Nations.
+      - /sardegnas - Lists all Sardegnas Nations.
+      - /neptunians - Lists all Neptunia Nations.
+      Note: These commands list users with special bot priveleges and can only be used by them.
+      You can visit @YorktownEagleUnion to query more about these.
 
 nlp_help: |
 
