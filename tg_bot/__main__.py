@@ -160,7 +160,7 @@ def start(update: Update, context: CallbackContext):
             if args[0].lower() == "help":
                 send_help(update.effective_chat.id, (gs(chat.id, "pm_help_text")))
             elif args[0].lower() in ["markdownhelp", "markdown"]:
-                IMPORTED["mics"].markdown_help(update)
+                IMPORTED["misc"].markdown_help(update)
             elif args[0].lower() == "nations":
                 IMPORTED["nations"].send_nations(update)
             elif args[0].lower().startswith("stngs_"):
