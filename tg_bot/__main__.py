@@ -181,7 +181,7 @@ def start(update: Update, context: CallbackContext):
                     escape_markdown(context.bot.first_name),
                     START_IMG,
                     START_IMG,
-                    SUPPORT_CHAT,
+                    "ElitesOfSupport",
                 ),
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=InlineKeyboardMarkup(buttuns),
