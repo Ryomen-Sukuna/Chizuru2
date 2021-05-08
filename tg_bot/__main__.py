@@ -158,7 +158,7 @@ def start(update: Update, context: CallbackContext):
         if len(args) >= 1:
             if args[0].lower() == "help":
                 send_help(update.effective_chat.id, (gs(chat.id, "pm_help_text")))
-            elif args[0].lower() == "markdownhelp":
+            elif args[0].lower() in ["markdownhelp", "markdown"]:
                 IMPORTED["extras"].markdown_help_sender(update)
             elif args[0].lower() == "nations":
                 IMPORTED["nations"].send_nations(update)
@@ -370,9 +370,31 @@ def about_callback(update, context):
 
     elif query.data == "aboutmanu_spamprot":
         query.message.edit_text(
+            text=gs(chat.id, "antispam_help"),
+            parse_mode=ParseMode.MARKDOWN,
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton(text="Next", callback_data="aboutmanu_spamprot2")],
+                [InlineKeyboardButton(text="NPL", callback_data="aboutmanu_spamprotcf")],
+                [InlineKeyboardButton(text="Back", callback_data="aboutmanu_howto")]
+            ]), 
+        )
+        query.answer("Antispam 1")
+
+    elif query.data == "aboutmanu_spamprotcf":
+        query.message.edit_text(
+            text=gs(chat.id, "nlp_help"),
+            parse_mode=ParseMode.MARKDOWN,
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton(text="Next", callback_data="aboutmanu_spamprot2")],
+                [InlineKeyboardButton(text="NPL", callback_data="aboutmanu_howto")],
+                [InlineKeyboardButton(text="Back", callback_data="aboutmanu_howto")]
+            ]), 
+        )
+        query.answer("Chatroom Spam Prediction")
+
+    elif query.data == "aboutmanu_spamprot2":
+        query.message.edit_text(
             text="*Anti-Spam Settings:*"
-                 "\n- /antispam <on/off/yes/no>: Change antispam security settings in the group, or return your current settings(when no arguments)."
-                 "\n_This helps protect you and your groups by removing spam flooders as quickly as possible._"
                  "\n\n- /setflood <int/'no'/'off'>: enables or disables flood control"
                  "\n- /setfloodmode <ban/kick/mute/tban/tmute> <value>: Action to perform when user have exceeded flood limit. ban/kick/mute/tmute/tban"
                  "\n_Antiflood allows you to take action on users that send more than x messages in a row. Exceeding the set flood will result in restricting that user._"
@@ -382,7 +404,19 @@ def about_callback(update, context):
                  "\n\n- /reports <on/off>: Change report setting, or view current status."
                  "\n • If done in pm, toggles your status."
                  "\n • If in chat, toggles that chat's status."
-                 "\n_If someone in your group thinks someone needs reporting, they now have an easy way to call all admins._"
+                 "\n_If someone in your group thinks someone needs reporting, they now have an easy way to call all admins._",
+            parse_mode=ParseMode.MARKDOWN,
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton(text="Previous", callback_data="aboutmanu_spamprot"),
+                InlineKeyboardButton(text="Next", callback_data="aboutmanu_spamprot3")],
+                [InlineKeyboardButton(text="Back", callback_data="aboutmanu_howto")]
+            ]), 
+        )
+        query.answer("Antispam 2")
+
+    elif query.data == "aboutmanu_spamprot3":
+        query.message.edit_text(
+            text="*Anti-Spam Settings:*"
                  "\n\n- /lock <type>: Lock items of a certain type (not available in private)"
                  "\n- /locktypes: Lists all possible locktypes"
                  "\n_The locks module allows you to lock away some common items in the telegram world; the bot will automatically delete them!_"
@@ -393,9 +427,12 @@ def about_callback(update, context):
                  "\n\n- /welcomemute <off/soft/strong>: All users that join, get muted"
                  "\n_ A button gets added to the welcome message for them to unmute themselves. This proves they aren't a bot! soft - restricts users ability to post media for 24 hours. strong - mutes on join until they prove they're not bots._",
             parse_mode=ParseMode.MARKDOWN,
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Back", callback_data="aboutmanu_howto")]]), 
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton(text="Previous", callback_data="aboutmanu_spamprot2")],
+                [InlineKeyboardButton(text="Back", callback_data="aboutmanu_howto")]
+            ]), 
         )
-        query.answer("Antispam")
+        query.answer("Antispam 3")
 
     elif query.data == "aboutmanu_tac":
         query.message.edit_text(
