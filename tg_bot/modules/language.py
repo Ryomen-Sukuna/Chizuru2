@@ -82,9 +82,10 @@ def lang_button(update: Update, _) -> None:
     )
 
 
-SETLANG_HANDLER = CommandHandler("rent", get_lang, filters=Filters.group)
+GETLANG_HANDLER = CommandHandler("rent", get_lang, filters=Filters.group)
 SETLANG_HANDLER = CommandHandler("rental", set_lang, filters=Filters.group)
 SETLANG_BUTTON_HANDLER = CallbackQueryHandler(lang_button, pattern=r"setLang_")
 
+dispatcher.add_handler(GETLANG_HANDLER)
 dispatcher.add_handler(SETLANG_HANDLER)
 dispatcher.add_handler(SETLANG_BUTTON_HANDLER)
