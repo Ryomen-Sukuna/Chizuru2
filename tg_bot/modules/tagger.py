@@ -28,8 +28,12 @@ def tag(update, context):
         return
     try:
         member = chat.get_member(user_id)
-    except BadRequest:
-        return
+    except BadRequest as excp:
+        if excp.message == "User not found":
+            message.reply_text("I can't seem to find this user")
+            return 
+        else:
+            return
     if sql.is_tag(message.chat_id, user_id):
         message.reply_text(
             f"[{member.user['first_name']}](tg://user?id={member.user['id']}) is already tagged in {chat_title}",
@@ -38,7 +42,15 @@ def tag(update, context):
         return
     sql.tag(message.chat_id, user_id)
     message.reply_text(
-        f"[{member.user['first_name']}](tg://user?id={member.user['id']}) has been tagged in {chat_title}!",
+        f"[{member.user['first_name']}](tg://user?id={member.user['id']}) accept this, if you want to add yourself into {chat_title}'s tag list! or just simply decline this.", 
+        reply_markup=InlineKeyboardMarkup(
+                                   [
+                                      [
+                                         InlineKeyboardButton(text="Accept", callback_data=f"addtag_accept={user_id}"),
+                                         InlineKeyboardButton(text="Decline", callback_data=f"addtag_dicline={user_id}")  
+                                      ]
+                                   ]
+                              ),
         parse_mode=ParseMode.MARKDOWN,
     )
 
@@ -59,8 +71,12 @@ def untag(update, context):
         return
     try:
         member = chat.get_member(user_id)
-    except BadRequest:
-        return
+    except BadRequest as excp:
+        if excp.message == "User not found":
+            message.reply_text("I can't seem to find this user")
+            return 
+        else:
+            return
     if not sql.is_tag(message.chat_id, user_id):
         message.reply_text(f"{member.user['first_name']} isn't tagged yet!")
         return
@@ -69,18 +85,53 @@ def untag(update, context):
         f"{member.user['first_name']} is no longer tagged in {chat_title}.")
 
 
+@kigcmd(command='tagme', filters=Filters.chat_type.groups)
+def tagme(update, context): 
+    chat = update.effective_chat  
+    user = update.effective_user 
+    message = update.effective_message
+    if sql.is_tag(chat.id, user.id):
+        message.reply_text(
+            "You're Already Exist In {}'s Tag List!".format(chat.title)
+        ) 
+        return
+    sql.tag(chat.id, user.id)
+    message.reply_text(
+        "{} has been successfully added in {}'s tag list.".format(
+        mention_html(user.id, user.first_name), chat.title),
+        parse_mode=ParseMode.HTML,
+    )
+
+@kigcmd(command='untagme', filters=Filters.chat_type.groups)
+def untagme(update, context): 
+    chat = update.effective_chat  
+    user = update.effective_user 
+    message = update.effective_message
+    if not sql.is_tag(chat.id, user.id):
+        message.reply_text(
+            "You're Already Doesn't Exist In {}'s Tag List!".format(chat.title)
+        ) 
+        return
+    sql.untag(chat.id, user.id)
+    message.reply_text(
+        "{} has been removed from {}'s tag list.".format(
+        mention_html(user.id, user.first_name), chat.title),
+        parse_mode=ParseMode.HTML,
+    )
+
+
 @user_admin
 @kigcmd(command='tagall', filters=Filters.chat_type.groups)
 def tagall(update, context):
     message = update.effective_message
     chat_title = message.chat.title
     chat = update.effective_chat
-    msg = "The following users are tagged.\n"
+    msg = "The following users are tagged.\n\n"
     tagged_users = sql.list_tagger(message.chat_id)
     for i in tagged_users:
         member = chat.get_member(int(i.user_id))
-        msg += f"{mention_html(member.user['id'], html.escape(member.user['first_name']))},\n"
-    if msg.endswith("tagged.\n"):
+        msg += f"{mention_html(member.user['id'], html.escape(member.user['first_name']))}, "
+    if msg.endswith("tagged.\n\n"):
         message.reply_text(f"No users are tagged in {chat_title}.")
         return
     else:
@@ -100,7 +151,7 @@ def untagall(update: Update, context: CallbackContext):
         buttons = InlineKeyboardMarkup([
             [
                 InlineKeyboardButton(
-                    text="Unapprove all users",
+                    text="Untag All",
                     callback_data="untagall_user")
             ],
             [
@@ -113,6 +164,39 @@ def untagall(update: Update, context: CallbackContext):
             reply_markup=buttons,
             parse_mode=ParseMode.MARKDOWN,
         )
+
+@kigcallback(pattern=r"addtag_.*")
+def addtag_button(update: Update, context: CallbackContext):
+    query = update.callback_query
+    chat = update.effective_chat  
+    splitter = query.data.split('=')
+    query_match = splitter[0]
+    user_id = splitter[1]
+    if query_match == "addtag_accept":
+        if query.from_user.id == int(user_id):
+            member = chat.get_member(int(user_id))
+            sql.tag(chat.id, member.user.id)
+            query.message.edit_text(
+                "{} is accepted! to add yourself {}'s tag list.".format(
+                mention_html(member.user.id, member.user.first_name), chat.title),
+                parse_mode=ParseMode.HTML,
+            )
+            query.answer("Accepted")
+        else:
+            query.answer("You're not the user being added in tag list!")
+
+    elif query_match == "addtag_dicline":
+        if query.from_user.id == int(user_id):
+            member = chat.get_member(int(user_id))
+            query.message.edit_text(
+                "{} is deslined! to add yourself {}'s tag list.".format(
+                mention_html(member.user.id, member.user.first_name), chat.title),
+                parse_mode=ParseMode.HTML,
+            )
+            query.answer("Declined")
+        else:
+            query.answer("You're not the user being added in tag list!")
+
 
 @kigcallback(pattern=r"untagall_.*")
 def untagall_btn(update: Update, context: CallbackContext):
@@ -128,6 +212,9 @@ def untagall_btn(update: Update, context: CallbackContext):
                 users.append(int(i.user_id))
             for user_id in users:
                 sql.untag(chat.id, user_id)
+            query.answer("OK!")
+            message.edit_text(f"Successully Untagged All Users From {chat.title}!")
+            return
 
         if member.status == "administrator":
             query.answer("Only owner of the chat can do this.")
