@@ -40,7 +40,6 @@ def tag(update, context):
             parse_mode=ParseMode.MARKDOWN,
         )
         return
-    sql.tag(message.chat_id, user_id)
     message.reply_text(
         f"[{member.user['first_name']}](tg://user?id={member.user['id']}) accept this, if you want to add yourself into {chat_title}'s tag list! or just simply decline this.", 
         reply_markup=InlineKeyboardMarkup(
@@ -172,8 +171,14 @@ def addtag_button(update: Update, context: CallbackContext):
     query_match = splitter[0]
     user_id = splitter[1]
     if query_match == "addtag_accept":
+        member = chat.get_member(int(user_id))
+        if sql.is_tag(chat.id, member.user.id):
+            query.message.edit_text(
+                 f"[{member.user['first_name']}](tg://user?id={member.user['id']}) is already tagged in {chat_title}",
+                 parse_mode=ParseMode.MARKDOWN,
+            )
+            return
         if query.from_user.id == int(user_id):
-            member = chat.get_member(int(user_id))
             sql.tag(chat.id, member.user.id)
             query.message.edit_text(
                 "{} is accepted! to add yourself {}'s tag list.".format(
