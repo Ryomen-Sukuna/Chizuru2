@@ -9,7 +9,7 @@ set_chat_lang: "Great, {} it is from now on!"
 
 
 pm_start_text: |
-   Hey There! I'm *{dispatcher.bot.first_name}* 
+   Hey There! I'm *{}* 
    [✧]({}) I'm Here To Help You Manage \n    Your Groups!
    [✧]({}) Hit /help To Find Out More About\n    How To Use Me.
    Join My [Support Chat](t.me/{}) To Get Information & Help.
