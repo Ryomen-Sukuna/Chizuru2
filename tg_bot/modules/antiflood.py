@@ -426,4 +426,4 @@ from tg_bot.modules.language import gs
 def get_help(chat):
     return gs(chat, "antiflood_help")
 
-__mod_name__ = "Anti-Flood"
+__mod_name__ = "Antiflood"
