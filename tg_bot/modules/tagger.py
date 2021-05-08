@@ -174,8 +174,8 @@ def addtag_button(update: Update, context: CallbackContext):
         member = chat.get_member(int(user_id))
         if sql.is_tag(chat.id, member.user.id):
             query.message.edit_text(
-                 f"[{member.user['first_name']}](tg://user?id={member.user['id']}) is already tagged in {chat_title}",
-                 parse_mode=ParseMode.MARKDOWN,
+                 f"{mention_html(member.user.id, member.user.first_name)} is already tagged in {chat.title}",
+                 parse_mode=ParseMode.HTML,
             )
             return
         if query.from_user.id == int(user_id):
