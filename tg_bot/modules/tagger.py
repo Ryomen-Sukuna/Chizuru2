@@ -127,7 +127,7 @@ def tagall(update, context):
     chat_title = message.chat.title
     chat = update.effective_chat
     msg = "The following users are tagged.\n\n"
-    tagged_users = sql.list_tagger(message.chat_id)
+    tagged_users = sql.tag_list(message.chat_id)
     for i in tagged_users:
         member = chat.get_member(int(i.user_id))
         msg += f"{mention_html(member.user['id'], html.escape(member.user['first_name']))}, "
@@ -151,8 +151,7 @@ def untagall(update: Update, context: CallbackContext):
         buttons = InlineKeyboardMarkup([
             [
                 InlineKeyboardButton(
-                    text="Untag All",
-                    callback_data="untagall_user")
+                    text="Untag All", callback_data="untagall_user")
             ],
             [
                 InlineKeyboardButton(
