@@ -1,11 +1,11 @@
 # Language name in their native
-language: "English 🇺🇲 (Memes Edition)"
+language: "Hinglish 🇮🇳"
 # name of people(s) who re-worked on this translation
 authors: "@LustPriest"
 
 # languages
-curr_chat_lang: "Hey. Your current language is {}, select the one you want from the buttons below :)"
-set_chat_lang: "Great, {} it is from now on!"
+curr_chat_lang: "Yoo. Aapki language: {}, select the one you want from the buttons below :)"
+set_chat_lang: "Sabash Kachra, Abse Ham {} Me Batt Karenge!"
 
 
 pm_start_text: |
