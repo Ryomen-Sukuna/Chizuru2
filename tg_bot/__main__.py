@@ -324,7 +324,7 @@ def about_callback(update: Update, context: CallbackContext):
                      START_IMG,
                      SUPPORT_CHAT,
                 ),
-                reply_markup=InlineKeyboardMarkup(buttons),
+                reply_markup=InlineKeyboardMarkup(buttuns),
                 parse_mode=ParseMode.MARKDOWN,
                 timeout=60, 
             )
@@ -387,9 +387,7 @@ def about_callback(update: Update, context: CallbackContext):
             text=gs(chat.id, "nlp_help"),
             parse_mode=ParseMode.MARKDOWN,
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton(text="Next", callback_data="aboutmanu_spamprot2")],
-                [InlineKeyboardButton(text="NPL", callback_data="aboutmanu_howto")],
-                [InlineKeyboardButton(text="Back", callback_data="aboutmanu_howto")]
+                [InlineKeyboardButton(text="Back", callback_data="aboutmanu_spamprot")]
             ]), 
         )
         query.answer("Chatroom Spam Prediction")
@@ -411,6 +409,7 @@ def about_callback(update: Update, context: CallbackContext):
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton(text="Previous", callback_data="aboutmanu_spamprot"),
                 InlineKeyboardButton(text="Next", callback_data="aboutmanu_spamprot3")],
+                [InlineKeyboardButton(text="NPL", callback_data="aboutmanu_spamprotcf")],
                 [InlineKeyboardButton(text="Back", callback_data="aboutmanu_howto")]
             ]), 
         )
@@ -431,6 +430,7 @@ def about_callback(update: Update, context: CallbackContext):
             parse_mode=ParseMode.MARKDOWN,
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton(text="Previous", callback_data="aboutmanu_spamprot2")],
+                [InlineKeyboardButton(text="NPL", callback_data="aboutmanu_spamprotcf")],
                 [InlineKeyboardButton(text="Back", callback_data="aboutmanu_howto")]
             ]), 
         )
