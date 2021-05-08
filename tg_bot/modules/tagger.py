@@ -207,7 +207,7 @@ def untagall_btn(update: Update, context: CallbackContext):
     if query.data == "untagall_user":
         if member.status == "creator" or query.from_user.id in SUDO_USERS:
             users = []
-            tagged_users = sql.list_tag(chat.id)
+            tagged_users = sql.tag_list(chat.id)
             for i in tagged_users:
                 users.append(int(i.user_id))
             for user_id in users:
