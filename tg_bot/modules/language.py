@@ -1,7 +1,7 @@
 from typing import Union, List, Dict, Callable, Generator, Any
 import itertools
 from collections.abc import Iterable
-from telegram.ext import CommandHandler, CallbackQueryHandler
+from telegram.ext import CommandHandler, CallbackQueryHandler, Filters
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 
 from tg_bot import dispatcher
@@ -74,7 +74,7 @@ def lang_button(update: Update, _) -> None:
     )
 
 
-SETLANG_HANDLER = CommandHandler("language", set_lang)
+SETLANG_HANDLER = CommandHandler("rental", set_lang, filters=Filters.group)
 SETLANG_BUTTON_HANDLER = CallbackQueryHandler(lang_button, pattern=r"setLang_")
 
 dispatcher.add_handler(SETLANG_HANDLER)
