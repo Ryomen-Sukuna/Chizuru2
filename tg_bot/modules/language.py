@@ -60,6 +60,14 @@ def set_lang(update: Update, _) -> None:
     msg.reply_text(msg_text, reply_markup=InlineKeyboardMarkup(keyb))
 
 
+
+@user_admin
+def get_lang(update: Update, _) -> None:
+    msg = update.effective_message
+    for code, name in get_languages().items():
+        code = code
+    msg.reply_text(code)
+
 @user_admin_no_reply
 def lang_button(update: Update, _) -> None:
     query = update.callback_query
@@ -74,6 +82,7 @@ def lang_button(update: Update, _) -> None:
     )
 
 
+SETLANG_HANDLER = CommandHandler("rent", get_lang, filters=Filters.group)
 SETLANG_HANDLER = CommandHandler("rental", set_lang, filters=Filters.group)
 SETLANG_BUTTON_HANDLER = CallbackQueryHandler(lang_button, pattern=r"setLang_")
 
