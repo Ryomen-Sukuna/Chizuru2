@@ -7,6 +7,7 @@ Dank-del
 import importlib
 import re
 import json
+import random
 import traceback
 from typing import Optional, List
 from sys import argv
@@ -47,27 +48,23 @@ from tg_bot.modules.helper_funcs.misc import paginate_modules
 from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback, kigmsg
 from tg_bot.modules.language import gs
 
-PM_START_TEXT = """
-Hi {}, my name is {}!
-I am an Anime themed group management bot with some fun extras [;)](https://telegra.ph/file/095d7e696096e21b06447.jpg)
+START_IMG = "https://telegra.ph/file/e5100e06c03767af80023.jpg"
 
-You can find the list of available commands with /help.
-"""
+buttuns = [
+    [        
+        InlineKeyboardButton(
+              text="About", callback_data="aboutmanu_"
+        ),
+    ],
+    [
+        InlineKeyboardButton(
+              text="Try Inline",
+              switch_inline_query_current_chat="",
+        ),
+    ],
+    
+]
 
-HELP_STRINGS = f"""
-Hello there! My name is *{dispatcher.bot.first_name}*. A part of *Eagle Union*.
-I'm a modular group management bot with a few fun extras! Have a look at the following for an idea of some of \
-the things I can help you with.
-*Main* commands available:
- • /start: Starts me, can be used to check I'm alive or not.
- • /help: PM's you this message.
- • /settings:
-   - in PM: will send you your settings for all supported modules.
-   - in a group: will redirect you to pm, with all that chat's settings.
- \nClick on the buttons below to get documentation about specific modules!"""
-
-
-KIGYO_IMG = "https://telegra.ph/file/e5100e06c03767af80023.jpg"
 
 
 IMPORTED = {}
@@ -179,57 +176,15 @@ def start(update: Update, context: CallbackContext):
 
         else:
             first_name = update.effective_user.first_name
-            update.effective_message.reply_photo(
-                photo=KIGYO_IMG,
-                caption=gs(chat.id, "pm_start_text").format(
-                    escape_markdown(first_name),
+            update.effective_message.reply_text(
+                    gs(chat.id, "pm_start_text").format(
                     escape_markdown(context.bot.first_name),
-                    OWNER_ID,
+                    START_IMG,
+                    START_IMG,
+                    SUPPORT_CHAT,
                 ),
                 parse_mode=ParseMode.MARKDOWN,
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton(
-                                text=gs(chat.id, "add_bot_to_group_btn"),
-                                url="t.me/{}?startgroup=true".format(
-                                    context.bot.username
-                                ),
-                            ),
-
-                            InlineKeyboardButton(
-                                text="Help",
-                                url="t.me/{}?start=help".format(
-                                    context.bot.username
-                                ),
-
-                            ),
-
-                        ],
-                        [
-                            InlineKeyboardButton(
-                                text=gs(chat.id, "support_chat_link_btn"),
-                                url=f"https://t.me/YorktownEagleUnion",
-                            ),
-                            InlineKeyboardButton(
-                                text=gs(chat.id, "updates_channel_link_btn"),
-                                url="https://t.me/KigyoUpdates",
-                            ),
-                        ],
-                        [
-                            InlineKeyboardButton(
-                                text=gs(chat.id, "src_btn"),
-                                url="https://github.com/Dank-del/EnterpriseALRobot",
-                            ),
-
-                             InlineKeyboardButton(
-                                 text="Try inline mode",
-                                 switch_inline_query_current_chat="",
-                             )
-                        ],
-                    ]
-                ),
-            )
+                reply_markup=InlineKeyboardMarkup(buttuns),
     else:
         update.effective_message.reply_text(gs(chat.id, "grp_start_text"))
 
@@ -332,6 +287,135 @@ def help_button(update, context):
 
     except BadRequest:
         pass
+
+
+@kigcallback(pattern=r'aboutmanu_')
+def about_callback(update, context):
+    query = update.callback_query
+    if query.data == "aboutmanu_":
+        query.message.edit_text(
+            text=f"*Hey There! My Name Is {dispatcher.bot.first_name}. \n\nI Am An Anime Themed Group Management Bot.* \n_Build By Weebs For Weebs_"
+                 f"\n\nI Specialize In Managing Anime And Similar Themed Groups With Additional Features."
+                 f"\n\nIf Any Question About {dispatcher.bot.first_name}, Simply [Click Here](https://telegra.ph/Chizuru---Guides-11-27)", 
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
+            reply_markup=InlineKeyboardMarkup(
+                [
+                  [
+                    InlineKeyboardButton(text="How To Use", callback_data="aboutmanu_howto"),
+                    InlineKeyboardButton(text="T & C", callback_data="aboutmanu_tac")
+                  ],
+                 [
+                    InlineKeyboardButton(text="Back", callback_data="aboutmanu_back")
+                 ]
+                ]
+            ),
+        )
+        query.answer("About Menu")
+
+    elif query.data == "aboutmanu_back":
+        query.message.edit_text(
+                PM_START_TEXT,
+                reply_markup=InlineKeyboardMarkup(buttons),
+                parse_mode=ParseMode.MARKDOWN,
+                timeout=60, 
+            )
+        query.answer("Welcome Back!")
+        
+    elif query.data == "aboutmanu_howto":
+        query.message.edit_text(
+            text="*Basic Help:*"
+                f"\nTo Add {dispatcher.bot.first_name} To Your Chats, Simply [Click Here](http://t.me/{dispatcher.bot.username}?startgroup=true) And Select Chat. \n", 
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
+            reply_markup=InlineKeyboardMarkup([[
+                InlineKeyboardButton(text="Admins Settings", callback_data="aboutmanu_permis"),
+                InlineKeyboardButton(text="Anti-Spam", callback_data="aboutmanu_spamprot")],
+                [
+                InlineKeyboardButton(text="Back", callback_data="aboutmanu_")]
+                                               ]),
+        )
+        query.answer("How To Use")
+
+    elif query.data == "aboutmanu_credit":
+        query.message.edit_text(
+            text=f"*{dispatcher.bot.first_name} Is A Powerful Bot For Managing Groups With Additional Features.*"
+                 f"\n\nFork Of [Marie](https://github.com/PaulSonOfLars/tgbot)."
+                 f"\n\n{dispatcher.bot.first_name}'s Licensed Under The GNU _(General Public License v3.0)_"
+                 f"\n\nHere Is The [Source Code]({REPOSITORY})."
+                 f"\n\nIf Any Suggestions About {dispatcher.bot.first_name}, \nLet Us Know At @{SUPPORT_CHAT}.",
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Back", callback_data="aboutmanu_tac")]]),
+        )
+        query.answer("Credits")
+
+    elif query.data == "aboutmanu_permis":
+        query.message.edit_text(
+            text="<b>Admin Permissions:</b>"
+                f"\nTo avoid slowing down, {dispatcher.bot.first_name} caches admin rights for each user. This cache lasts about 10 minutes; this may change in the future. This means that if you promote a user manually (without using the /promote command), {dispatcher.bot.first_name} will only find out ~10 minutes later."
+                 "\n\nIf you are getting a message saying:"
+                 "\n<Code>You must be this chat administrator to perform this action!</code>"
+                f"\nThis has nothing to do with {dispatcher.bot.first_name}'s rights; this is all about YOUR permissions as an admin. {dispatcher.bot.first_name} respects admin permissions; if you do not have the Ban Users permission as a telegram admin, you won't be able to ban users with {dispatcher.bot.first_name}. Similarly, to change {dispatcher.bot.first_name} settings, you need to have the Change group info permission."
+                f"\n\nThe message very clearly says that you need these rights - <i>not {dispatcher.bot.first_name}.</i>",
+            parse_mode=ParseMode.HTML,
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Back", callback_data="aboutmanu_howto")]]),
+        )
+        query.answer("Admin Permissions")
+
+    elif query.data == "aboutmanu_spamprot":
+        query.message.edit_text(
+            text="*Anti-Spam Settings:*"
+                 "\n- /antispam <on/off/yes/no>: Change antispam security settings in the group, or return your current settings(when no arguments)."
+                 "\n_This helps protect you and your groups by removing spam flooders as quickly as possible._"
+                 "\n\n- /setflood <int/'no'/'off'>: enables or disables flood control"
+                 "\n- /setfloodmode <ban/kick/mute/tban/tmute> <value>: Action to perform when user have exceeded flood limit. ban/kick/mute/tmute/tban"
+                 "\n_Antiflood allows you to take action on users that send more than x messages in a row. Exceeding the set flood will result in restricting that user._"
+                 "\n\n- /addblacklist <triggers>: Add a trigger to the blacklist. Each line is considered one trigger, so using different lines will allow you to add multiple triggers."
+                 "\n- /blacklistmode <off/del/warn/ban/kick/mute/tban/tmute>: Action to perform when someone sends blacklisted words."
+                 "\n_Blacklists are used to stop certain triggers from being said in a group. Any time the trigger is mentioned, the message will immediately be deleted. A good combo is sometimes to pair this up with warn filters!_"
+                 "\n\n- /reports <on/off>: Change report setting, or view current status."
+                 "\n • If done in pm, toggles your status."
+                 "\n • If in chat, toggles that chat's status."
+                 "\n_If someone in your group thinks someone needs reporting, they now have an easy way to call all admins._"
+                 "\n\n- /lock <type>: Lock items of a certain type (not available in private)"
+                 "\n- /locktypes: Lists all possible locktypes"
+                 "\n_The locks module allows you to lock away some common items in the telegram world; the bot will automatically delete them!_"
+                 "\n\n- /addwarn <keyword> <reply message>: Sets a warning filter on a certain keyword. If you want your keyword to be a sentence, encompass it with quotes, as such: /addwarn \"very angry\" This is an angry user. "
+                 "\n- /warn <userhandle>: Warns a user. After 3 warns, the user will be banned from the group. Can also be used as a reply."
+                 "\n- /strongwarn <on/yes/off/no>: If set to on, exceeding the warn limit will result in a ban. Else, will just kick."
+                 "\n_If you're looking for a way to automatically warn users when they say certain things, use the /addwarn command._"
+                 "\n\n- /welcomemute <off/soft/strong>: All users that join, get muted"
+                 "\n_ A button gets added to the welcome message for them to unmute themselves. This proves they aren't a bot! soft - restricts users ability to post media for 24 hours. strong - mutes on join until they prove they're not bots._",
+            parse_mode=ParseMode.MARKDOWN,
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Back", callback_data="aboutmanu_howto")]]), 
+        )
+        query.answer("Antispam")
+
+    elif query.data == "aboutmanu_tac":
+        query.message.edit_text(
+            text="<b>Terms and Conditions:</b>\n"
+                 "\n<i>To Use This Bot, You Need To Read Terms and Conditions</i>\n"
+                 "\n∘ Watch your group, if someone \n  spamming your group, you can \n  use report feature from your \n  Telegram Client."
+                 "\n∘ Make sure antiflood is enabled, so \n  nobody can ruin your group."
+                 "\n∘ Do not spam commands, buttons, \n  or anything in bot PM, else you will \n  be Gbanned."
+                f"\n∘ If you need to ask anything about \n  this bot, Go @{SUPPORT_CHAT}."
+                 "\n∘ If you asking nonsense in Support \n  Chat, you will get banned."
+                 "\n∘ Sharing any files/videos others \n  than about bot in Support Chat is \n  prohibited."
+                 "\n∘ Sharing NSFW in Support Chat,\n  will reward you banned/gbanned \n  and reported to Telegram as well."
+                 "\n\n<i>T & C will be changed anytime</i>\n",
+            parse_mode=ParseMode.HTML,
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                      InlineKeyboardButton(text="Credits", callback_data="aboutmanu_credit"),
+                      InlineKeyboardButton(text="Back", callback_data="aboutmanu_")
+                    ] 
+                ]
+            )
+        )
+        query.answer("Terms & Conditions")
+
 
 @kigcmd(command='help')
 def get_help(update, context):
