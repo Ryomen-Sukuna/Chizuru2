@@ -64,8 +64,9 @@ def set_lang(update: Update, _) -> None:
 @user_admin
 def get_lang(update: Update, _) -> None:
     msg = update.effective_message
+    codes = ""
     for code, name in get_languages().items():
-        code = code
+        codes += code
     msg.reply_text(code)
 
 @user_admin_no_reply
