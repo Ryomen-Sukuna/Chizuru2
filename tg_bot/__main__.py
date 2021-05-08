@@ -48,6 +48,7 @@ from tg_bot.modules.helper_funcs.misc import paginate_modules
 from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback, kigmsg
 from tg_bot.modules.language import gs
 
+SUPPORT_CHAT = "ElitesOfSupport"
 START_IMG = "https://telegra.ph/file/e5100e06c03767af80023.jpg"
 
 buttuns = [
@@ -181,7 +182,7 @@ def start(update: Update, context: CallbackContext):
                            escape_markdown(context.bot.first_name),
                            START_IMG,
                            START_IMG,
-                           "ElitesOfSupport",
+                           SUPPORT_CHAT,
                     ),
                     parse_mode=ParseMode.MARKDOWN,
                     reply_markup=InlineKeyboardMarkup(buttuns),
@@ -290,7 +291,7 @@ def help_button(update, context):
         pass
 
 
-@kigcallback(pattern=r'aboutmanu_')
+@kigcallback(pattern=r'aboutmanu_.*')
 def about_callback(update, context):
     query = update.callback_query
     if query.data == "aboutmanu_":
@@ -320,7 +321,7 @@ def about_callback(update, context):
                      escape_markdown(context.bot.first_name),
                      START_IMG,
                      START_IMG,
-                     "ElitesOfSupport",
+                     SUPPORT_CHAT,
                 ),
                 reply_markup=InlineKeyboardMarkup(buttons),
                 parse_mode=ParseMode.MARKDOWN,
@@ -347,7 +348,7 @@ def about_callback(update, context):
             text=f"*{dispatcher.bot.first_name} Is A Powerful Bot For Managing Groups With Additional Features.*"
                  f"\n\nFork Of [Marie](https://github.com/PaulSonOfLars/tgbot)."
                  f"\n\n{dispatcher.bot.first_name}'s Licensed Under The GNU _(General Public License v3.0)_"
-                 f"\n\nHere Is The [Source Code](t.me/elitesofsupport)."
+                 f"\n\nHere Is The [Source Code](t.me/{SUPPORT_CHAT})."
                  f"\n\nIf Any Suggestions About {dispatcher.bot.first_name}, \nLet Us Know At @{SUPPORT_CHAT}.",
             parse_mode=ParseMode.MARKDOWN,
             disable_web_page_preview=True,
