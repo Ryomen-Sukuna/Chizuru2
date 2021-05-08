@@ -10,7 +10,7 @@ import tg_bot.modules.sql.nlp_detect_sql as sql
 from pyrogram.types import Message
 
 session = aiohttp.ClientSession()
-
+__mod_name__ = 'NPL'
 
 async def admin_check(message: Message) -> bool:
     client = message._client
