@@ -192,7 +192,7 @@ def start(update: Update, context: CallbackContext):
 
 
 # for test purposes
-def error_callback(update, context):
+def error_callback(update: Update, context: CallbackContext):
     '''#TODO
 
     Params:
@@ -222,7 +222,7 @@ def error_callback(update, context):
         # handle all other telegram related errors
 
 @kigcallback(pattern=r'help_')
-def help_button(update, context):
+def help_button(update: Update, context: CallbackContext):
     '''#TODO
 
     Params:
@@ -292,7 +292,8 @@ def help_button(update, context):
 
 
 @kigcallback(pattern=r'aboutmanu_.*')
-def about_callback(update, context):
+def about_callback(update: Update, context: CallbackContext):
+    chat = update.effective_chat
     query = update.callback_query
     if query.data == "aboutmanu_":
         query.message.edit_text(
@@ -461,7 +462,7 @@ def about_callback(update, context):
 
 
 @kigcmd(command='help')
-def get_help(update, context):
+def get_help(update: Update, context: CallbackContext):
     '''#TODO
 
     Params:
