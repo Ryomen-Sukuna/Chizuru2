@@ -165,7 +165,7 @@ def get_help(chat):
     return gs(chat, "fun_help")
 
 
-def get_help(chat):
+def get_help_btns():
      buttuns = [
         [InlineKeyboardButton(text="AFK", callback_data="sunhelp_afk"),
         InlineKeyboardButton(text="Sticker", callback_data="subhelp_stick"),
