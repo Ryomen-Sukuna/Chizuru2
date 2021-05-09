@@ -13,7 +13,7 @@ import tg_bot.modules.fun_strings as fun_strings
 from tg_bot import dispatcher
 from tg_bot.modules.helper_funcs.chat_status import is_user_admin
 from tg_bot.modules.helper_funcs.extraction import extract_user
-from tg_bot.modules.helper_funcs.decorators import kigcmd
+from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback
 
 @kigcmd(command='runs')
 def runs(update: Update, context: CallbackContext):
