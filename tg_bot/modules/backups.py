@@ -337,9 +337,11 @@ def export_data(update, context):
     )
     os.remove("KigyoRobot{}.backup".format(chat_id))  # Cleaning file
 
-from tg_bot.modules.language import gs
+
+__mod_name__ = "Backups"
 
 def get_help(chat):
+    from tg_bot.modules.language import gs
     return gs(chat, "backup_help")
 
 IMPORT_HANDLER = CommandHandler("import", import_data, run_async=True)
@@ -348,5 +350,4 @@ EXPORT_HANDLER = CommandHandler("export", export_data, run_async=True)
 #dispatcher.add_handler(IMPORT_HANDLER)
 #dispatcher.add_handler(EXPORT_HANDLER)
 
-__mod_name__ = "Backups"
 __handlers__ = [IMPORT_HANDLER, EXPORT_HANDLER]
