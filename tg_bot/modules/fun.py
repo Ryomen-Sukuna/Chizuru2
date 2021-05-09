@@ -12,6 +12,7 @@ from telegram.error import BadRequest
 
 import tg_bot.modules.fun_strings as fun_strings
 from tg_bot import dispatcher
+from tg_bot.modules.language import gs
 from tg_bot.modules.helper_funcs.chat_status import is_user_admin
 from tg_bot.modules.helper_funcs.extraction import extract_user
 from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback
@@ -190,7 +191,6 @@ def subhelp_button(update: Update, context: CallbackContext):
 
 
 
-from tg_bot.modules.language import gs
 def get_help(chat):
     return gs(chat, "fun_help")
 
