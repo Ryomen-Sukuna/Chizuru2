@@ -124,7 +124,7 @@ def subhelp_button(update: Update, context: CallbackContext):
             )
     elif query.data == "subhelp_wel_random":
         query.message.edit_text(
-                text=gs(chat, "greetings_random_help").format(first_name=context.bot.first_name),
+                text=gs(chat, "greetings_random_help"),
                 reply_markup=InlineKeyboardMarkup(
                         [[InlineKeyboardButton(text="Back", callback_data="subhelp_wel_format"),]]
                 ),
