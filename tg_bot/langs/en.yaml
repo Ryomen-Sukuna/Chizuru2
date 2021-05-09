@@ -356,6 +356,16 @@ rules_help: |
       • `/setrules <your rules here>`*:* set the rules for this chat.
       • `/clearrules`*:* clear the rules for this chat.
 
+tagger_help: |
+   Tagger is an essential feature to mention all subscribed members in the group. Any chat members can subscribe to tagger.
+   • `/tagme`*:* registers to the chat tag list.
+   • `/untagme`*:* unsubscribes from the chat tag list.
+   Admin only:
+   • `/tag <userhandle>`*:* add a user to chat tag list. (via handle, or reply)
+   • `/untag <userhandle>`*:* remove a user to chat tag list. (via handle, or reply)
+   • `/tagall`*:* mention all subscribed members.
+   • `/untagall`*:* clears all subscribed members.
+
 userinfo_help: |
       - /setbio <text>: while replying, will save another user's bio
       - /bio: will get your or another user's bio. This cannot be set by yourself.
