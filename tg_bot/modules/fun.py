@@ -12,7 +12,6 @@ from telegram.error import BadRequest
 
 import tg_bot.modules.fun_strings as fun_strings
 from tg_bot import dispatcher
-from tg_bot.modules.language import gs
 from tg_bot.modules.helper_funcs.chat_status import is_user_admin
 from tg_bot.modules.helper_funcs.extraction import extract_user
 from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback
@@ -148,61 +147,5 @@ def table(update: Update, context: CallbackContext):
 __mod_name__ = "Fun"
 
 def get_help(chat):
+    from tg_bot.modules.language import gs
     return gs(chat, "fun_help")
-
-def get_help_btns():
-     buttuns = [
-        [InlineKeyboardButton(text="AFK", callback_data="subhelp_afk"),
-        InlineKeyboardButton(text="Sticker", callback_data="subhelp_stick"),
-        InlineKeyboardButton(text="Translation", callback_data="subhelp_tr"),],
-        [InlineKeyboardButton(text="Back", callback_data="help_back"),],
-     ]
-     return buttuns
-
-
-@kigcallback(pattern=r'subhelp_.*')
-def subhelp_button(update: Update, context: CallbackContext):
-    chat = update.effective_chat
-    query = update.callback_query
-    if query.data == "subhelp_back":
-        query.message.edit_text(
-                text="Here is the help for the *Fun* module:\n" + gs(chat, "fun_help"),
-                reply_markup=InlineKeyboardMarkup(
-                        get_help_btns()
-                ),
-                parse_mode=ParseMode.MARKDOWN,
-                disable_web_page_preview=True,
-                timeout=60, 
-            )
-    elif query.data == "subhelp_afk":
-        query.message.edit_text(
-                text="Here is the help for the *AFK* module:\n" + gs(chat, "afk_help"),
-                reply_markup=InlineKeyboardMarkup(
-                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
-                ),
-                parse_mode=ParseMode.MARKDOWN,
-                disable_web_page_preview=True,
-                timeout=60, 
-            )
-
-    elif query.data == "subhelp_stick":
-        query.message.edit_text(
-                text="Here is the help for the *Stickers* module:\n" + gs(chat, "sticker_help"),
-                reply_markup=InlineKeyboardMarkup(
-                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
-                ),
-                parse_mode=ParseMode.MARKDOWN,
-                disable_web_page_preview=True,
-                timeout=60, 
-            )
-
-    elif query.data == "subhelp_tr":
-        query.message.edit_text(
-                text="Here is the help for the *Translation* module:\n" + gs(chat, "gtranslate_help"),
-                reply_markup=InlineKeyboardMarkup(
-                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
-                ),
-                parse_mode=ParseMode.MARKDOWN,
-                disable_web_page_preview=True,
-                timeout=60, 
-            )
