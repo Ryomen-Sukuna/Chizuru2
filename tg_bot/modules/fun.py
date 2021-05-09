@@ -150,7 +150,7 @@ def subhelp_button(update: Update, context: CallbackContext):
         query.message.edit_text(
                 text=gs(chat, "fun_help"),
                 reply_markup=InlineKeyboardMarkup(
-                        [InlineKeyboardButton(text="Back", callback_data="help_back"),]
+                        [[InlineKeyboardButton(text="Back", callback_data="help_back"),]]
                 ),
                 parse_mode=ParseMode.MARKDOWN,
                 disable_web_page_preview=True,
@@ -160,7 +160,7 @@ def subhelp_button(update: Update, context: CallbackContext):
         query.message.edit_text(
                 text=gs(chat, "afk_help"),
                 reply_markup=InlineKeyboardMarkup(
-                        [InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]
+                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
                 ),
                 parse_mode=ParseMode.MARKDOWN,
                 disable_web_page_preview=True,
@@ -171,7 +171,7 @@ def subhelp_button(update: Update, context: CallbackContext):
         query.message.edit_text(
                 text=gs(chat, "sticker_help"),
                 reply_markup=InlineKeyboardMarkup(
-                        [InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]
+                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
                 ),
                 parse_mode=ParseMode.MARKDOWN,
                 disable_web_page_preview=True,
@@ -182,7 +182,7 @@ def subhelp_button(update: Update, context: CallbackContext):
         query.message.edit_text(
                 text=gs(chat, "gtranslate_help"),
                 reply_markup=InlineKeyboardMarkup(
-                        [InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]
+                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
                 ),
                 parse_mode=ParseMode.MARKDOWN,
                 disable_web_page_preview=True,
