@@ -247,7 +247,9 @@ def help_button(update: Update, context: CallbackContext):
                 + HELPABLE[module].get_help(update.effective_chat.id)
             )
             try:
-                markup = HELPABLE[module].get_help_btns()
+                markup = InlineKeyboardMarkup(
+                               HELPABLE[module].get_help_btns()
+                         )
             except:
                 markup = InlineKeyboardMarkup(
                                [[InlineKeyboardButton(text="Back", callback_data="help_back")]]
