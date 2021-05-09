@@ -5,7 +5,8 @@ import time
 import urllib.request
 import urllib.parse
 import requests
-from telegram import ParseMode, Update, ChatPermissions, InlineKeyboardButton                                     
+from telegram import ParseMode, Update, ChatPermissions
+from telegram InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
 from telegram.error import BadRequest
 
@@ -120,26 +121,6 @@ def roll(update: Update, context: CallbackContext):
 @kigcmd(command='toss')
 def toss(update: Update, context: CallbackContext):
     update.message.reply_text(random.choice(fun_strings.TOSS))
-
-@kigcmd(command='shrug')
-def shrug(update: Update, context: CallbackContext):
-    msg = update.effective_message
-    reply_text = (
-        msg.reply_to_message.reply_text if msg.reply_to_message else msg.reply_text
-    )
-    reply_text(r"¯\_(ツ)_/¯")
-
-@kigcmd(command='rlg')
-def rlg(update: Update, context: CallbackContext):
-    eyes = random.choice(fun_strings.EYES)
-    mouth = random.choice(fun_strings.MOUTHS)
-    ears = random.choice(fun_strings.EARS)
-
-    if len(eyes) == 2:
-        repl = ears[0] + eyes[0] + mouth[0] + eyes[1] + ears[1]
-    else:
-        repl = ears[0] + eyes[0] + mouth[0] + eyes[0] + ears[1]
-    update.message.reply_text(repl)
 
 @kigcmd(command='decide')
 def decide(update: Update, context: CallbackContext):
