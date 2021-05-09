@@ -142,58 +142,13 @@ def table(update: Update, context: CallbackContext):
     reply_text(random.choice(fun_strings.TABLE))
 
 
-@kigcallback(pattern=r'subhelp_.*')
-def subhelp_button(update: Update, context: CallbackContext):
-    chat = update.effective_chat
-    query = update.callback_query
-    if query.data == "subhelp_back":
-        query.message.edit_text(
-                text=gs(chat, "fun_help"),
-                reply_markup=InlineKeyboardMarkup(
-                        [[InlineKeyboardButton(text="Back", callback_data="help_back"),]]
-                ),
-                parse_mode=ParseMode.MARKDOWN,
-                disable_web_page_preview=True,
-                timeout=60, 
-            )
-    elif query.data == "subhelp_afk":
-        query.message.edit_text(
-                text=gs(chat, "afk_help"),
-                reply_markup=InlineKeyboardMarkup(
-                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
-                ),
-                parse_mode=ParseMode.MARKDOWN,
-                disable_web_page_preview=True,
-                timeout=60, 
-            )
-
-    elif query.data == "subhelp_stick":
-        query.message.edit_text(
-                text=gs(chat, "sticker_help"),
-                reply_markup=InlineKeyboardMarkup(
-                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
-                ),
-                parse_mode=ParseMode.MARKDOWN,
-                disable_web_page_preview=True,
-                timeout=60, 
-            )
-
-    elif query.data == "subhelp_tr":
-        query.message.edit_text(
-                text=gs(chat, "gtranslate_help"),
-                reply_markup=InlineKeyboardMarkup(
-                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
-                ),
-                parse_mode=ParseMode.MARKDOWN,
-                disable_web_page_preview=True,
-                timeout=60, 
-            )
 
 
+
+__mod_name__ = "Fun"
 
 def get_help(chat):
     return gs(chat, "fun_help")
-
 
 def get_help_btns():
      buttuns = [
@@ -204,4 +159,50 @@ def get_help_btns():
      ]
      return buttuns
 
-__mod_name__ = "Fun"
+
+@kigcallback(pattern=r'subhelp_.*')
+def subhelp_button(update: Update, context: CallbackContext):
+    chat = update.effective_chat
+    query = update.callback_query
+    if query.data == "subhelp_back":
+        query.message.edit_text(
+                text="Here is the help for the *Fun* module:\n" + gs(chat, "fun_help"),
+                reply_markup=InlineKeyboardMarkup(
+                        get_help_btns()
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True,
+                timeout=60, 
+            )
+    elif query.data == "subhelp_afk":
+        query.message.edit_text(
+                text="Here is the help for the *AFK* module:\n" + gs(chat, "afk_help"),
+                reply_markup=InlineKeyboardMarkup(
+                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True,
+                timeout=60, 
+            )
+
+    elif query.data == "subhelp_stick":
+        query.message.edit_text(
+                text="Here is the help for the *Stickers* module:\n" + gs(chat, "sticker_help"),
+                reply_markup=InlineKeyboardMarkup(
+                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True,
+                timeout=60, 
+            )
+
+    elif query.data == "subhelp_tr":
+        query.message.edit_text(
+                text="Here is the help for the *Translation* module:\n" + gs(chat, "gtranslate_help"),
+                reply_markup=InlineKeyboardMarkup(
+                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True,
+                timeout=60, 
+            )
