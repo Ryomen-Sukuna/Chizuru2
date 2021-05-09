@@ -6,7 +6,7 @@ import urllib.request
 import urllib.parse
 import requests
 from telegram import ParseMode, Update, ChatPermissions
-from telegram InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
 from telegram.error import BadRequest
 
