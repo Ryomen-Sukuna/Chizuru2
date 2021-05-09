@@ -95,8 +95,8 @@ def subhelp_button(update: Update, context: CallbackContext):
                 reply_markup=InlineKeyboardMarkup([
                         [InlineKeyboardButton(text="Markdown", callback_data="subhelp_wel_markdown"),
                         InlineKeyboardButton(text="Fillings", callback_data="subhelp_wel_fillings"),],
-                        [InlineKeyboardButton(text="Random Content", callback_data="subhelp_wel_random"),
-                        InlineKeyboardButton(text="Back", callback_data="subhelp_back2"),],
+                        [InlineKeyboardButton(text="Random Content", callback_data="subhelp_wel_random"),],
+                        [InlineKeyboardButton(text="Back", callback_data="subhelp_back2"),],
                 ]),
                 parse_mode=ParseMode.MARKDOWN,
                 disable_web_page_preview=True,
