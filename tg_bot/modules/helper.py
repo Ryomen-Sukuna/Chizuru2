@@ -108,7 +108,7 @@ def subhelp_button(update: Update, context: CallbackContext):
                 reply_markup=InlineKeyboardMarkup(
                         [[InlineKeyboardButton(text="Back", callback_data="subhelp_wel_format"),]]
                 ),
-                parse_mode=ParseMode.HTLM,
+                parse_mode=ParseMode.HTML,
                 disable_web_page_preview=True,
                 timeout=60, 
             )
@@ -124,7 +124,7 @@ def subhelp_button(update: Update, context: CallbackContext):
             )
     elif query.data == "subhelp_wel_random":
         query.message.edit_text(
-                text=gs(chat, "greetings_random_help").format(context.bot.first_name),
+                text=gs(chat, "greetings_random_help").format(first_name=context.bot.first_name),
                 reply_markup=InlineKeyboardMarkup(
                         [[InlineKeyboardButton(text="Back", callback_data="subhelp_wel_format"),]]
                 ),
