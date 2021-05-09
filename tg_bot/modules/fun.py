@@ -159,17 +159,66 @@ def table(update: Update, context: CallbackContext):
     )
     reply_text(random.choice(fun_strings.TABLE))
 
-from tg_bot.modules.language import gs
 
+@kigcallback(pattern=r'subhelp_.*')
+def subhelp_button(update: Update, context: CallbackContext):
+    chat = update.effective_chat
+    query = update.callback_query
+    if query.data == "subhelp_back":
+        query.message.edit_text(
+                text=gs(chat, "fun_help"),
+                reply_markup=InlineKeyboardMarkup(
+                        [InlineKeyboardButton(text="Back", callback_data="help_back"),]
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True,
+                timeout=60, 
+            )
+    elif query.data == "subhelp_afk":
+        query.message.edit_text(
+                text=gs(chat, "afk_help"),
+                reply_markup=InlineKeyboardMarkup(
+                        [InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True,
+                timeout=60, 
+            )
+
+    elif query.data == "subhelp_stick":
+        query.message.edit_text(
+                text=gs(chat, "sticker_help"),
+                reply_markup=InlineKeyboardMarkup(
+                        [InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True,
+                timeout=60, 
+            )
+
+    elif query.data == "subhelp_tr":
+        query.message.edit_text(
+                text=gs(chat, "gtranslate_help"),
+                reply_markup=InlineKeyboardMarkup(
+                        [InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True,
+                timeout=60, 
+            )
+
+
+
+from tg_bot.modules.language import gs
 def get_help(chat):
     return gs(chat, "fun_help")
 
 
 def get_help_btns():
      buttuns = [
-        [InlineKeyboardButton(text="AFK", callback_data="sunhelp_afk"),
+        [InlineKeyboardButton(text="AFK", callback_data="subhelp_afk"),
         InlineKeyboardButton(text="Sticker", callback_data="subhelp_stick"),
-        InlineKeyboardButton(text="Translation", callback_data="subhelp_tans"),],
+        InlineKeyboardButton(text="Translation", callback_data="subhelp_tr"),],
         [InlineKeyboardButton(text="Back", callback_data="help_back"),],
      ]
 
