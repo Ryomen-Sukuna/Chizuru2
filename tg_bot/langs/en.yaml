@@ -46,17 +46,17 @@ admin_help: |
    • `/title <title here>`*:* sets a custom title for an admin that the bot promoted
 
 afk_help: |
-   - /afk <reason>: mark yourself as AFK(away from keyboard).
-   - brb <reason>: same as the afk command - but not a command.
+   • /afk or /dnd <reason>: mark yourself as AFK(away from keyboard).
+   • brb or dnd <reason>: same as the afk command - but not a command.
    When marked as AFK, any mentions will be replied to with a message to say you're not available!
 
 anilist_help: |
     *AniList*
     Get information about anime, manga or characters with the help of this module! All data is fetched from [AniList](anilist.co).
     *Available commands:*
-     - /anime <anime>: returns information about the anime.
-     - /character <character>: returns information about the character.
-     - /manga <manga>: returns information about the manga.
+     • /anime <anime>: returns information about the anime.
+     • /character <character>: returns information about the character.
+     • /manga <manga>: returns information about the manga.
 
 antiflood_help: |
     Antiflood allows you to take action on users that send more than x messages in a row. Exceeding the set flood
@@ -88,18 +88,18 @@ approve_help: |
 
 backup_help: |
     *Admin only:*
-     - /import: reply to a group butler backup file to import as much as possible, making the transfer super simple! Note \
+     • /import: reply to a group butler backup file to import as much as possible, making the transfer super simple! Note \
        that files/photos can't be imported due to telegram restrictions.
-     - /export: !!! This isn't a command yet, but should be coming soon!
+     • /export: !!! This isn't a command yet, but should be coming soon!
 
 bans_help: |
-    - /kickme: kicks the user who issued the command
+    • /kickme: kicks the user who issued the command
 
      *Admin only:*
-    - /ban <userhandle>: bans a user. (via handle, or reply)
-    - /tban <userhandle> x(m/h/d): bans a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
-    - /unban <userhandle>: unbans a user. (via handle, or reply)
-    - /kick <userhandle>: kick a user out of the group, (via handle, or reply)
+    • /ban <userhandle>: bans a user. (via handle, or reply)
+    • /tban <userhandle> x(m/h/d): bans a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
+    • /unban <userhandle>: unbans a user. (via handle, or reply)
+    • /kick <userhandle>: kick a user out of the group, (via handle, or reply)
 
 blacklist_help: |
     Blacklists are used to stop certain triggers from being said in a group. Any time the trigger is mentioned, the message will immediately be deleted. A good combo is sometimes to pair this up with warn filters!
@@ -114,19 +114,19 @@ blacklist_help: |
      • `/blacklistmode <off/del/warn/ban/kick/mute/tban/tmute>`*:* Action to perform when someone sends blacklisted words.
 
 cleaner_help: |
-    - /cleanbluetext <on/off/yes/no> - clean commands after sending
-    - /ignorecleanbluetext <word> - prevent auto cleaning of the command
-    - /unignorecleanbluetext <word> - remove prevent auto cleaning of the command
-    - /listcleanbluetext - list currently whitelisted commands
+    • /cleanbluetext <on/off/yes/no> - clean commands after sending
+    • /ignorecleanbluetext <word> - prevent auto cleaning of the command
+    • /unignorecleanbluetext <word> - remove prevent auto cleaning of the command
+    • /listcleanbluetext - list currently whitelisted commands
 
 connections_help: |
-    - /connect: connect a chat (Can be done in a group by /connect or /connect <chat id> in PM)
-    - /connection: list connected chats
-    - /disconnect: disconnect from a chat
-    - /helpconnect: list available commands that can be done remotely
+    • /connect: connect a chat (Can be done in a group by /connect or /connect <chat id> in PM)
+    • /connection: list connected chats
+    • /disconnect: disconnect from a chat
+    • /helpconnect: list available commands that can be done remotely
 
      *Admin only:*
-    - /allowconnect <yes/no>: allow a user to connect to a chat
+    • /allowconnect <yes/no>: allow a user to connect to a chat
 
 cust_filters_help: |
     • `/filters`*:* List all active filters saved in the chat.
@@ -196,10 +196,21 @@ fun_help: |
      • /roll : Roll a dice.
      • /rlg : Join ears,nose,mouth and create an emo ;-;
      • /shout <keyword>: write anything you want to give loud shout.
-     • /stickerid: reply to a sticker to get its ID.
-     • /getsticker: reply to a sticker to get the raw PNG image.
-     • /steal: reply to a sticker or image to add it to your pack.
-     • /stickers: search stickers in combot sticker finder.
+
+
+sticker_help: |
+     Here Is The Help For The Stickers Module: 
+
+     Stickers made easy with stickers module!
+
+     • /stickers: Find stickers for given term on combot sticker catalogue 
+
+     • /addsticker: Reply to a sticker to add it to your pack.
+     • /delsticker: Reply to your anime exist sticker to your pack to delete it.
+     • /stickerid: Reply to a sticker to me to tell you its file ID.
+     • /getsticker: Reply to a sticker to me to upload its raw PNG file.
+
+     Example: `/stickers Chizuru`
 
 antispam_help: |
      *Admins only:*
@@ -267,14 +278,14 @@ markdown_help_text: |
       Markdown is a very powerful formatting tool supported by telegram. Kigyo has some enhancements, to make sure that
       saved messages are correctly parsed, and to allow you to create buttons.
 
-      - <code>_italic_</code>: wrapping text with '_' will produce italic text
-      - <code>*bold*</code>: wrapping text with '*' will produce bold text
-      - <code>`code`</code>: wrapping text with '`' will produce monospaced text, also known as 'code'
-      - <code>[sometext](someURL)</code>: this will create a link - the message will just show <code>sometext</code>,
+      • <code>_italic_</code>: wrapping text with '_' will produce italic text
+      • <code>*bold*</code>: wrapping text with '*' will produce bold text
+      • <code>`code`</code>: wrapping text with '`' will produce monospaced text, also known as 'code'
+      • <code>[sometext](someURL)</code>: this will create a link - the message will just show <code>sometext</code>,
       and tapping on it will open the page at <code>someURL</code>.
       EG: <code>[test](example.com)</code>
 
-      - <code>[buttontext](buttonurl:someURL)</code>: this is a special enhancement to allow users to have telegram
+      • <code>[buttontext](buttonurl:someURL)</code>: this is a special enhancement to allow users to have telegram
       buttons in their markdown. <code>buttontext</code> will be what is displayed on the button, and <code>someurl</code>
       will be the url which is opened.
       EG: <code>[This is a button](buttonurl:example.com)</code>
@@ -367,10 +378,10 @@ tagger_help: |
    • `/untagall`*:* clears all subscribed members.
 
 userinfo_help: |
-      - /setbio <text>: while replying, will save another user's bio
-      - /bio: will get your or another user's bio. This cannot be set by yourself.
-      - /setme <text>: will set your info
-      - /me: will get your or another user's info
+      • /setbio <text>: while replying, will save another user's bio
+      • /bio: will get your or another user's bio. This cannot be set by yourself.
+      • /setme <text>: will set your info
+      • /me: will get your or another user's info
 
 warns_help: |
       • `/warns <userhandle>`*:* get a user's number, and reason, of warns.
@@ -405,11 +416,11 @@ greetings_help: |
        • `/welcomehelp`*:* view more formatting information for custom welcome/goodbye messages.
 
 nation_help: |
-      - /eagle - Lists all Eagle Union members.
-      - /royals - Lists all Royal Nations.
-      - /sakuras - Lists all Sakura Nations.
-      - /sardegnas - Lists all Sardegnas Nations.
-      - /neptunians - Lists all Neptunia Nations.
+      • /eagle - Lists all Eagle Union members.
+      • /royals - Lists all Royal Nations.
+      • /sakuras - Lists all Sakura Nations.
+      • /sardegnas - Lists all Sardegnas Nations.
+      • /neptunians - Lists all Neptunia Nations.
       Note: These commands list users with special bot priveleges and can only be used by them.
       You can visit @YorktownEagleUnion to query more about these.
 
