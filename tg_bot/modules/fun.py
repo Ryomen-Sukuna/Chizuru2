@@ -221,5 +221,6 @@ def get_help_btns():
         InlineKeyboardButton(text="Translation", callback_data="subhelp_tr"),],
         [InlineKeyboardButton(text="Back", callback_data="help_back"),],
      ]
+     return buttuns
 
 __mod_name__ = "Fun"
