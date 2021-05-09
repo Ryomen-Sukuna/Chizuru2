@@ -246,12 +246,16 @@ def help_button(update: Update, context: CallbackContext):
                 )
                 + HELPABLE[module].get_help(update.effective_chat.id)
             )
+            try:
+                markup = HELPABLE[module].get_help_btns()
+            except:
+                markup = InlineKeyboardMarkup(
+                               [[InlineKeyboardButton(text="Back", callback_data="help_back")]]
+                         )
             query.message.edit_text(
                 text=text,
                 parse_mode=ParseMode.MARKDOWN,
-                reply_markup=InlineKeyboardMarkup(
-                    [[InlineKeyboardButton(text="Back", callback_data="help_back")]]
-                ),
+                reply_markup=markup,
             )
 
         elif prev_match:
