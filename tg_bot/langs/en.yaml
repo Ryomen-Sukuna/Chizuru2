@@ -446,19 +446,19 @@ greetings_random_help: |
     • %%%: This separator can be used to add "random" replies to the bot.
 
     *For example:*
-    `hello
+    ```hello
     %%%
-    how are you`
-    This will randomly choose between sending the first message, "hello", or the second message, "how are you". Use this to make {first_name} feel a bit more customised! (only works in notes/filters/greetings).
+    how are you```
+    This will randomly choose between sending the first message, "hello", or the second message, "how are you". Use this to make Chizuru feel a bit more customised! (only works in notes/filters/greetings).
 
     *Example welcome message:*
     • Every time a new user joins, they'll be presented with one of the three messages shown here.
-    -> `/setwelcome
+    -> ```/setwelcome
     hello there {first}!
     %%%
     Ooooh, {first} is in the house!
     %%%
-    Welcome to the group, {first}!`
+    Welcome to the group, {first}!```
 
 
 nation_help: |
