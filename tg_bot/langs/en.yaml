@@ -419,7 +419,8 @@ greetings_help: |
 greetings_format_help: |
     *Formatting:*
 
-    {} supports a large number of formatting options to make your messages more expressive. Take a look!
+    {} supports a large number of formatting options to make your messages more expressive.
+    Take a look!
 
 greetings_filling_help: |
     *Fillings:*
