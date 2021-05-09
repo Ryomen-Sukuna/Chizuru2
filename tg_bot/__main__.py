@@ -46,6 +46,7 @@ from tg_bot.modules import ALL_MODULES
 from tg_bot.modules.helper_funcs.chat_status import is_user_admin
 from tg_bot.modules.helper_funcs.misc import paginate_modules
 from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback, kigmsg
+from tg_bot.modules.helper import get_help_btns
 from tg_bot.modules.language import gs
 
 SUPPORT_CHAT = "ElitesOfSupport"
@@ -248,7 +249,7 @@ def help_button(update: Update, context: CallbackContext):
             )
             try:
                 markup = InlineKeyboardMarkup(
-                               HELPABLE[module].get_help_btns()
+                               get_help_btns(HELPABLE[module].__mod_name__)
                          )
             except:
                 markup = InlineKeyboardMarkup(
