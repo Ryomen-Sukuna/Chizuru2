@@ -241,3 +241,4 @@ def get_help(chat):
     return gs(chat, "tagger_help")
 
 __mod_name__ = "Tagger"
+# Made by @LustPriest /// Inspired From - https://github.com/imdivu/ElitesOfRobot-old-/ElitesOfRobot/modules/tagall.py
