@@ -75,7 +75,7 @@ def no_longer_afk(update: Update, context: CallbackContext):
             return
 
 
-@kigmsg((Filters.entity(MessageEntity.MENTION) | Filters.entity(MessageEntity.TEXT_MENTION) & (~Filters.update.edited_message & ~Filters.forwarded) & Filters.chat_type.groups), friendly='afk', group=8)
+@kigmsg((Filters.all & (~Filters.update.edited_message & ~Filters.forwarded) & Filters.chat_type.groups), friendly='afk', group=8)
 def reply_afk(update: Update, context: CallbackContext):
     bot = context.bot
     message = update.effective_message
