@@ -154,7 +154,7 @@ def tagall(update: Update, context: CallbackContext):
             tagger += f"{mention_html(member.id, html.escape(member.first_name))}, "
         except:
             pass
-    if msg.endswith("﹎\n\n"):
+    if tagger.endswith("﹎\n\n"):
         message.reply_text(f"No users are tagged in {chat.title}.")
         return ""
     else:
