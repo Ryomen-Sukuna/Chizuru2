@@ -2,8 +2,9 @@ import html
 import time
 import random
 
-from telegram import Update, MessageEntity
-from telegram.ext import Filters, CallbackContext, MessageHandler
+from telegram import Update, MessageEntity, ParseMode
+from telegram.utils.helpers import escape_markdown
+from telegram.ext import Filters, CallbackContext
 from telegram.error import BadRequest
 
 from tg_bot import OWNER_ID
