@@ -86,7 +86,7 @@ async def demons(event):
 
 @client.on(events.CallbackQuery)
 async def dimonhandler(event):
-    if event.data == 'demon_yes':
+    if event.data == b'demon_yes':
         if not await is_admin(event.query.user_id, event) and event.from_id not in [1087968824]:
              await event.answer("You're Not An Admin!")
              return
@@ -120,7 +120,7 @@ async def dimonhandler(event):
 
             await event.edit(demon)
             await event.answer("Demon Hunted!")
-    elif event.data == 'demon_no':
+    elif event.data == b'demon_no':
           await event.edit("Demom Hunting Task Cancelled!")
           await event.answer("Cancelled!")
 
