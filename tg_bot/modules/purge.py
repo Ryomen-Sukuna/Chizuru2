@@ -101,9 +101,8 @@ def get_help(chat):
 
 
 
-me = await client.get_me()
-PURGE_HANDLER = purge_messages, events.NewMessage(pattern=["^[!/]purge ?(.*)", f"^[!/]purge@{me.username} ?(.*)"])
-DEL_HANDLER = delete_messages, events.NewMessage(pattern=["^[!/]del ?(.*)", f"^[!/]del@{me.username} ?(.*)"])
+PURGE_HANDLER = purge_messages, events.NewMessage(pattern="^[!/]purge ?(.*)")
+DEL_HANDLER = delete_messages, events.NewMessage(pattern="^[!/]del ?(.*)")
 
 client.add_event_handler(*PURGE_HANDLER)
 client.add_event_handler(*DEL_HANDLER)
