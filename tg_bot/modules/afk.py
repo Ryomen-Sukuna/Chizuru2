@@ -13,7 +13,7 @@ from tg_bot.modules.helper_funcs.decorators import kigcmd, kigmsg
 # exception msg for afk
 EXCEPT_MSGS = (
 ~Filters.update.edited_message & ~Filters.venue & 
-~Filters.command('afk') & ~Filters.regex(r"^(?i)brb(.*)$") &
+# ~Filters.command('afk') & ~Filters.regex(r"^(?i)brb(.*)$") &
 ~Filters.status_update & ~Filters.game & ~Filters.forwarded
 )
 
