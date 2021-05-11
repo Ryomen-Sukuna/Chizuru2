@@ -136,6 +136,7 @@ def untagme(update: Update, context: CallbackContext):
     )
 
 
+@loggable
 @user_admin
 @kigcmd(command='tagall', filters=Filters.chat_type.groups)
 def tagall(update: Update, context: CallbackContext):
@@ -144,7 +145,7 @@ def tagall(update: Update, context: CallbackContext):
     query = " ".join(context.args)
     if not query:
         message.reply_text("Please give a reason why are you want to tag all!")
-        return
+        return ""
     tagger = f"<b>• Tagged Reason: </b>\n{query}\n\n﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎\n\n"
     tagged_users = sql.tag_list(message.chat_id)
     for i in tagged_users:
@@ -155,7 +156,7 @@ def tagall(update: Update, context: CallbackContext):
             pass
     if msg.endswith("﹎\n\n"):
         message.reply_text(f"No users are tagged in {chat.title}.")
-        return
+        return ""
     else:
         if message.reply_to_message:
               message.reply_to_message.reply_text(
@@ -167,8 +168,15 @@ def tagall(update: Update, context: CallbackContext):
                 tagger,
                 parse_mode=ParseMode.HTML,
             )
+    log_message = (
+        f"<b>{html.escape(chat.title)}:</b>\n"
+        f"#TAGGED_ALL\n"
+        f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
+    )
+    return log_message
 
 
+@loggable
 @kigcmd(command='untagall', filters=Filters.chat_type.groups)
 def untagall(update: Update, context: CallbackContext):
     chat = update.effective_chat
@@ -177,6 +185,7 @@ def untagall(update: Update, context: CallbackContext):
     if member.status != "creator" and user.id not in SUDO_USERS:
         update.effective_message.reply_text(
             "Only the chat owner can untag all users at once.")
+        return ""
     else:
         update.effective_message.reply_text(
             f"Are you sure you would like to untag ALL users in {chat.title}? This action cannot be undone.",
@@ -252,22 +261,31 @@ def untagall_btn(update: Update, context: CallbackContext):
                 sql.untag(chat.id, user_id)
             query.answer("OK!")
             message.edit_text(f"Successully Untagged All Users From {chat.title}!")
-            return
+            log_message = (
+                  f"<b>{html.escape(chat.title)}:</b>\n"
+                  f"#UNTAGGED_ALL\n"
+                  f"<b>Admin:</b> {mention_html(query.from_user.id, query.from_user.first_name)}\n"
+            )
+            return log_message
 
         if member.status == "administrator":
             query.answer("Only owner of the chat can do this.")
+            return ""
 
         if member.status == "member":
             query.answer("You need to be admin to do this.")
+            return ""
     elif query.data == "untagll_cancel":
         if member.status == "creator" or query.from_user.id in SUDO_USERS:
             message.edit_text(
                 "Removing of all tagged users has been cancelled.")
-            return
+            return ""
         if member.status == "administrator":
             query.answer("Only owner of the chat can do this.")
+            return ""
         if member.status == "member":
             query.answer("You need to be admin to do this.")
+            return ""
 
 
 
