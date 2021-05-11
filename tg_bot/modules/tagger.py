@@ -1,20 +1,21 @@
 import html
-from tg_bot.modules.disable import DisableAbleCommandHandler
 from tg_bot import dispatcher, SUDO_USERS
 from tg_bot.modules.helper_funcs.extraction import extract_user
-from telegram.ext import CallbackContext, CallbackQueryHandler, Filters
+from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback
+
 import tg_bot.modules.sql.tagger_sql as sql
 from tg_bot.modules.helper_funcs.chat_status import user_admin
 from tg_bot.modules.log_channel import loggable
+
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton, Update
+from telegram.ext import CallbackContext, CallbackQueryHandler, Filters
 from telegram.utils.helpers import mention_html
 from telegram.error import BadRequest
-from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback
 
 
 @user_admin
 @kigcmd(command='tag', filters=Filters.chat_type.groups)
-def tag(update, context):
+def tag(update: Update, context: CallbackContext):
     message = update.effective_message
     chat_title = message.chat.title
     chat = update.effective_chat
@@ -34,14 +35,20 @@ def tag(update, context):
             return 
         else:
             return
+    if user_id == context.bot.id:
+        message.reply_text("how I supposed to tag myself")
+        return
+
     if sql.is_tag(message.chat_id, user_id):
         message.reply_text(
-            f"[{member.user['first_name']}](tg://user?id={member.user['id']}) is already tagged in {chat_title}",
-            parse_mode=ParseMode.MARKDOWN,
+            "{} is already exist in {}'s taglist.".format(
+             mention_html(member.user.id, member.user.first_name), chat.title),
+            parse_mode=ParseMode.HTML,
         )
         return
     message.reply_text(
-        f"[{member.user['first_name']}](tg://user?id={member.user['id']}) accept this, if you want to add yourself into {chat_title}'s tag list! or just simply decline this.", 
+        "{} accept this, if you want to add yourself into {}'s taglist! or just simply decline this.".format(
+        mention_html(member.user.id, member.user.first_name), chat.title), 
         reply_markup=InlineKeyboardMarkup(
                                    [
                                       [
@@ -50,13 +57,13 @@ def tag(update, context):
                                       ]
                                    ]
                               ),
-        parse_mode=ParseMode.MARKDOWN,
+        parse_mode=ParseMode.HTML,
     )
 
 
 @user_admin
 @kigcmd(command='untag', filters=Filters.chat_type.groups)
-def untag(update, context):
+def untag(update: Update, context: CallbackContext):
     message = update.effective_message
     chat_title = message.chat.title
     chat = update.effective_chat
@@ -76,44 +83,54 @@ def untag(update, context):
             return 
         else:
             return
+    if user_id == context.bot.id:
+        message.reply_text("how I supposed to tag or untag myself")
+        return
+
     if not sql.is_tag(message.chat_id, user_id):
-        message.reply_text(f"{member.user['first_name']} isn't tagged yet!")
+        message.reply_text(
+            "{} is doesn't exist in {}'s taglist!".format(
+            mention_html(member.user.id, member.user.first_name), chat.title),
+            parse_mode=ParseMode.HTML,
+        )
         return
     sql.untag(message.chat_id, user_id)
     message.reply_text(
-        f"{member.user['first_name']} is no longer tagged in {chat_title}.")
-
+        "{} is successfully removed from {}'s taglist!".format(
+        mention_html(member.user.id, member.user.first_name), chat.title),
+        parse_mode=ParseMode.HTML,
+    )
 
 @kigcmd(command='tagme', filters=Filters.chat_type.groups)
-def tagme(update, context): 
+def tagme(update: Update, context: CallbackContext): 
     chat = update.effective_chat  
     user = update.effective_user 
     message = update.effective_message
     if sql.is_tag(chat.id, user.id):
         message.reply_text(
-            "You're Already Exist In {}'s Tag List!".format(chat.title)
+            "You're already exist in {}'s taglist!".format(chat.title)
         ) 
         return
     sql.tag(chat.id, user.id)
     message.reply_text(
-        "{} has been successfully added in {}'s tag list.".format(
+        "{} has been successfully added in {}'s taglist.".format(
         mention_html(user.id, user.first_name), chat.title),
         parse_mode=ParseMode.HTML,
     )
 
 @kigcmd(command='untagme', filters=Filters.chat_type.groups)
-def untagme(update, context): 
+def untagme(update: Update, context: CallbackContext): 
     chat = update.effective_chat  
     user = update.effective_user 
     message = update.effective_message
     if not sql.is_tag(chat.id, user.id):
         message.reply_text(
-            "You're Already Doesn't Exist In {}'s Tag List!".format(chat.title)
+            "You're already doesn't exist in {}'s taglist!".format(chat.title)
         ) 
         return
     sql.untag(chat.id, user.id)
     message.reply_text(
-        "{} has been removed from {}'s tag list.".format(
+        "{} has been removed from {}'s taglist.".format(
         mention_html(user.id, user.first_name), chat.title),
         parse_mode=ParseMode.HTML,
     )
@@ -121,21 +138,35 @@ def untagme(update, context):
 
 @user_admin
 @kigcmd(command='tagall', filters=Filters.chat_type.groups)
-def tagall(update, context):
-    message = update.effective_message
-    chat_title = message.chat.title
+def tagall(update: Update, context: CallbackContext):
     chat = update.effective_chat
-    msg = "The following users are tagged.\n\n"
+    message = update.effective_message
+    query = " ".join(context.args)
+    if not query:
+        message.reply_text("Please give a reason why are you want to tag all!")
+        return
+    tagger = f"<b>• Tagged Reason: </b>\n{query}\n\n﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎\n\n"
     tagged_users = sql.tag_list(message.chat_id)
     for i in tagged_users:
-        member = chat.get_member(int(i.user_id))
-        msg += f"{mention_html(member.user['id'], html.escape(member.user['first_name']))}, "
-    if msg.endswith("tagged.\n\n"):
-        message.reply_text(f"No users are tagged in {chat_title}.")
+        try:
+            member = context.bot.get_chat(int(i.user_id))
+            tagger += f"{mention_html(member.id, html.escape(member.first_name))}, "
+        except:
+            pass
+    if msg.endswith("﹎\n\n"):
+        message.reply_text(f"No users are tagged in {chat.title}.")
         return
     else:
-        message.reply_text(msg, parse_mode=ParseMode.HTML)
-
+        if message.reply_to_message:
+              message.reply_to_message.reply_text(
+                     tagger,
+                     parse_mode=ParseMode.HTML,
+              )
+        else:
+            message.reply_text(
+                tagger,
+                parse_mode=ParseMode.HTML,
+            )
 
 
 @kigcmd(command='untagall', filters=Filters.chat_type.groups)
@@ -147,20 +178,23 @@ def untagall(update: Update, context: CallbackContext):
         update.effective_message.reply_text(
             "Only the chat owner can untag all users at once.")
     else:
-        buttons = InlineKeyboardMarkup([
-            [
-                InlineKeyboardButton(
-                    text="Untag All", callback_data="untagall_user")
-            ],
-            [
-                InlineKeyboardButton(
-                    text="Cancel", callback_data="untagall_cancel")
-            ],
-        ])
         update.effective_message.reply_text(
             f"Are you sure you would like to untag ALL users in {chat.title}? This action cannot be undone.",
-            reply_markup=buttons,
-            parse_mode=ParseMode.MARKDOWN,
+            parse_mode=ParseMode.HTML,
+            reply_markup=InlineKeyboardMarkup([
+                           [
+                               InlineKeyboardButton(
+                                     text="Untag All", 
+                                     callback_data="untagall_user",
+                               ),
+                           ],
+                           [
+                               InlineKeyboardButton(
+                                     text="Cancel", 
+                                     callback_data="untagall_cancel",
+                               ),
+                           ],
+                  ]),
         )
 
 @kigcallback(pattern=r"addtag_.*")
@@ -229,16 +263,19 @@ def untagall_btn(update: Update, context: CallbackContext):
         if member.status == "creator" or query.from_user.id in SUDO_USERS:
             message.edit_text(
                 "Removing of all tagged users has been cancelled.")
-            return ""
+            return
         if member.status == "administrator":
             query.answer("Only owner of the chat can do this.")
         if member.status == "member":
             query.answer("You need to be admin to do this.")
 
-from tg_bot.modules.language import gs
+
+
+
 
 def get_help(chat):
-    return gs(chat, "tagger_help")
+      from tg_bot.modules.language import gs
+      return gs(chat, "tagger_help")
 
 __mod_name__ = "Tagger"
 # Made by @LustPriest /// Inspired From - https://github.com/imdivu/ElitesOfRobot-old-/ElitesOfRobot/modules/tagall.py
