@@ -106,7 +106,7 @@ def get_help(chat):
 
 
 
-PURGE_HANDLER = purge_messages, events.NewMessage(pattern="^[!/]purge$")
+PURGE_HANDLER = purge_messages, events.NewMessage(pattern="^[!/]purge ?(.*)")
 DEL_HANDLER = delete_messages, events.NewMessage(pattern="^[!/]del$")
 
 client.add_event_handler(*PURGE_HANDLER)
