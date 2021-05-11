@@ -10,6 +10,7 @@ from telegram.error import BadRequest
 from tg_bot import OWNER_ID
 from tg_bot.modules.sql import afk_sql as sql
 from tg_bot.modules.users import get_user_id
+from tg_bot.modules.helper_funcs.get_time import get_time
 from tg_bot.modules.helper_funcs.decorators import kigcmd, kigmsg
 
 # exception msg for afk
@@ -139,7 +140,7 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
                   parse_mode=ParseMode.MARKDOWN, timeout=60)
         except:
             return
-        since_afk = get_readable_time((time.time() - int(user.time)))
+        since_afk = get_time((time.time() - int(user.time)))
         if not user.reason:
             if int(user_id) == OWNER_ID:
                  res = "My Master Is Currently AFK!\nSince AFK: `{}`".format(since_afk)
