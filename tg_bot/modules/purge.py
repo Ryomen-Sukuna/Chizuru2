@@ -45,15 +45,15 @@ async def purge_messages(event):
     try:
         await event.client.delete_messages(event.chat_id, event.message.id)
         messages.append(event.reply_to_msg_id)
-        for m_id in range(to_delete, msg_id - 1, -1):
-            msgs.append(m_id)
+        for m_id in range(delete_to, message_id - 1, -1):
+            messages.append(m_id)
             count += 1
-            if len(msgs) == 100:
-                await event.client.delete_messages(chat, msgs)
-                msgs = []
+            if len(messages) == 100:
+                await event.client.delete_messages(event.chat_id, messages)
+                messages = []
 
         try:
-            await event.client.delete_messages(event.chat_id, msgs)
+            await event.client.delete_messages(event.chat_id, messages)
         except:
             pass
 
