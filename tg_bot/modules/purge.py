@@ -62,16 +62,12 @@ async def purge_messages(event):
         if len(reason) > 1:
            text += "\n\n**Purged Reason:** " + reason[1]
 
-        del_res = await event.client.send_message(event.chat_id, text)
-        await asyncio.sleep(4)
-        await del_res.delete()
+        await event.client.send_message(event.chat_id, text)
 
     except MessageDeleteForbiddenError:
         text = "Failed to delete messages.\n"
         text += "Messages maybe too old or I'm not admin! or dont have delete rights!"
-        del_res = await event.respond(text, parse_mode="md")
-        await asyncio.sleep(5)
-        await del_res.delete()
+        await event.respond(text, parse_mode="md")
 
 
 
@@ -105,9 +101,9 @@ def get_help(chat):
 
 
 
-
-PURGE_HANDLER = purge_messages, events.NewMessage(pattern="^[!/]purge ?(.*)")
-DEL_HANDLER = delete_messages, events.NewMessage(pattern="^[!/]del$")
+me = await client.get_me()
+PURGE_HANDLER = purge_messages, events.NewMessage(pattern=["^[!/]purge ?(.*)", f"^[!/]purge@{me.username} ?(.*)])
+DEL_HANDLER = delete_messages, events.NewMessage(pattern=["^[!/]del ?(.*)", f"^[!/]del@{me.username} ?(.*)"])
 
 client.add_event_handler(*PURGE_HANDLER)
 client.add_event_handler(*DEL_HANDLER)
