@@ -6,6 +6,7 @@ from telegram import Update, MessageEntity
 from telegram.ext import Filters, CallbackContext, MessageHandler
 from telegram.error import BadRequest
 
+from tg_bot import OWNER_ID
 from tg_bot.modules.sql import afk_sql as sql
 from tg_bot.modules.users import get_user_id
 from tg_bot.modules.helper_funcs.decorators import kigcmd, kigmsg
