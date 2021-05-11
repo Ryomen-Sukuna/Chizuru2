@@ -141,12 +141,13 @@ def untagme(update: Update, context: CallbackContext):
 @kigcmd(command='tagall', filters=Filters.chat_type.groups)
 def tagall(update: Update, context: CallbackContext):
     chat = update.effective_chat
+    user = update.effective_user
     message = update.effective_message
-    query = " ".join(context.args)
-    if not query:
+    reason = " ".join(context.args)
+    if not reason:
         message.reply_text("Please give a reason why are you want to tag all!")
         return ""
-    tagger = f"<b>• Tagged Reason: </b>\n{query}\n\n﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎\n\n"
+    tagger = f"<b>• Tagged Reason: </b>\n{reason}\n\n﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎﹎\n\n"
     tagged_users = sql.tag_list(message.chat_id)
     for i in tagged_users:
         try:
@@ -155,7 +156,7 @@ def tagall(update: Update, context: CallbackContext):
         except:
             pass
     if tagger.endswith("﹎\n\n"):
-        message.reply_text(f"No users are tagged in {chat.title}.")
+        message.reply_text(f"{chat.title}'s Taglist Is Empty!")
         return ""
     else:
         if message.reply_to_message:
@@ -172,6 +173,7 @@ def tagall(update: Update, context: CallbackContext):
         f"<b>{html.escape(chat.title)}:</b>\n"
         f"#TAGGED_ALL\n"
         f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
+        f"<b>Reason:</b> {reason}\n"
     )
     return log_message
 
