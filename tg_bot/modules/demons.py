@@ -90,7 +90,8 @@ async def dimonhandler(event):
         if not await is_admin(event.query.user_id, event) and event.from_id not in [1087968824]:
              await event.answer("You're Not An Admin!")
              return
-        admim = await event.get_chat().admin_rights
+        but = await event.get_chat()
+        admim = but.admin_rights
         if not admim:
              await event.answer("I Am Not An Admin Here!")
              return
