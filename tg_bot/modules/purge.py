@@ -56,12 +56,13 @@ async def purge_messages(event):
             await event.client.delete_messages(event.chat_id, msgs)
         except:
             pass
-        time_ = time.perf_counter() - start
-        del_res = await event.client.send_message(
-            event.chat_id, 
-            f"Purged {count} Messages In {time_:0.2f} Secs. {'\n\n**Purged Reason:** ' + reason[1] if len(reason) > 1 else ''}",
-        )
 
+        time_ = time.perf_counter() - start
+        text = f"Purged {count} Messages In {time_:0.2f} Secs."
+        if len(reason) > 1:
+           text += "\n\n**Purged Reason:** " + reason[1]
+
+        del_res = await event.client.send_message(event.chat_id, text)
         await asyncio.sleep(4)
         await del_res.delete()
 
