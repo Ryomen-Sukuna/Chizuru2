@@ -1,9 +1,9 @@
 import time
 from telethon import events
+from telethon.errors.rpcerrorlist import MessageDeleteForbiddenError
 
-from tg_bot import telethn
-from tg_bot.modules.helper_funcs.telethn.chatstatus import (
-    can_delete_messages, user_is_admin)
+from tg_bot import client
+from tg_bot.modules.helper_funcs.telethn.chatstatus import can_delete_messages, user_is_admin
 
 
 async def purge_messages(event):
@@ -27,9 +27,12 @@ async def purge_messages(event):
         await event.reply(
             "Reply to a message to select where to start purging from.")
         return
+
+    count = 0
     messages = []
     message_id = reply_msg.id
     delete_to = event.message.id
+    reason = event.text.split(" ", 1)
 
     messages.append(event.reply_to_msg_id)
     for msg_id in range(message_id, delete_to + 1):
@@ -38,13 +41,37 @@ async def purge_messages(event):
             await event.client.delete_messages(event.chat_id, messages)
             messages = []
 
+
     try:
-        await event.client.delete_messages(event.chat_id, messages)
-    except:
-        pass
-    time_ = time.perf_counter() - start
-    text = f"Purged Successfully in {time_:0.2f} Second(s)"
-    await event.respond(text, parse_mode='markdown')
+        await event.client.delete_messages(event.chat_id, event.message.id)
+        messages.append(event.reply_to_msg_id)
+        for m_id in range(to_delete, msg_id - 1, -1):
+            msgs.append(m_id)
+            count += 1
+            if len(msgs) == 100:
+                await event.client.delete_messages(chat, msgs)
+                msgs = []
+
+        try:
+            await event.client.delete_messages(event.chat_id, msgs)
+        except:
+            pass
+        time_ = time.perf_counter() - start
+        del_res = await event.client.send_message(
+            event.chat_id, 
+            f"Purged {count} Messages In {time_:0.2f} Secs. {'\n\n**Purged Reason:** ' + reason[1] if len(reason) > 1 else ''}",
+        )
+
+        await asyncio.sleep(4)
+        await del_res.delete()
+
+    except MessageDeleteForbiddenError:
+        text = "Failed to delete messages.\n"
+        text += "Messages maybe too old or I'm not admin! or dont have delete rights!"
+        del_res = await event.respond(text, parse_mode="md")
+        await asyncio.sleep(5)
+        await del_res.delete()
+
 
 
 async def delete_messages(event):
@@ -70,9 +97,9 @@ async def delete_messages(event):
     del_message = [message, event.message]
     await event.client.delete_messages(chat, del_message)
 
-from tg_bot.modules.language import gs
 
 def get_help(chat):
+    from tg_bot.modules.language import gs
     return gs(chat, "purge_help")
 
 
@@ -81,8 +108,8 @@ def get_help(chat):
 PURGE_HANDLER = purge_messages, events.NewMessage(pattern="^[!/]purge$")
 DEL_HANDLER = delete_messages, events.NewMessage(pattern="^[!/]del$")
 
-telethn.add_event_handler(*PURGE_HANDLER)
-telethn.add_event_handler(*DEL_HANDLER)
+client.add_event_handler(*PURGE_HANDLER)
+client.add_event_handler(*DEL_HANDLER)
 
 __mod_name__ = "Purges"
 __command_list__ = ["del", "purge"]
