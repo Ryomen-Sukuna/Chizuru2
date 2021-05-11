@@ -58,9 +58,9 @@ async def purge_messages(event):
             pass
 
         time_ = time.perf_counter() - start
-        text = f"Purged {count} Messages In {time_:0.2f} Secs."
+        text = f"Purged {count} Messages In {time_:0.2f} Seconds."
         if len(reason) > 1:
-           text += "\n\n**Purged Reason:** " + reason[1]
+           text += "\n\n**Purged Reason:** \n" + reason[1]
 
         await event.client.send_message(event.chat_id, text)
 
@@ -102,7 +102,7 @@ def get_help(chat):
 
 
 me = await client.get_me()
-PURGE_HANDLER = purge_messages, events.NewMessage(pattern=["^[!/]purge ?(.*)", f"^[!/]purge@{me.username} ?(.*)])
+PURGE_HANDLER = purge_messages, events.NewMessage(pattern=["^[!/]purge ?(.*)", f"^[!/]purge@{me.username} ?(.*)"])
 DEL_HANDLER = delete_messages, events.NewMessage(pattern=["^[!/]del ?(.*)", f"^[!/]del@{me.username} ?(.*)"])
 
 client.add_event_handler(*PURGE_HANDLER)
