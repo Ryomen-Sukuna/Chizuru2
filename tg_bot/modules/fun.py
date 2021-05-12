@@ -16,6 +16,34 @@ from tg_bot.modules.helper_funcs.chat_status import is_user_admin
 from tg_bot.modules.helper_funcs.extraction import extract_user
 from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback
 
+
+# truth / dare
+@kigcmd(command="truth")
+def truth(update: Update, context: CallbackContext):
+    try:
+       try:
+          xyz = requests.get("https://elianaapi.herokuapp.com/games/truth").json()
+          truth = xyz.get("truth")
+          update.effective_message.reply_text(truth)
+       except:
+           update.effective_message.reply_text(random.choice(fun_strings.TRUTH))
+    except:
+        pass
+
+@kigcmd(command="dare")
+def dare(update: Update, context: CallbackContext):
+    try:
+       try:
+          xyz = requests.get("https://elianaapi.herokuapp.com/games/dares").json()
+          truth = xyz.get("dare")
+          update.effective_message.reply_text(truth)
+       except:
+           update.effective_message.reply_text(random.choice(fun_strings.DARE))
+    except:
+        pass
+
+
+
 @kigcmd(command='runs')
 def runs(update: Update, context: CallbackContext):
     update.effective_message.reply_text(random.choice(fun_strings.RUN_STRINGS))
