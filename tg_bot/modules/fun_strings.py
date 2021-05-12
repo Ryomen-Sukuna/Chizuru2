@@ -181,7 +181,7 @@ SLAP_TEMPLATES = [
 ]
 
 
-FRUIT = [
+FRUIT = (
    "Apple",
    "Apricot",
    "Avocado",
@@ -273,8 +273,8 @@ FRUIT = [
    "Tamarillo",
    "Tamarind",
    "Ugli fruit",
-   "Yuzu",
-]
+   "Yuzu"
+)
 
 ITEMS = [
     "cast iron skillet",
@@ -326,11 +326,11 @@ HIT = [
 ]
 
 
-HEART = [
+HEART = (
        "💖", "🤍", "🖤", "💜", "💙", "💚",
        "🧡", "❤️", "🤎", "💕", "💓", "💗",
-       "💝", "💘", "❣", "♥️", "💛", "💞",
-]
+       "💝", "💘", "❣", "♥️", "💛", "💞"
+)
 
 HUG_TEMPLATES = [
     "{user1} {hug} {user2}.",
