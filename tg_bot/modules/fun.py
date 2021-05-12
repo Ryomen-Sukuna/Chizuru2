@@ -8,6 +8,7 @@ import urllib.parse
 import requests
 from telegram import ParseMode, Update, ChatPermissions
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.utils.helpers import escape_markdown
 from telegram.ext import Filters, CallbackContext
 from telegram.error import BadRequest
 
