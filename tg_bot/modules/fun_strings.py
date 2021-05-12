@@ -306,7 +306,7 @@ ITEMS = [
     "Kubikiribōchō",
     "rasengan",
     "spherical flying kat",
-    random.choice(random.shuffle(FRUIT)),
+    random.choice(FRUIT),
 ]
 
 THROW = [
