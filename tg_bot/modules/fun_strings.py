@@ -60,7 +60,7 @@ RUN_STRINGS = [
     "As The Doctor would say... RUN!",
 ]
 
-SLAP_Kigyō_TEMPLATES = )
+SLAP_BOT_TEMPLATES = (
     "Slap me one more time and I'll mute you.",
     "Stop slapping me. REEEEEEEEEEEEEE.",
     [
