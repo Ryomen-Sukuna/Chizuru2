@@ -181,6 +181,101 @@ SLAP_TEMPLATES = [
 ]
 
 
+FRUIT = [
+   "Apple",
+   "Apricot",
+   "Avocado",
+   "Banana",
+   "Bilberry",
+   "Blackberry",
+   "Blueberry",
+   "Blackcurrant",
+   "Boysenberry",
+   "Currant",
+   "Cherry",
+   "Cherimoya",
+   "Chico fruit",
+   "Cloudberry",
+   "Coconut",
+   "Cranberry",
+   "Cucumber",
+   "Custard apple",
+   "Damson",
+   "Date",
+   "Dragonfruit",
+   "Durian",
+   "Elderberry",
+   "Feijoa",
+   "Fig",
+   "Goji berry",
+   "Gooseberry",
+   "Grape",
+   "Raisin",
+   "Grapefruit",
+   "Guava",
+   "Honeyberry",
+   "Huckleberry",
+   "Jabuticaba",
+   "Jackfruit",
+   "Jambul",
+   "Jujube",
+   "Juniper berry",
+   "Kiwano",
+   "Kiwifruit",
+   "Kumquat",
+   "Lemon",
+   "Lime",
+   "Loquat",
+   "Longan",
+   "Lychee",
+   "Mango",
+   "Mangosteen",
+   "Marionberry",
+   "Melon",
+   "Cantaloupe",
+   "Watermelon",
+   "Miracle fruit",
+   "Mulberry",
+   "Nectarine",
+   "Nance",
+   "Orange",
+   "Olive",
+   "Blood orange",
+   "Clementine",
+   "Mandarine",
+   "Tangerine",
+   "Papaya",
+   "Passionfruit",
+   "Peach",
+   "Pear",
+   "Persimmon",
+   "Physalis",
+   "Plantain",
+   "Plum",
+   "Prune",
+   "Pineapple",
+   "Plumcot",
+   "Pomegranate",
+   "Pomelo",
+   "Purple mangosteen",
+   "Quince",
+   "Raspberry",
+   "Salmonberry",
+   "Rambutan",
+   "Redcurrant",
+   "Salal berry",
+   "Salak",
+   "Satsuma",
+   "Soursop",
+   "Star fruit",
+   "Solanum quitoense",
+   "Strawberry",
+   "Tamarillo",
+   "Tamarind",
+   "Ugli fruit",
+   "Yuzu",
+]
+
 ITEMS = [
     "cast iron skillet",
     "angry meow",
@@ -193,18 +288,25 @@ ITEMS = [
     "rubber chicken",
     "spiked bat",
     "heavy rock",
+    "aladdin's chirag"
     "chunk of dirt",
     "ton of bricks",
     "rasengan",
+    "t.v. remote",
     "spirit bomb",
     "100-Type Guanyin Bodhisattva",
     "rasenshuriken",
     "Murasame",
     "ban",
+    "kit-kat",
+    "dairy-milk",
+    "gas-cylinder",
+    "chappal",
     "chunchunmaru",
     "Kubikiribōchō",
     "rasengan",
     "spherical flying kat",
+    random.choice(random.shuffle(FRUIT)),
 ]
 
 THROW = [
@@ -221,6 +323,27 @@ HIT = [
     "smacks",
     "bashes",
     "pats",
+]
+
+
+HEART = [
+       "💖", "🤍", "🖤", "💜", "💙", "💚",
+       "🧡", "❤️", "🤎", "💕", "💓", "💗",
+       "💝", "💘", "❣", "♥️", "💛", "💞",
+]
+
+HUG_TEMPLATES = [
+    "{user1} {hug} {user2}.",
+    "{user1} {hug} {user2} Warmly.",
+    "{user1} {hug} {user2} With A" + f" {random.choice(random.shuffle(HEART))}.",
+    "{user1} {hug} {user2} With Kindness."
+]
+
+KISS_TEMPLATES = [
+    "{user1} {kiss} {user2}.",
+    "{user1} {kiss} {user2} Warmly.",
+    "{user1} {kiss} {user2} With A" + f" {random.choice(random.shuffle(HEART))}.",
+    "{user1} {kiss} {user2} With Kindness."
 ]
 
 ABUSE_STRINGS = [
@@ -240,6 +363,40 @@ ABUSE_STRINGS = [
     " Gay is here",
     "Ur dad gey bc ",
 ]
+
+
+GBUN = [
+    "Beware! This Bot-Admeme Can Gbun You Right Off The Map.",
+    "I Guess You've Forgot Spelling Of GBAN Maybe...?", 
+    "Don't Misuse Your Powers...",
+    "Nah, He/She Looks Innocent...",
+]
+
+GBAM = "<b>Beginning Of Global Bam For {user2}</b>  \n \nChat Id : <code>{chatid}</code> \nReason : <i>{reason}</i> \nGBammed By {user1}"                                                       
+
+GBAM_REASON = [
+    "sasta noob",
+    "sasta waifu stealer",
+    "sasta white-het hekur",
+    "sasta white-het codur",
+    "sasta white-het vala chintu",
+    "sasta hexa hekur",
+    "sasta hexa playur",
+    "sasta tiktokur💃🏾",
+    "sasta membor of team 7",
+    "sasta selmon boi",
+    "sasta fri-fire player",
+    "sasta chhota bhim",
+    "sasta chhapri",
+    "sasta jony sin",
+    "sasta chhapri nibba",
+    "sasta nibba",
+    "sasti ria chokroborti",
+    "sasti nibbi",
+    "sasta camper",
+]
+
+
 
 EYES = [
     ["⌐■", "■"],
