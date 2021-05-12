@@ -1,4 +1,14 @@
-RUN_STRINGS = (
+import random
+from tg_bot.modules.helper_funcs.fun.dares import DERE
+from tg_bot.modules.helper_funcs.fun.truths import TURUTH
+
+#===========================================================================================================================
+
+TRUTH = TURUTH
+DARE = DERE
+
+
+RUN_STRINGS = [
     "Where do you think you're going?",
     "Huh? what? did they get away?",
     "ZZzzZZzz... Huh? what? oh, just them again, nevermind.",
@@ -48,9 +58,9 @@ RUN_STRINGS = (
     "Han shot first. So will I.",
     "What are you running after, a white rabbit?",
     "As The Doctor would say... RUN!",
-)
+]
 
-SLAP_Kigyō_TEMPLATES = (
+SLAP_Kigyō_TEMPLATES = )
     "Slap me one more time and I'll mute you.",
     "Stop slapping me. REEEEEEEEEEEEEE.",
     [
@@ -60,7 +70,7 @@ SLAP_Kigyō_TEMPLATES = (
     ],
 )
 
-SLAP_TEMPLATES = (
+SLAP_TEMPLATES = [
     "{user2} was shot by {user1}.",
     "{user2} walked into a cactus while trying to escape {user1}.",
     "{user2} drowned whilst trying to escape {user1}.",
@@ -168,14 +178,10 @@ SLAP_TEMPLATES = (
     "{user2} was turned into a Jojo reference!",
     "{user1} hits {user2} with {item}.",
     "Round 2!..Ready? .. FIGHT!!",
-)
+]
 
-PING_STRING = (
-    "PONG!!",
-    "I am here!",
-)
 
-ITEMS = (
+ITEMS = [
     "cast iron skillet",
     "angry meow",
     "cricket bat",
@@ -199,25 +205,25 @@ ITEMS = (
     "Kubikiribōchō",
     "rasengan",
     "spherical flying kat",
-)
+]
 
-THROW = (
+THROW = [
     "throws",
     "flings",
     "chucks",
     "hurls",
-)
+]
 
-HIT = (
+HIT = [
     "hits",
     "whacks",
     "slaps",
     "smacks",
     "bashes",
     "pats",
-)
+]
 
-ABUSE_STRINGS = (
+ABUSE_STRINGS = [
     "Fuck off",
     "Stfu go fuck yourself",
     "Ur mum gey",
@@ -233,7 +239,7 @@ ABUSE_STRINGS = (
     "CUnt",
     " Gay is here",
     "Ur dad gey bc ",
-)
+]
 
 EYES = [
     ["⌐■", "■"],
@@ -407,15 +413,17 @@ EARS = [
     ["(∩", ")⊃━☆ﾟ.*"],
 ]
 
-TOSS = (
+TOSS = [
     "Heads",
     "Tails",
-)
+]
 
 DECIDE = ("Yes.", "NoU.", "Maybe.")
 
-TABLE = (
+TABLE = [
     "(╯°□°）╯彡 ┻━┻",
     "I ran out of tables, will order more.",
+    "(╯°□°）╯彡 ┻━┻",
     "Go do some work instead of flippin tables.",
-)
+    "(╯°□°）╯彡 ┻━┻",
+]
