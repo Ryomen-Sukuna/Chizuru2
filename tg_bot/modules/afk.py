@@ -145,8 +145,6 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
                  res = "User *{}* Is Currently AFK!\nSince AFK: `{}`".format(escape_markdown(fst_name), since_afk)
             try:
                 MSG.edit_text(res, parse_mode=ParseMode.MARKDOWN, timeout=60)
-                sleep(30)
-                MSG.delete()
             except:
                 pass
         else:
@@ -171,12 +169,6 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
                 except:
                     res = "{} Is Currently AFK!\nSince AFK: `{}`".format('My Master' if int(user_id) == OWNER_ID else f'User *{escape_markdown(fst_name)}*', since_afk)
                     MSG.edit_text(res, parse_mode=ParseMode.MARKDOWN, timeout=60)
-            except:
-                pass
-
-            try:
-                sleep(30)
-                MSG.delete()
             except:
                 pass
 
