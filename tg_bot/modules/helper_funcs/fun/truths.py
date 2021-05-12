@@ -648,7 +648,7 @@ Truth3 = [
 
 
 TURUTH = [
-    random.choice(random.shuffle(Truth1)), 
-    random.choice(random.shuffle(Truth2)), 
-    random.choice(random.shuffle(Truth3)),
+    random.choice(Truth1), 
+    random.choice(Truth2), 
+    random.choice(Truth3),
 ]
