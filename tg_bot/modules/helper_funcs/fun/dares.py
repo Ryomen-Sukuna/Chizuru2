@@ -437,7 +437,7 @@ Dare3 = [
 
 
 DERE = [
-    random.choice(random.shuffle(Dare1)), 
-    random.choice(random.shuffle(Dare2)), 
-    random.choice(random.shuffle(Dare3)),
+    random.choice(Dare1), 
+    random.choice(Dare2), 
+    random.choice(Dare3),
 ]
