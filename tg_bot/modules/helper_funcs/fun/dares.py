@@ -7,7 +7,7 @@ import random
 
 
 #Line 21 to 69 Taken From @zoldiktmbot
-Dare1 = (
+Dare1 = [
     "Show the most embarrassing photo on your phone",
     "Show the last five people you texted and what the messages said",
     "Let the rest of the group DM someone from your Instagram account",
@@ -56,13 +56,13 @@ Dare1 = (
     "Confess to your current crush. ❤️",
     "Declare who is your true love.",
     "Send a screenshot of your gallery.",
-    "Set your crush’s picture as your dp."
-)
+    "Set your crush’s picture as your dp.",
+]
 
 
 
 #Taken From OpenUserBot
-Dare2 = (
+Dare2 = [
         "Let the group choose an item for you to brush your teeth with.",
         "Write your name on the floor with your tongue.",
         "Go outside and pick exactly 40 blades of grass with a pair of tweezers.",
@@ -387,12 +387,12 @@ Dare2 = (
         "Call a random person and sing a song, don’t stop until they hang up.",
         "Stand on one leg for the next 2 rounds.",
         "Eat a raw egg.",
-        "Eat a spoonful of hot sauce."
-)
+        "Eat a spoonful of hot sauce.",
+]
 
 
 #Taken From Google
-Dare3 = (
+Dare3 = [
    "Post 'I love English!' on a social media.",
    "Sing the English alphabet backwards and record it.",
    "Send the last photo you took with your phone.",
@@ -427,8 +427,8 @@ Dare3 = (
    "Tell the group two truths and one lie and they have to guess which one the lie is.",
    "Take a screenshot of your most recent google search history and send it.",
    "Yell out the first word that comes to your mind, and record it.",
-   "Let the rest of the group DM someone from your Instagram account"
-)
+   "Let the rest of the group DM someone from your Instagram account",
+]
 
 
 
