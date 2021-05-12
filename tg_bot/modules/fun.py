@@ -26,7 +26,7 @@ def truth(update: Update, context: CallbackContext):
           truth = xyz.get("truth")
           update.effective_message.reply_text(truth)
        except:
-           update.effective_message.reply_text(random.choice(fun_strings.TRUTH))
+           update.effective_message.reply_text(random.choice(random.shuffle(fun_strings.TRUTH)))
     except:
         pass
 
@@ -38,7 +38,7 @@ def dare(update: Update, context: CallbackContext):
           truth = xyz.get("dare")
           update.effective_message.reply_text(truth)
        except:
-           update.effective_message.reply_text(random.choice(fun_strings.DARE))
+           update.effective_message.reply_text(random.choice(random.shuffle(fun_strings.DARE)))
     except:
         pass
 
@@ -46,7 +46,7 @@ def dare(update: Update, context: CallbackContext):
 
 @kigcmd(command='runs')
 def runs(update: Update, context: CallbackContext):
-    update.effective_message.reply_text(random.choice(fun_strings.RUN_STRINGS))
+    update.effective_message.reply_text(random.choice(random.shuffle(fun_strings.RUN_STRINGS)))
 
 @kigcmd(command='slap')
 def slap(update: Update, context: CallbackContext):
@@ -64,7 +64,7 @@ def slap(update: Update, context: CallbackContext):
     user_id = extract_user(message, args)
 
     if user_id == bot.id:
-        temp = random.choice(fun_strings.SLAP_Kigyō_TEMPLATES)
+        temp = random.choice(random.shuffle(fun_strings.SLAP_Kigyō_TEMPLATES))
 
         if isinstance(temp, list):
             if temp[2] == "tmute":
@@ -94,10 +94,10 @@ def slap(update: Update, context: CallbackContext):
         user1 = bot.first_name
         user2 = curr_user
 
-    temp = random.choice(fun_strings.SLAP_TEMPLATES)
-    item = random.choice(fun_strings.ITEMS)
-    hit = random.choice(fun_strings.HIT)
-    throw = random.choice(fun_strings.THROW)
+    temp = random.choice(random.shuffle(fun_strings.SLAP_TEMPLATES))
+    item = random.choice(random.shuffle(fun_strings.ITEMS))
+    hit = random.choice(random.shuffle(fun_strings.HIT))
+    throw = random.choice(random.shuffle(fun_strings.THROW))
     reply = temp.format(user1=user1, user2=user2, item=item, hits=hit, throws=throw)
 
     reply_text(reply, parse_mode=ParseMode.HTML)
@@ -148,7 +148,7 @@ def roll(update: Update, context: CallbackContext):
 
 @kigcmd(command='toss')
 def toss(update: Update, context: CallbackContext):
-    update.message.reply_text(random.choice(fun_strings.TOSS))
+    update.message.reply_text(random.choice(random.shuffle(fun_strings.TOSS)))
 
 @kigcmd(command='decide')
 def decide(update: Update, context: CallbackContext):
@@ -157,7 +157,7 @@ def decide(update: Update, context: CallbackContext):
         if update.effective_message.reply_to_message
         else update.effective_message.reply_text
     )
-    reply_text(random.choice(fun_strings.DECIDE))
+    reply_text(random.choice(random.shuffle(fun_strings.DECIDE)))
 
 @kigcmd(command='table')
 def table(update: Update, context: CallbackContext):
@@ -166,7 +166,7 @@ def table(update: Update, context: CallbackContext):
         if update.effective_message.reply_to_message
         else update.effective_message.reply_text
     )
-    reply_text(random.choice(fun_strings.TABLE))
+    reply_text(random.choice(random.shuffle(fun_strings.TABLE)))
 
 
 
