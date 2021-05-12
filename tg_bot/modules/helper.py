@@ -77,9 +77,8 @@ def subhelp_button(update: Update, context: CallbackContext):
                 timeout=60, 
             )
 
-
     # Sub - Buttons For GREETINGS Help
-    if query.data == "subhelp_back2":
+    elif query.data == "subhelp_back2":
         query.message.edit_text(
                 text="Here is the help for the *Greetings* module:\n" + gs(chat, "greetings_help"),
                 reply_markup=InlineKeyboardMarkup(
@@ -132,5 +131,7 @@ def subhelp_button(update: Update, context: CallbackContext):
                 disable_web_page_preview=True,
                 timeout=60, 
             )
+
+    context.bot.answer_callback_query(query.id)
 
 __mod_name__ = "Helper"
