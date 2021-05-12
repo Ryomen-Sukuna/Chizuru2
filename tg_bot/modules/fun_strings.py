@@ -335,14 +335,14 @@ HEART = (
 HUG_TEMPLATES = [
     "{user1} {hug} {user2}.",
     "{user1} {hug} {user2} Warmly.",
-    "{user1} {hug} {user2} With A" + f" {random.choice(random.shuffle(HEART))}.",
+    "{user1} {hug} {user2} With A" + f" {random.choice(HEART)}.",
     "{user1} {hug} {user2} With Kindness."
 ]
 
 KISS_TEMPLATES = [
     "{user1} {kiss} {user2}.",
     "{user1} {kiss} {user2} Warmly.",
-    "{user1} {kiss} {user2} With A" + f" {random.choice(random.shuffle(HEART))}.",
+    "{user1} {kiss} {user2} With A" + f" {random.choice(HEART)}.",
     "{user1} {kiss} {user2} With Kindness."
 ]
 
