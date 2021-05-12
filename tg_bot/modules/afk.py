@@ -34,7 +34,7 @@ def afk(update: Update, context: CallbackContext):
         return
 
     notice = ""
-    if len(args) >= 2:
+    if len(args) > 1:
         reason = args[1]
         if len(reason) > 100:
             reason = reason[:100]
@@ -61,18 +61,15 @@ def no_longer_afk(update: Update, context: CallbackContext):
         return
 
     res = sql.rm_afk(user.id)
-    if res:
-        if message.new_chat_members:  # dont say msg
-            return
-        firstname = user.first_name
+    if res: 
         try:
             options = [
-                "{} Is Un-AFK!",
+                "{} Is Now Un-AFK!",
                 "{} Is Back Online!",
             ]
             reply_msg = random.choice(options)
             message.reply_text(
-                reply_msg.format(firstname),
+                reply_msg.format(user.first_name),
             )
         except:
             return
@@ -164,15 +161,15 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
                rison = reason
 
             if int(user_id) == OWNER_ID:
-                 res = "My Master Is Currently AFK!\nLast Seen: `{}` \n\nSays It's Because Of:\n`❝` {} `❞`".format(since_afk, rison)
+                 res = "My Master Is Currently AFK!\nSince AFK: `{}` \n\nSays It's Because Of:\n{}".format(since_afk, rison)
             else:
-                 res = "User *{}* Is Currently AFK!\nLast Seen: `{}` \n\nSays It's Because Of:\n`❝` {} `❞`".format(escape_markdown(fst_name), since_afk, rison)
+                 res = "User *{}* Is Currently AFK!\nSince AFK: `{}` \n\nSays It's Because Of:\n{}".format(escape_markdown(fst_name), since_afk, rison)
 
             try:
                 try:
                     MSG.edit_text(res, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True, timeout=60)
                 except:
-                    res = "{} Is Currently AFK!\nLast Seen: `{}`".format('My Master' if int(user_id) == OWNER_ID else f'User *{escape_markdown(fst_name)}*', since_afk)
+                    res = "{} Is Currently AFK!\nSince AFK: `{}`".format('My Master' if int(user_id) == OWNER_ID else f'User *{escape_markdown(fst_name)}*', since_afk)
                     MSG.edit_text(res, parse_mode=ParseMode.MARKDOWN, timeout=60)
             except:
                 pass
