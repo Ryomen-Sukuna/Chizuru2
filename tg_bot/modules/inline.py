@@ -123,7 +123,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
     sql.update_user(user.id, user.username)
     same_chats = sql.get_user_num_chats(user.id)
     if int(same_chats) >= 1:
-         text += f"\n∘ Mutual Chats: <code>{num_chats}</code>"
+         text += f"\n∘ Mutual Chats: <code>{same_chats}</code>"
 
 
 
