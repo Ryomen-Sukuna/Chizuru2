@@ -21,7 +21,6 @@ from tg_bot.modules.helper_funcs.alternate import send_message
 from tg_bot import kp, get_entity
 from pyrogram import Client, filters
 from pyrogram.types import Chat, User
-from tg_bot.modules.language import gs
 from tg_bot.modules.helper_funcs.decorators import kigcmd
 
 
@@ -30,7 +29,7 @@ from tg_bot.modules.helper_funcs.decorators import kigcmd
 @can_promote
 @user_admin
 @loggable
-@kigcmd(command="promote", can_disable=False)
+@kigcmd(command="fullpromote", pass_args=True)
 def promote(update: Update, context: CallbackContext) -> str:
     bot = context.bot
     args = context.args
@@ -48,7 +47,98 @@ def promote(update: Update, context: CallbackContext) -> str:
         message.reply_text("You don't have the necessary rights to do that!")
         return
 
-    user_id = extract_user(message, args)
+    user_id, title = extract_user_and_text(message, args)
+
+    if not user_id:
+        message.reply_text(
+            "You don't seem to be referring to a user or the ID specified is incorrect.."
+        )
+        return
+
+    try:
+        user_member = chat.get_member(user_id)
+    except:
+        return
+
+    if user_id == bot.id:
+        message.reply_text("I can't promote myself! Get an admin to do it for me.")
+        return
+
+    if user_member.status in ("administrator", "creator"):
+        message.reply_text("How am I meant to promote someone that's already an admin?")
+        return
+
+    # set same perms as bot - bot can't assign higher perms than itself!
+    bot_member = chat.get_member(bot.id)
+
+    try:
+        bot.promoteChatMember(
+            chat.id,
+            user_id,
+            can_change_info=bot_member.can_change_info,
+            can_post_messages=bot_member.can_post_messages,
+            can_edit_messages=bot_member.can_edit_messages,
+            can_delete_messages=bot_member.can_delete_messages,
+            can_invite_users=bot_member.can_invite_users,
+            can_promote_members=bot_member.can_promote_members,
+            can_restrict_members=bot_member.can_restrict_members,
+            can_pin_messages=bot_member.can_pin_messages,
+            can_manage_voice_chats=bot_member.can_manage_voice_chats,
+        )
+    except BadRequest as err:
+        if err.message == "User_not_mutual_contact":
+            message.reply_text("I can't promote someone who isn't in the group.")
+        else:
+            message.reply_text("An error occured while promoting.")
+        return
+
+    try:
+        if title:
+          if len(title) < 17:
+              bot.set_chat_administrator_custom_title(chat.id, user_id, title)
+    except:
+        pass
+
+    bot.sendMessage(
+        chat.id,
+        f"<b>{user_member.user.first_name or user_id}</b> was promoted by <b>{message.from_user.first_name}</b> in <b>{chat.title}</b>",
+        parse_mode=ParseMode.HTML,
+    )
+
+    log_message = (
+        f"<b>{html.escape(chat.title)}:</b>\n"
+        f"#FULLPROMOTED\n"
+        f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
+        f"<b>User:</b> {mention_html(user_member.user.id, user_member.user.first_name)}"
+    )
+
+    return log_message
+
+
+@connection_status
+@bot_admin
+@can_promote
+@user_admin
+@loggable
+@kigcmd(command="promote", pass_args=True, can_disable=False)
+def promote(update: Update, context: CallbackContext) -> str:
+    bot = context.bot
+    args = context.args
+
+    message = update.effective_message
+    chat = update.effective_chat
+    user = update.effective_user
+
+    promoter = chat.get_member(user.id)
+
+    if (
+        not (promoter.can_promote_members or promoter.status == "creator")
+        and not user.id in SUDO_USERS
+    ):
+        message.reply_text("You don't have the necessary rights to do that!")
+        return
+
+    user_id, title = extract_user_and_text(message, args)
 
     if not user_id:
         message.reply_text(
@@ -84,7 +174,7 @@ def promote(update: Update, context: CallbackContext) -> str:
             # can_promote_members=bot_member.can_promote_members,
             can_restrict_members=bot_member.can_restrict_members,
             can_pin_messages=bot_member.can_pin_messages,
-            can_manage_voice_chats=bot_member.can_manage_voice_chats,
+            # can_manage_voice_chats=bot_member.can_manage_voice_chats,
         )
     except BadRequest as err:
         if err.message == "User_not_mutual_contact":
@@ -92,6 +182,13 @@ def promote(update: Update, context: CallbackContext) -> str:
         else:
             message.reply_text("An error occured while promoting.")
         return
+
+    try:
+        if title:
+          if len(title) < 17:
+              bot.set_chat_administrator_custom_title(chat.id, user_id, title)
+    except:
+        pass
 
     bot.sendMessage(
         chat.id,
@@ -135,16 +232,16 @@ def demote(update: Update, context: CallbackContext) -> str:
     except:
         return
 
+    if user_id == bot.id:
+        message.reply_text("I can't demote myself! Get an admin to do it for me.")
+        return
+
     if user_member.status == "creator":
         message.reply_text("This person CREATED the chat, how would I demote them?")
         return
 
     if user_member.status != "administrator":
         message.reply_text("Can't demote what wasn't promoted!")
-        return
-
-    if user_id == bot.id:
-        message.reply_text("I can't demote myself! Get an admin to do it for me.")
         return
 
     try:
@@ -403,6 +500,7 @@ async def admins(client, message):
     await reply.edit_text(text_ping, disable_web_page_preview=True)
 
 def get_help(chat):
+    from tg_bot.modules.language import gs
     return gs(chat, "admin_help")
 
 __mod_name__ = "Admin"
