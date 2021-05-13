@@ -14,15 +14,17 @@ from ptbcontrib.postgres_persistence import PostgresPersistence
 
 
 def get_user_list(key):
-	try:  # Import here to evade a circular import
-		from tg_bot.modules.sql import nation_sql
-		royals = nation_sql.get_royals(key)
-		return [a.user_id for a in royals]
-	except:
-		with open('{}/tg_bot/{}'.format(os.getcwd(), 'elevated_users.json'),
-		          'r') as royals:
-			return json.load(royals)[key]
-
+	#try:  # Import here to evade a circular import
+	#	from tg_bot.modules.sql import nation_sql
+	#	royals = nation_sql.get_royals(key)
+	#	return [a.user_id for a in royals]
+	#except:
+	#	with open('{}/tg_bot/{}'.format(os.getcwd(), 'elevated_users.json'),
+	#	          'r') as royals:
+	#		return json.load(royals)[key]
+      with open('{}/tg_bot/{}'.format(os.getcwd(), 'elevated_users.json'),
+                'r') as royals:
+              return json.load(royals)[key]
 
 # enable logging
 FORMAT = "[RentalBot] %(message)s"
@@ -50,7 +52,6 @@ class RentalBot:
 		self.URL = self.rent.URL
 		self.CERT_PATH = self.rent.CERT_PATH
 		self.PORT = self.rent.PORT
-		self.INFOPIC = self.rent.INFOPIC
 		self.DEL_CMDS = self.rent.DEL_CMDS
 		self.STRICT_GBAN = self.rent.STRICT_GBAN
 		self.ALLOW_EXCL = self.rent.ALLOW_EXCL
@@ -97,7 +98,6 @@ WEBHOOK = Rent.WEBHOOK
 URL = Rent.URL
 CERT_PATH = Rent.CERT_PATH
 PORT = Rent.PORT
-INFOPIC = Rent.INFOPIC
 DEL_CMDS = Rent.DEL_CMDS
 ALLOW_EXCL = Rent.ALLOW_EXCL
 CUSTOM_CMD = Rent.CUSTOM_CMD
