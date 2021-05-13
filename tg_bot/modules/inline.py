@@ -59,15 +59,14 @@ def inlinequery(update: Update, _) -> None:
             "description": "Search anime and manga on AniList.co",
             "message_text": "Click the button below to search anime and manga on AniList.co",
             "thumb_urL": "https://telegra.ph/file/c85e07b58f5b3158b529a.jpg",
-            "keyboard": ".anilist ",
+            "keyboard": ".anime ",
         },
     ]
 
     inline_funcs = {
         ".spb": spb,
         ".info": inlineinfo,
-        ".about": about,
-        ".anilist": media_query,
+        ".anime": media_query,
     }
 
     if (f := query.split(" ", 1)[0]) in inline_funcs:
@@ -410,7 +409,7 @@ def media_query(query: str, update: Update, context: CallbackContext) -> None:
                 [
                     InlineKeyboardButton(
                         text="Search Again",
-                        switch_inline_query_current_chat=".anilist ",
+                        switch_inline_query_current_chat=".anime ",
                     ),
 
                 ],
