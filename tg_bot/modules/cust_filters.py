@@ -1,4 +1,5 @@
 import re
+import random
 from html import escape
 
 import telegram
