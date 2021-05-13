@@ -300,6 +300,52 @@ def reply_filter(update, context):
                     "mention",
                 ]
                 if filt.reply_text:
+                    if "%%%" in filt.reply_text:
+                        split = filt.reply_text.split("%%%")
+                        if all(split):
+                            text = random.choice(split)
+                        else:
+                            text = filt.reply_text
+                    else:
+                        text = filt.reply_text
+                    if text.startswith("sticker:") and text.endswith(":sticker"):
+                        sticker_id = text.replace("sticker:", "").replace(":sticker", "")
+                        try:
+                            context.bot.send_sticker(
+                                chat.id,
+                                sticker_id,
+                                reply_to_message_id=message.message_id,
+                            )
+                            return
+                        except BadRequest as excp:
+                            if (
+                                excp.message
+                                == "Wrong remote file identifier specified: wrong padding in the string"
+                            ):
+                                context.bot.send_message(
+                                    chat.id,
+                                    "Message couldn't be sent, Is the sticker id valid?",
+                                )
+                                return
+                            else:
+                                log.exception("Error in filters: " + excp.message)
+                                return
+                    if text.startswith("gif:") and text.endswith(":gif"):
+                        gif_id = text.replace("gif:", "").replace(":gif", "")
+                        try:
+                            context.bot.send_animation(
+                                chat.id,
+                                gif_id,
+                                reply_to_message_id=message.message_id,
+                            )
+                            return
+                        except BadRequest as excp:
+                                context.bot.send_message(
+                                    chat.id,
+                                    "Message couldn't be sent, Is the gif id valid?",
+                                )
+                                log.exception("Error in filters: " + excp.message)
+                                return
                     valid_format = escape_invalid_curly_brackets(
                         filt.reply_text, VALID_WELCOME_FORMATTERS
                     )
