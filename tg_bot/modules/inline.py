@@ -40,12 +40,11 @@ def inlinequery(update: Update, _) -> None:
     results: List = []
     inline_help_dicts = [
         {
-            "title": "SpamProtection INFO",
-            "description": "Look up a person/bot/channel/chat on @Intellivoid SpamProtection API",
-            "message_text": "Click the button below to look up a person/bot/channel/chat on @Intellivoid SpamProtection API using "
-                            "username or telegram id",
-            "thumb_urL": "https://telegra.ph/file/3ce9045b1c7faf7123c67.jpg",
-            "keyboard": ".spb ",
+            "title": "Anime",
+            "description": "Search anime and manga on AniList.co",
+            "message_text": "Click the button below to search anime and manga on AniList.co",
+            "thumb_urL": "https://telegra.ph/file/c85e07b58f5b3158b529a.jpg",
+            "keyboard": ".anime ",
         },
         {
             "title": "Account info",
@@ -54,19 +53,11 @@ def inlinequery(update: Update, _) -> None:
             "thumb_urL": "https://telegra.ph/file/c85e07b58f5b3158b529a.jpg",
             "keyboard": ".info ",
         },
-        {
-            "title": "Anime",
-            "description": "Search anime and manga on AniList.co",
-            "message_text": "Click the button below to search anime and manga on AniList.co",
-            "thumb_urL": "https://telegra.ph/file/c85e07b58f5b3158b529a.jpg",
-            "keyboard": ".anime ",
-        },
     ]
 
     inline_funcs = {
-        ".spb": spb,
-        ".info": inlineinfo,
         ".anime": media_query,
+        ".info": inlineinfo,
     }
 
     if (f := query.split(" ", 1)[0]) in inline_funcs:
@@ -118,169 +109,42 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
     sql.update_user(user.id, user.username)
 
     text = (
-        f"<b>Information:</b>\n"
-        f"• ID: <code>{user.id}</code>\n"
-        f"• First Name: {html.escape(user.first_name)}"
+        f"<b>• User Information:</b>\n"
+        f"∘ ID: <code>{user.id}</code>\n"
+        f"∘ First Name: {html.escape(user.first_name) if user.first_name is not None else '☠️ <code>Zombie</code> ☠️'}"
     )
 
     if user.last_name:
-        text += f"\n• Last Name: {html.escape(user.last_name)}"
+        text += f"\n∘ Last Name: {html.escape(user.last_name)}"
 
     if user.username:
-        text += f"\n• Username: @{html.escape(user.username)}"
+        text += f"\n∘ Username: @{html.escape(user.username)}"
 
-    text += f"\n• Permanent user link: {mention_html(user.id, 'link')}"
+    text += f"\n∘ Profile Link: {mention_html(user.id, 'Here')}"
 
-    try:
-        spamwtc = sw.get_ban(int(user.id))
-        if spamwtc:
-            text += "<b>\n\n• SpamWatched:\n</b> Yes"
-            text += f"\n• Reason: <pre>{spamwtc.reason}</pre>"
-            text += "\n• Appeal at @SpamWatchSupport"
-        else:
-            text += "<b>\n\n• SpamWatched:</b> No"
-    except:
-        pass  # don't crash if api is down somehow...
-
-    apst = requests.get(f'https://api.intellivoid.net/spamprotection/v1/lookup?query={context.bot.username}')
-    api_status = apst.status_code
-    if (api_status == 200):
-        try:
-            status = client.raw_output(int(user.id))
-            # ptid = status["results"]["private_telegram_id"]
-            op = status["results"]["attributes"]["is_operator"]
-            ag = status["results"]["attributes"]["is_agent"]
-            wl = status["results"]["attributes"]["is_whitelisted"]
-            ps = status["results"]["attributes"]["is_potential_spammer"]
-            sp = status["results"]["spam_prediction"]["spam_prediction"]
-            hamp = status["results"]["spam_prediction"]["ham_prediction"]
-            blc = status["results"]["attributes"]["is_blacklisted"]
-            if blc:
-                blres = status["results"]["attributes"]["blacklist_reason"]
-            else:
-                blres = None
-            text += "\n\n<b>SpamProtection:</b>"
-            # text += f"<b>\n• Private Telegram ID:</b> <code>{ptid}</code>\n"
-            text += f"<b>\n• Operator:</b> <code>{op}</code>\n"
-            text += f"<b>• Agent:</b> <code>{ag}</code>\n"
-            text += f"<b>• Whitelisted:</b> <code>{wl}</code>\n"
-            text += f"<b>• Spam/Ham Prediction:</b> <code>{round((sp/hamp*100), 3)}%</code>\n"
-            text += f"<b>• Potential Spammer:</b> <code>{ps}</code>\n"
-            text += f"<b>• Blacklisted:</b> <code>{blc}</code>\n"
-            text += f"<b>• Blacklist Reason:</b> <code>{blres}</code>\n"
-        except HostDownError:
-            text += "\n\n<b>SpamProtection:</b>"
-            text += "\nCan't connect to Intellivoid SpamProtection API\n"
-    else:
-        text += "\n\n<b>SpamProtection:</b>"
-        text += f"\n<code>API RETURNED: {api_status}</code>\n"
-
-    num_chats = sql.get_user_num_chats(user.id)
-    text += f"\n• Chat count: <code>{num_chats}</code>"
+    same_chats = sql.get_user_num_chats(user.id)
+    if int(same_chats) >= 1:
+         text += f"\n∘ Mutual Chats: <code>{num_chats}</code>"
 
 
 
 
     kb = InlineKeyboardMarkup(
-        [
-            [
-                InlineKeyboardButton(
-                    text="Search Again",
-                    switch_inline_query_current_chat=".info ",
-                ),
-
-            ],
-        ]
-        )
+               [
+                  [
+                    InlineKeyboardButton(
+                          text="Search Again",
+                          switch_inline_query_current_chat=".info ",
+                    ),
+                  ],
+               ]
+         )
 
     results = [
         InlineQueryResultArticle(
             id=str(uuid4()),
             title=f"User info of {html.escape(user.first_name)}",
             input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML,
-                                                          disable_web_page_preview=True),
-            reply_markup=kb
-        ),
-    ]
-
-    update.inline_query.answer(results, cache_time=5)
-
-
-
-def spb(query: str, update: Update, context: CallbackContext) -> None:
-    """Handle the inline query."""
-    query = update.inline_query.query
-    user_id = update.effective_user.id
-    srdata = None
-    apst = requests.get(f'https://api.intellivoid.net/spamprotection/v1/lookup?query={context.bot.username}')
-    api_status = apst.status_code
-    if (api_status != 200):
-        stats = f"API RETURNED {api_status}"
-    else:
-        try:
-            search = query.split(" ", 1)[1]
-        except IndexError:
-            search = user_id
-
-        if search:
-            srdata = search
-        else:
-            srdata = user_id
-
-        url = f"https://api.intellivoid.net/spamprotection/v1/lookup?query={srdata}"
-        r = requests.get(url)
-        a = r.json()
-        response = a["success"]
-        if response is True:
-            date = a["results"]["last_updated"]
-            stats = f"*◢ Intellivoid• SpamProtection Info*:\n"
-            stats += f' • *Updated on*: `{datetime.fromtimestamp(date).strftime("%Y-%m-%d %I:%M:%S %p")}`\n'
-
-            if a["results"]["attributes"]["is_potential_spammer"] is True:
-                stats += f" • *User*: `USERxSPAM`\n"
-            elif a["results"]["attributes"]["is_operator"] is True:
-                stats += f" • *User*: `USERxOPERATOR`\n"
-            elif a["results"]["attributes"]["is_agent"] is True:
-                stats += f" • *User*: `USERxAGENT`\n"
-            elif a["results"]["attributes"]["is_whitelisted"] is True:
-                stats += f" • *User*: `USERxWHITELISTED`\n"
-
-            stats += f' • *Type*: `{a["results"]["entity_type"]}`\n'
-            stats += (
-                f' • *Language*: `{a["results"]["language_prediction"]["language"]}`\n'
-            )
-            stats += f' • *Language Probability*: `{a["results"]["language_prediction"]["probability"]}`\n'
-            stats += f"*Spam Prediction*:\n"
-            stats += f' • *Ham Prediction*: `{a["results"]["spam_prediction"]["ham_prediction"]}`\n'
-            stats += f' • *Spam Prediction*: `{a["results"]["spam_prediction"]["spam_prediction"]}`\n'
-            stats += f'*Blacklisted*: `{a["results"]["attributes"]["is_blacklisted"]}`\n'
-            if a["results"]["attributes"]["is_blacklisted"] is True:
-                stats += (
-                    f' • *Reason*: `{a["results"]["attributes"]["blacklist_reason"]}`\n'
-                )
-                stats += f' • *Flag*: `{a["results"]["attributes"]["blacklist_flag"]}`\n'
-            stats += f'*PTID*:\n`{a["results"]["private_telegram_id"]}`\n'
-
-        else:
-            stats = "`cannot reach SpamProtection API`"
-
-    kb = InlineKeyboardMarkup(
-        [
-            [
-                InlineKeyboardButton(
-                    text="Search Again",
-                    switch_inline_query_current_chat=".spb ",
-                ),
-
-            ],
-        ])
-
-    a = "the entity was not found"
-    results = [
-        InlineQueryResultArticle(
-            id=str(uuid4()),
-            title=f"SpamProtection API info of {srdata or a}",
-            input_message_content=InputTextMessageContent(stats, parse_mode=ParseMode.MARKDOWN,
                                                           disable_web_page_preview=True),
             reply_markup=kb
         ),
@@ -370,7 +234,7 @@ def media_query(query: str, update: Update, context: CallbackContext) -> None:
                 [
                     [
                         InlineKeyboardButton(
-                            text="Read More",
+                            text="Full Information",
                             url=aurl,
                         ),
                         InlineKeyboardButton(
