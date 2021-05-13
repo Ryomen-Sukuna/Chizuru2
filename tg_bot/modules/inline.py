@@ -104,9 +104,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
         user = bot.get_chat(int(search))
     except (BadRequest, ValueError):
         user = bot.get_chat(user_id)
-
     chat = update.effective_chat
-    sql.update_user(user.id, user.username)
 
     text = (
         f"<b>• User Information:</b>\n"
@@ -122,6 +120,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
 
     text += f"\n∘ Profile Link: {mention_html(user.id, 'Here')}"
 
+    sql.update_user(user.id, user.username)
     same_chats = sql.get_user_num_chats(user.id)
     if int(same_chats) >= 1:
          text += f"\n∘ Mutual Chats: <code>{num_chats}</code>"
