@@ -1,7 +1,7 @@
 
 from tg_bot.modules.sql.antispam_sql import is_user_gbanned
 from tg_bot.modules.sql.afk_sql import is_afk, check_afk_status
-from tg_bot.modules.sql.userinfo_sql import get_user_me_info, get_user_bio
+from tg_bot.modules.sql.userinfo_sql import get_user_num_chats, get_user_me_info, get_user_bio
 
 #HELTH-BAR - Show User Health -- This Feature From @SaitamaRobot
 def no_by_per(totalhp, percentage):
