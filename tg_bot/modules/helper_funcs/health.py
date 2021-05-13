@@ -1,4 +1,4 @@
-
+from tg_bot import dispatcher
 from tg_bot.modules.sql.antispam_sql import is_user_gbanned
 from tg_bot.modules.sql.users_sql import get_user_num_chats
 from tg_bot.modules.sql.afk_sql import is_afk, check_afk_status
