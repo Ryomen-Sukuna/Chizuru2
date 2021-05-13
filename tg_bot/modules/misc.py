@@ -113,22 +113,22 @@ def info(update: Update, context: CallbackContext):
         return
 
     text = (
-        f"<b>General:</b>\n"
-        f"ID: <code>{user.id}</code>\n"
-        f"First Name: {html.escape(user.first_name)}"
+        f"<b>• User Information:</b>\n"
+        f"\n∘ ID: <code>{user.id}</code>"
+        f"\n∘ First Name: {html.escape(user.first_name)}"
     )
 
     if user.last_name:
-        text += f"\nLast Name: {html.escape(user.last_name)}"
+        text += f"\n∘ Last Name: {html.escape(user.last_name)}"
 
     if user.username:
-        text += f"\nUsername: @{html.escape(user.username)}"
+        text += f"\n∘ Username: @{html.escape(user.username)}"
 
     text += f"\n∘ Profile Link: <a href='tg://openmessage?user_id={user.id}'>Here</a>\n"
 
 
     num_chats = sql.get_user_num_chats(user.id)
-    text += f"\nMutual Chats: <code>{num_chats}</code>"
+    text += f"\n∘ Mutual Chats: <code>{num_chats}</code>"
 
     try:
         if chat.type != 'private':
