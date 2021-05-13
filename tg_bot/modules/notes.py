@@ -1,3 +1,4 @@
+import random
 import re, ast
 from io import BytesIO
 from typing import Optional
@@ -109,6 +110,17 @@ def get(update, context, notename, show_none=True, no_format=False):
                 note.value, VALID_NOTE_FORMATTERS
             )
             if valid_format:
+                if not no_format:
+                    if "%%%" in valid_format:
+                        split = valid_format.split("%%%")
+                        if all(split):
+                            text = random.choice(split)
+                        else:
+                            text = valid_format
+                    else:
+                        text = valid_format
+                else:
+                    text = valid_format
                 text = valid_format.format(
                     first=escape_markdown(message.from_user.first_name),
                     last=escape_markdown(
