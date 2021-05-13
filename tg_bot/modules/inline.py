@@ -16,15 +16,7 @@ from telegram.ext import CallbackContext
 from telegram.utils.helpers import mention_html
 
 import tg_bot.modules.sql.users_sql as sql
-from tg_bot import (
-    OWNER_ID,
-    SUDO_USERS,
-    SUPPORT_USERS,
-    DEV_USERS,
-    SARDEGNA_USERS,
-    WHITELIST_USERS,
-    sw, log
-)
+from tg_bot import sw, log
 from tg_bot.modules.helper_funcs.misc import article
 from tg_bot.modules.helper_funcs.decorators import kiginline
 
@@ -56,21 +48,14 @@ def inlinequery(update: Update, _) -> None:
             "keyboard": ".spb ",
         },
         {
-            "title": "Account info on Kigyo",
+            "title": "Account info",
             "description": "Look up a Telegram account in Kigyo database",
             "message_text": "Click the button below to look up a person in Kigyo database using their Telegram ID",
             "thumb_urL": "https://telegra.ph/file/c85e07b58f5b3158b529a.jpg",
             "keyboard": ".info ",
         },
         {
-            "title": "About",
-            "description": "Know about Kigyo",
-            "message_text": "Click the button below to get to know about Kigyo.",
-            "thumb_urL": "https://telegra.ph/file/c85e07b58f5b3158b529a.jpg",
-            "keyboard": ".about ",
-        },
-        {
-            "title": "Anilist",
+            "title": "Anime",
             "description": "Search anime and manga on AniList.co",
             "message_text": "Click the button below to search anime and manga on AniList.co",
             "thumb_urL": "https://telegra.ph/file/c85e07b58f5b3158b529a.jpg",
@@ -147,30 +132,6 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
 
     text += f"\n• Permanent user link: {mention_html(user.id, 'link')}"
 
-    nation_level_present = False
-
-    if user.id == OWNER_ID:
-        text += f"\n\nThis person is my owner"
-        nation_level_present = True
-    elif user.id in DEV_USERS:
-        text += f"\n\nThis Person is a part of Eagle Union"
-        nation_level_present = True
-    elif user.id in SUDO_USERS:
-        text += f"\n\nThe Nation level of this person is Royal"
-        nation_level_present = True
-    elif user.id in SUPPORT_USERS:
-        text += f"\n\nThe Nation level of this person is Sakura"
-        nation_level_present = True
-    elif user.id in SARDEGNA_USERS:
-        text += f"\n\nThe Nation level of this person is Sardegna"
-        nation_level_present = True
-    elif user.id in WHITELIST_USERS:
-        text += f"\n\nThe Nation level of this person is Neptunia"
-        nation_level_present = True
-
-    if nation_level_present:
-        text += ' [<a href="https://t.me/{}?start=nations">?</a>]'.format(bot.username)
-
     try:
         spamwtc = sw.get_ban(int(user.id))
         if spamwtc:
@@ -225,11 +186,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
         [
             [
                 InlineKeyboardButton(
-                    text="Report Error",
-                    url=f"https://t.me/YorktownEagleUnion",
-                ),
-                InlineKeyboardButton(
-                    text="Search again",
+                    text="Search Again",
                     switch_inline_query_current_chat=".info ",
                 ),
 
@@ -249,57 +206,6 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
 
     update.inline_query.answer(results, cache_time=5)
 
-
-def about(query: str, update: Update, context: CallbackContext) -> None:
-    """Handle the inline query."""
-    query = update.inline_query.query
-    user_id = update.effective_user.id
-    user = context.bot.get_chat(user_id)
-    sql.update_user(user.id, user.username)
-    about_text = f"""
-    Kigyo (@{context.bot.username})
-    Maintained by [Dank-del](t.me/dank_as_fuck)
-    Built with ❤️ using python-telegram-bot v{str(__version__)}
-    Running on Python {python_version()}
-    """
-    results: list = []
-    kb = InlineKeyboardMarkup(
-        [
-            [
-                InlineKeyboardButton(
-                    text="Support",
-                    url=f"https://t.me/YorktownEagleUnion",
-                ),
-                InlineKeyboardButton(
-                    text="Channel",
-                    url=f"https://t.me/KigyoUpdates",
-                ),
-
-            ],
-            [
-                InlineKeyboardButton(
-                    text="GitLab",
-                    url=f"https://www.gitlab.com/Dank-del/EnterpriseALRobot",
-                ),
-                InlineKeyboardButton(
-                    text="GitHub",
-                    url="https://www.github.com/Dank-del/EnterpriseALRobot",
-                ),
-            ],
-        ])
-
-    results.append(
-
-        InlineQueryResultArticle
-            (
-            id=str(uuid4()),
-            title=f"About Kigyo (@{context.bot.username})",
-            input_message_content=InputTextMessageContent(about_text, parse_mode=ParseMode.MARKDOWN,
-                                                          disable_web_page_preview=True),
-            reply_markup=kb
-        )
-    )
-    update.inline_query.answer(results)
 
 
 def spb(query: str, update: Update, context: CallbackContext) -> None:
@@ -363,11 +269,7 @@ def spb(query: str, update: Update, context: CallbackContext) -> None:
         [
             [
                 InlineKeyboardButton(
-                    text="Report Error",
-                    url=f"https://t.me/YorktownEagleUnion",
-                ),
-                InlineKeyboardButton(
-                    text="Search again",
+                    text="Search Again",
                     switch_inline_query_current_chat=".spb ",
                 ),
 
@@ -507,11 +409,7 @@ def media_query(query: str, update: Update, context: CallbackContext) -> None:
             [
                 [
                     InlineKeyboardButton(
-                        text="Report error",
-                        url="t.me/YorktownEagleUnion",
-                    ),
-                    InlineKeyboardButton(
-                        text="Search again",
+                        text="Search Again",
                         switch_inline_query_current_chat=".anilist ",
                     ),
 
