@@ -309,8 +309,8 @@ def reply_filter(update, context):
                             text = filt.reply_text
                     else:
                         text = filt.reply_text
-                    if text.startswith("sticker:") and text.endswith(":sticker"):
-                        sticker_id = text.replace("sticker:", "").replace(":sticker", "")
+                    if (text.startswith("~!") or text.startswith(" ~!")) and (text.endswith("!~") or text.endswith("!~ ")):
+                        sticker_id = text.replace("~!", "").replace("!~", "").replace(" ", "")
                         try:
                             context.bot.send_sticker(
                                 chat.id,
@@ -329,22 +329,6 @@ def reply_filter(update, context):
                                 )
                                 return
                             else:
-                                log.exception("Error in filters: " + excp.message)
-                                return
-                    if text.startswith("gif:") and text.endswith(":gif"):
-                        gif_id = text.replace("gif:", "").replace(":gif", "")
-                        try:
-                            context.bot.send_animation(
-                                chat.id,
-                                gif_id,
-                                reply_to_message_id=message.message_id,
-                            )
-                            return
-                        except BadRequest as excp:
-                                context.bot.send_message(
-                                    chat.id,
-                                    "Message couldn't be sent, Is the gif id valid?",
-                                )
                                 log.exception("Error in filters: " + excp.message)
                                 return
                     valid_format = escape_invalid_curly_brackets(
