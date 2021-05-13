@@ -346,6 +346,11 @@ KISS_TEMPLATES = [
     "{user1} {kiss} {user2} With Kindness."
 ]
 
+
+HUG = ("Hugs", "Hugged", "Kissed", "Pinches")
+KISS = ("Lip Kissed", "Neck Kissed", "Head Kissed", "Kissed", "Pinches")
+
+
 ABUSE_STRINGS = [
     "Fuck off",
     "Stfu go fuck yourself",
