@@ -39,7 +39,7 @@ from platform import python_version
 from spamprotection.sync import SPBClient
 from spamprotection.errors import HostDownError
 from tg_bot.modules.helper_funcs.decorators import kigcmd
-import tg_bot.modules.helper_funcs.helth as hp
+import tg_bot.modules.helper_funcs.health as hp
 from tg_bot.modules.helper_funcs.get_time import get_time as get_readable_time
 client = SPBClient()
 
