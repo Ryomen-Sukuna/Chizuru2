@@ -1,47 +1,32 @@
 import html
-import re, os
 import time
-from typing import List
-import git
 import requests
-from io import BytesIO
-from telegram import Update, MessageEntity, ParseMode
+import datetime
+
 from telegram.error import BadRequest
+from telegram.utils.helpers import mention_html
+from telegram import Update, MessageEntity, ParseMode
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CommandHandler, Filters, CallbackContext
-from telegram.utils.helpers import mention_html, escape_markdown
-from subprocess import Popen, PIPE
 
 from tg_bot import (
     dispatcher,
     OWNER_ID,
+    DEV_USERS,
     SUDO_USERS,
     SUPPORT_USERS,
-    DEV_USERS,
-    SARDEGNA_USERS,
     WHITELIST_USERS,
-    INFOPIC,
-    sw,
     StartTime
 )
 from tg_bot.__main__ import STATS, USER_INFO, TOKEN
-from tg_bot.modules.sql import SESSION
 from tg_bot.modules.disable import DisableAbleCommandHandler
 from tg_bot.modules.helper_funcs.chat_status import user_admin, sudo_plus
 from tg_bot.modules.helper_funcs.extraction import extract_user
 import tg_bot.modules.sql.users_sql as sql
 from tg_bot.modules.language import gs
-from telegram import __version__ as ptbver, InlineKeyboardMarkup, InlineKeyboardButton
-from pyrogram import __version__ as pyrover
-from psutil import cpu_percent, virtual_memory, disk_usage, boot_time
-import datetime
-import platform
-from platform import python_version
-from spamprotection.sync import SPBClient
-from spamprotection.errors import HostDownError
 from tg_bot.modules.helper_funcs.decorators import kigcmd
 import tg_bot.modules.helper_funcs.health as hp
 from tg_bot.modules.helper_funcs.get_time import get_time as get_readable_time
-client = SPBClient()
 
 MARKDOWN_HELP = f"""
 Markdown is a very powerful formatting tool supported by telegram. {dispatcher.bot.first_name} has some enhancements, to make sure that \
@@ -219,12 +204,6 @@ def echo(update: Update, _):
 
     message.delete()
 
-
-def shell(command):
-    process = Popen(command, stdout=PIPE, shell=True, stderr=PIPE)
-    stdout, stderr = process.communicate()
-    return (stdout, stderr)
-
 @kigcmd(command='markdownhelp', filters=Filters.chat_type.private)
 def markdown_help(update: Update, _):
     chat = update.effective_chat
@@ -238,7 +217,7 @@ def markdown_help(update: Update, _):
         "[button2](buttonurl://google.com:same)"
     )
 
-
+@sudo_plus
 @kigcmd(command='ping')
 def ping(update: Update, _):
     msg = update.effective_message
