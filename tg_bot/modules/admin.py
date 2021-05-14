@@ -112,7 +112,7 @@ def promote(update: Update, context: CallbackContext) -> str:
                         [
                            InlineKeyboardButton(
                                  text="Demote", 
-                                 callback_data="admim_demote={user_id}"
+                                 callback_data=f"admim_demote={user_id}"
                            ),
                            InlineKeyboardButton(
                                  text="Admin Cache", 
@@ -220,7 +220,7 @@ def promote(update: Update, context: CallbackContext) -> str:
                         [
                            InlineKeyboardButton(
                                  text="Demote", 
-                                 callback_data="admim_demote={user_id}"
+                                 callback_data=f"admim_demote={user_id}"
                            ),
                            InlineKeyboardButton(
                                  text="Admin Cache", 
@@ -303,7 +303,7 @@ def demote(update: Update, context: CallbackContext) -> str:
                         [
                            InlineKeyboardButton(
                                  text="Promote", 
-                                 callback_data="admim_promote={user_id}"
+                                 callback_data=f"admim_promote={user_id}"
                            ),
                            InlineKeyboardButton(
                                  text="Admin Cache", 
