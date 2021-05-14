@@ -105,7 +105,7 @@ def promote(update: Update, context: CallbackContext) -> str:
 
     bot.sendMessage(
         chat.id,
-        f"<b>{mention_html(user_id, member.user.first_name or user_id)</b> was promoted with full rights by <b>{mention_html(message.from_user.id, message.from_user.first_name or message.from_user.id)}</b> in <b>{chat.title}</b>!",
+        f"<b>{mention_html(user_id, member.user.first_name or user_id)}</b> was promoted with full rights by <b>{mention_html(message.from_user.id, message.from_user.first_name or message.from_user.id)}</b> in <b>{chat.title}</b>!",
         parse_mode=ParseMode.HTML,
         reply_markup=InlineKeyboardMarkup(
                       [
@@ -213,7 +213,7 @@ def promote(update: Update, context: CallbackContext) -> str:
 
     bot.sendMessage(
         chat.id,
-        f"<b>{mention_html(user_id, member.user.first_name or user_id)</b> was promoted by <b>{mention_html(message.from_user.id, message.from_user.first_name or message.from_user.id)}</b> in <b>{chat.title}</b>!",
+        f"<b>{mention_html(user_id, member.user.first_name or user_id)}</b> was promoted by <b>{mention_html(message.from_user.id, message.from_user.first_name or message.from_user.id)}</b> in <b>{chat.title}</b>!",
         parse_mode=ParseMode.HTML,
         reply_markup=InlineKeyboardMarkup(
                       [
@@ -296,7 +296,7 @@ def demote(update: Update, context: CallbackContext) -> str:
 
         bot.sendMessage(
             chat.id,
-            f"<b>{mention_html(user_id, member.user.first_name or user_id)</b> was demoted by <b>{mention_html(message.from_user.id, message.from_user.first_name or message.from_user.id)}</b> in <b>{chat.title}</b>!",
+            f"<b>{mention_html(user_id, member.user.first_name or user_id)}</b> was demoted by <b>{mention_html(message.from_user.id, message.from_user.first_name or message.from_user.id)}</b> in <b>{chat.title}</b>!",
             parse_mode=ParseMode.HTML,
             reply_markup=InlineKeyboardMarkup(
                       [
@@ -741,7 +741,7 @@ def admim_button(update: Update, context: CallbackContext):
                 message.reply_text(f"failed to promote: \n{br.message}")
                 return
             query.message.edit_text(
-                text=f"<b>{mention_html(user_id, member.user.first_name or user_id)</b> was promoted by <b>{mention_html(query.from_user.id, query.from_user.first_name or query.from_user.id)}</b> in <b>{chat.title}</b>!",
+                text=f"<b>{mention_html(user_id, member.user.first_name or user_id)}</b> was promoted by <b>{mention_html(query.from_user.id, query.from_user.first_name or query.from_user.id)}</b> in <b>{chat.title}</b>!",
                 parse_mode=ParseMode.HTML,
                 disable_web_page_preview=True,
                 timeout=60,
@@ -791,7 +791,7 @@ def admim_button(update: Update, context: CallbackContext):
                 message.reply_text(f"failed to demote: \n{br.message}")
                 return
             query.message.edit_text(
-                text=f"<b>{mention_html(user_id, member.user.first_name or user_id)</b> was demoted by <b>{mention_html(query.from_user.id, query.from_user.first_name or query.from_user.id)}</b> in <b>{chat.title}</b>!",
+                text=f"<b>{mention_html(user_id, member.user.first_name or user_id)}</b> was demoted by <b>{mention_html(query.from_user.id, query.from_user.first_name or query.from_user.id)}</b> in <b>{chat.title}</b>!",
                 parse_mode=ParseMode.HTML,
                 disable_web_page_preview=True,
                 timeout=60,
