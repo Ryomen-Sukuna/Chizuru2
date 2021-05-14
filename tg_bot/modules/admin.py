@@ -1,6 +1,6 @@
 import html
 
-from telegram import ParseMode, Update
+from telegram import ParseMode, Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import BadRequest
 from telegram.ext import CallbackContext, Filters
 from telegram.utils.helpers import mention_html, mention_markdown
