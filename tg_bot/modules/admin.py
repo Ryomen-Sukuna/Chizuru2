@@ -709,7 +709,8 @@ def admim_button(update: Update, context: CallbackContext):
             ADMIN_CACHE.pop(update.effective_chat.id)
         except:
             pass
-        query.answer("Admin Cache Refreshed!")
+        context.bot.answer_callback_query(query.id, text="Admin Cache Refreshed!")
+        return
 
     elif query_match == "admim_promote":
         member = chat.get_member(int(user_id))
