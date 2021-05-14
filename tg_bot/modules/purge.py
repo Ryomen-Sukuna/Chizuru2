@@ -30,35 +30,26 @@ async def purge_messages(event):
 
     count = 0
     messages = []
-    message_id = reply_msg.id
-    delete_to = event.message.id
     reason = event.text.split(" ", 1)
-
-    messages.append(event.reply_to_msg_id)
-    for msg_id in range(message_id, delete_to + 1):
-        messages.append(msg_id)
-        if len(messages) == 100:
-            await event.client.delete_messages(event.chat_id, messages)
-            messages = []
-
+    chat = await event.get_input_chat()
 
     try:
         await event.client.delete_messages(event.chat_id, event.message.id)
         messages.append(event.reply_to_msg_id)
-        for m_id in range(delete_to, message_id - 1, -1):
-            messages.append(m_id)
-            count += 1
-            if len(messages) == 100:
-                await event.client.delete_messages(event.chat_id, messages)
-                messages = []
+        async for msg in event.client.iter_messages(
+             chat, min_id=event.reply_to_msg_id
+        ):
+             messages.append(msg)
+             count += 1
+             if len(messages) == 100:
+                 await event.client.delete_messages(chat, messages)
+                 messages = []
 
-        try:
+        if messages:
             await event.client.delete_messages(event.chat_id, messages)
-        except:
-            pass
 
-        time_ = time.perf_counter() - start
-        text = f"Purged {count} Messages In {time_:0.2f} Seconds."
+        end = time.perf_counter() - start
+        text = f"Purged {count} Messages In {end:0.2f} Seconds."
         if len(reason) > 1:
            text += "\n\n**Purged Reason:** \n" + reason[1]
 
@@ -102,7 +93,7 @@ def get_help(chat):
 
 
 PURGE_HANDLER = purge_messages, events.NewMessage(pattern="^[!/]purge ?(.*)")
-DEL_HANDLER = delete_messages, events.NewMessage(pattern="^[!/]del ?(.*)")
+DEL_HANDLER = delete_messages, events.NewMessage(pattern=["^[!/]del", "^[!/]delete"])
 
 client.add_event_handler(*PURGE_HANDLER)
 client.add_event_handler(*DEL_HANDLER)
