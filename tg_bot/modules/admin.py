@@ -21,8 +21,9 @@ from tg_bot.modules.helper_funcs.alternate import send_message
 from tg_bot import kp, get_entity
 from pyrogram import Client, filters
 from pyrogram.types import Chat, User
-from tg_bot.modules.helper_funcs.decorators import kigcmd
-
+from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback
+from tg_bot.modules.helper_funcs.admin_rights import user_can_changeinfo
+ 
 
 @connection_status
 @bot_admin
@@ -68,6 +69,10 @@ def promote(update: Update, context: CallbackContext) -> str:
         message.reply_text("How am I meant to promote someone that's already an admin?")
         return
 
+    if len(title) > 16:
+        message.reply_text("Admin titles can only be 0-16 characters long, and cannot contain emoji.")
+        return
+
     # set same perms as bot - bot can't assign higher perms than itself!
     bot_member = chat.get_member(bot.id)
 
@@ -92,17 +97,30 @@ def promote(update: Update, context: CallbackContext) -> str:
             message.reply_text("An error occured while promoting.")
         return
 
-    try:
-        if title:
-          if len(title) < 17:
-              bot.set_chat_administrator_custom_title(chat.id, user_id, title)
-    except:
-        pass
+    if title:
+        try:
+            bot.set_chat_administrator_custom_title(chat.id, user_id, title)
+        except BadRequest:
+            message.reply_text("Admin titles can only be 0-16 characters long, and cannot contain emoji.")
 
     bot.sendMessage(
         chat.id,
-        f"<b>{user_member.user.first_name or user_id}</b> was promoted by <b>{message.from_user.first_name}</b> in <b>{chat.title}</b>",
+        f"<b>{mention_html(user_id, member.user.first_name or user_id)</b> was promoted with full rights by <b>{mention_html(message.from_user.id, message.from_user.first_name or message.from_user.id)}</b> in <b>{chat.title}</b>!",
         parse_mode=ParseMode.HTML,
+        reply_markup=InlineKeyboardMarkup(
+                      [
+                        [
+                           InlineKeyboardButton(
+                                 text="Demote", 
+                                 callback_data="admim_demote={user_id}"
+                           ),
+                           InlineKeyboardButton(
+                                 text="Admin Cache", 
+                                 callback_data="admim_realod"
+                           ),
+                        ],
+                      ]
+                ),
     )
 
     log_message = (
@@ -159,6 +177,10 @@ def promote(update: Update, context: CallbackContext) -> str:
         message.reply_text("I can't promote myself! Get an admin to do it for me.")
         return
 
+    if len(title) > 16:
+        message.reply_text("Admin titles can only be 0-16 characters long, and cannot contain emoji.")
+        return
+
     # set same perms as bot - bot can't assign higher perms than itself!
     bot_member = chat.get_member(bot.id)
 
@@ -183,17 +205,30 @@ def promote(update: Update, context: CallbackContext) -> str:
             message.reply_text("An error occured while promoting.")
         return
 
-    try:
-        if title:
-          if len(title) < 17:
-              bot.set_chat_administrator_custom_title(chat.id, user_id, title)
-    except:
-        pass
+    if title:
+        try:
+            bot.set_chat_administrator_custom_title(chat.id, user_id, title)
+        except BadRequest:
+            message.reply_text("Admin titles can only be 0-16 characters long, and cannot contain emoji.")
 
     bot.sendMessage(
         chat.id,
-        f"<b>{user_member.user.first_name or user_id}</b> was promoted by <b>{message.from_user.first_name}</b> in <b>{chat.title}</b>",
+        f"<b>{mention_html(user_id, member.user.first_name or user_id)</b> was promoted by <b>{mention_html(message.from_user.id, message.from_user.first_name or message.from_user.id)}</b> in <b>{chat.title}</b>!",
         parse_mode=ParseMode.HTML,
+        reply_markup=InlineKeyboardMarkup(
+                      [
+                        [
+                           InlineKeyboardButton(
+                                 text="Demote", 
+                                 callback_data="admim_demote={user_id}"
+                           ),
+                           InlineKeyboardButton(
+                                 text="Admin Cache", 
+                                 callback_data="admim_realod"
+                           ),
+                        ],
+                      ]
+                ),
     )
 
     log_message = (
@@ -261,8 +296,22 @@ def demote(update: Update, context: CallbackContext) -> str:
 
         bot.sendMessage(
             chat.id,
-            f"<b>{user_member.user.first_name or user_id or None}</b> was demoted by <b>{message.from_user.first_name or None}</b> in <b>{chat.title or None}</b>",
+            f"<b>{mention_html(user_id, member.user.first_name or user_id)</b> was demoted by <b>{mention_html(message.from_user.id, message.from_user.first_name or message.from_user.id)}</b> in <b>{chat.title}</b>!",
             parse_mode=ParseMode.HTML,
+            reply_markup=InlineKeyboardMarkup(
+                      [
+                        [
+                           InlineKeyboardButton(
+                                 text="Promote", 
+                                 callback_data="admim_promote={user_id}"
+                           ),
+                           InlineKeyboardButton(
+                                 text="Admin Cache", 
+                                 callback_data="admim_realod"
+                           ),
+                        ],
+                      ]
+                ),
         )
 
         log_message = (
@@ -282,7 +331,7 @@ def demote(update: Update, context: CallbackContext) -> str:
 
 
 @user_admin
-@kigcmd(command="admincache", can_disable=False)
+@kigcmd(command=["admincache", "reload"], can_disable=False)
 def refresh_admin(update, _):
     ADMIN_CACHE.pop(update.effective_chat.id)
     update.effective_message.reply_text("Admins cache refreshed!")
@@ -447,10 +496,154 @@ def invite(update: Update, context: CallbackContext):
         )
 
 
-ZWS = "\u200B"
+@bot_admin
+@user_admin
+@kigcmd(command="setgtitle", can_disable=False)
+def chattitle(update, context):
+    chat = update.effective_chat
+    user = update.effective_user
+    message = update.effective_message
+    bot, args = context.bot, context.args
+
+    if user_can_changeinfo(chat, user) is False:
+        message.reply_text("You don't have the necessary rights to change group info!")
+        return
+
+    title = " ".join(args)
+    if not title:
+        message.reply_text("Setting blank title doesn't do anything!")
+        return
+
+    try:
+        bot.set_chat_title(int(chat.id), str(title))
+        message.reply_text(
+            f"Successfully set <b>{title}</b> as new chat title!",
+            parse_mode=ParseMode.HTML,
+        )
+    except BadRequest as excp:
+        message.reply_text(f"Error! {excp.message}.")
+        return
+
+
+@bot_admin
+@user_admin
+@kigcmd(command="delgpic", can_disable=False)
+def delchatpic(update, context):
+    chat = update.effective_chat
+    user = update.effective_user
+    message = update.effective_message
+
+    if user_can_changeinfo(chat, user) is False:
+        message.reply_text("You don't have the necessary rights to change group info!")
+        return
+    try:
+        context.bot.delete_chat_photo(int(chat.id))
+        message.reply_text("Successfully deleted chat's profile photo!")
+    except BadRequest as excp:
+        message.reply_text(f"Error! {excp.message}.")
+        return
+
+
+@bot_admin
+@user_admin
+@kigcmd(command="setgpic", can_disable=False)
+def chatpic(update: Update, context: CallbackContext):
+    chat = update.effective_chat
+    user = update.effective_user
+    message = update.effective_message
+
+    if user_can_changeinfo(chat, user) is False:
+        message.reply_text("You don't have the necessary rights to change group info!")
+        return
+
+    if message.reply_to_message:
+        if message.reply_to_message.photo:
+            pic_id = message.reply_to_message.photo[-1].file_id
+        elif message.reply_to_message.document:
+            pic_id = message.reply_to_message.document.file_id
+        else:
+            message.reply_text("You can only set some photo as chat pic!")
+            return
+        dlmsg = message.reply_text("Just a sec...")
+        tpic = context.bot.get_file(pic_id)
+        tpic.download("gpic.png")
+        try:
+            with open("gpic.png", "rb") as chatp:
+                context.bot.set_chat_photo(int(chat.id), photo=chatp)
+                message.reply_text("Successfully set new chatpic!")
+        except BadRequest as excp:
+            message.reply_text(f"Error! {excp.message}")
+        finally:
+            dlmsg.delete()
+            if os.path.isfile("gpic.png"):
+                os.remove("gpic.png")
+    else:
+        message.reply_text("Reply to some photo or file to set new chat pic!")
+
+
+@bot_admin
+@user_admin
+@kigcmd(command="setsticker", can_disable=False)
+def gstickerset(update, context):
+    chat = update.effective_chat
+    user = update.effective_user
+    message = update.effective_message
+
+    if user_can_changeinfo(chat, user) is False:
+        message.reply_text("You don't have the necessary rights to change group info!")
+        return
+
+    if message.reply_to_message:
+        if not message.reply_to_message.sticker:
+            message.reply_text("You need to reply to some sticker to set chat sticker set!")
+            return
+
+        stickers = message.reply_to_message.sticker.set_name
+        try:
+            context.bot.set_chat_sticker_set(chat.id, stickers)
+            message.reply_text(f"Successfully set new group stickers in {chat.title}!")
+        except BadRequest as excp:
+            if excp.message == "Participants_too_few":
+                message.reply_text("Sorry, due to telegram restrictions chat needs to have minimum 100 members before they can have group stickers!")
+                return
+
+            message.reply_text(f"Error! {excp.message}.")
+
+    else:
+        message.reply_text("You need to reply to some sticker to set chat sticker set!")
+
+
+@bot_admin
+@user_admin
+@kigcmd(command=["setdescription", "setdesc"], can_disable=False)
+def set_desc(update, context):
+    chat = update.effective_chat
+    user = update.effective_user
+    message = update.effective_message
+
+    if user_can_changeinfo(chat, user) is False:
+        message.reply_text("You don't have the necessary rights to change group info!")
+        return
+
+    tesc = message.text.split(None, 1)
+    if len(tesc) >= 2:
+        desc = tesc[1]
+    else:
+        message.reply_text("Setting blank description doesn't do anything!")
+        return
+    try:
+        if len(desc) > 255:
+            message.reply_text("Description must needs to be under 255 characters!")
+            return
+        context.bot.set_chat_description(chat.id, desc)
+        message.reply_text(f"Successfully updated chat description in {chat.title}!")
+    except BadRequest as excp:
+        message.reply_text(f"Error! {excp.message}.")
+
 
 
 def _generate_sexy(entity, ping):
+    ZWS = "\u200B"
     text = entity.first_name
     if entity.last_name:
         text += f" {entity.last_name}"
@@ -476,9 +669,9 @@ def _generate_sexy(entity, ping):
         sexy_text += " <code>[SCAM]</code>"
     return sexy_text
 
-
 @kp.on_message(filters.command(["admin", "admins"], prefixes=["/", "!"]))
 async def admins(client, message):
+    ZWS = "\u200B"
     chat, entity_client = message.chat, client
     command = message.command
     command.pop(0)
@@ -498,6 +691,128 @@ async def admins(client, message):
             text_ping += f" // {html.escape(i.title)}"
     reply = await message.reply_text(text_unping, disable_web_page_preview=True)
     await reply.edit_text(text_ping, disable_web_page_preview=True)
+
+
+
+@kigcallback(pattern=r"admim_.*")
+def admim_button(update: Update, context: CallbackContext):
+    chat = update.effective_chat
+    query = update.callback_query
+    message = update.effective_message
+
+    splitter = query.data.split("=")
+    query_match = splitter[0]
+    user_id = splitter[1]
+
+    if query_match == "admim_reload":
+          try:
+              ADMIN_CACHE.pop(update.effective_chat.id)
+          except:
+              pass
+          query.answer("Admin Cache Refreshed!")
+
+    elif query_match == "admim_promote":
+        member = chat.get_member(int(user_id))
+        if member.status == "creator":
+           query.answer("That Person Is A Chat Creator! \nHow am I meant to promote him?", show_alert=True)
+           return
+        if member.status == "kicked" or member.status == "left":
+           query.answer("That Person Is Not Even A Member In This Chat! \nHow am I meant to promote him?", show_alert=True)
+           return
+        if member.status == "administrator":
+           query.answer("That Person Is Already An Administrator! \nHow am I meant to promote him?", show_alert=True)
+           return
+        if member.status != "administrator":
+            # set same perms as bot - bot can't assign higher perms than itself!
+            bot = chat.get_member(context.bot.id)
+            try:
+                context.bot.promoteChatMember(
+                     chat.id,
+                     user_id,
+                     can_change_info=bot.can_change_info,
+                     can_post_messages=bot.can_post_messages,
+                     can_edit_messages=bot.can_edit_messages,
+                     can_delete_messages=bot.can_delete_messages,
+                     can_invite_users=bot.can_invite_users,
+                     can_restrict_members=bot.can_restrict_members,
+                     can_pin_messages=bot.can_pin_messages,
+                )
+            except BadRequest as br:
+                message.reply_text(f"failed to promote: \n{br.message}")
+                return
+            query.message.edit_text(
+                text=f"<b>{mention_html(user_id, member.user.first_name or user_id)</b> was promoted by <b>{mention_html(query.from_user.id, query.from_user.first_name or query.from_user.id)}</b> in <b>{chat.title}</b>!",
+                parse_mode=ParseMode.HTML,
+                disable_web_page_preview=True,
+                timeout=60,
+                reply_markup=InlineKeyboardMarkup(
+                      [
+                        [
+                           InlineKeyboardButton(
+                                 text="Demote", 
+                                 callback_data="admim_demote={user_id}"
+                           ),
+                           InlineKeyboardButton(
+                                 text="Admin Cache", 
+                                 callback_data="admim_realod"
+                           ),
+                        ],
+                      ]
+                ),
+            )
+
+    elif query_match == "admim_demote":
+        member = chat.get_member(int(user_id))
+        if member.status == "creator":
+           query.answer("That Person Is A Chat Creator! \nHow am I meant to demote him?", show_alert=True)
+           return
+        if member.status == "kicked" or member.status == "left":
+           query.answer("That Person Is Not Even A Member In This Chat! \nHow am I meant to demote him?", show_alert=True)
+           return
+        if member.status != "administrator":
+           query.answer("That Person Is Not Even An Administrator! \nHow am I meant to demote him?", show_alert=True)
+           return
+        if member.status == "administrator":
+            try:
+                context.bot.promoteChatMember(
+                     chat.id,
+                     user_id,
+                     can_change_info=False,
+                     can_post_messages=False,
+                     can_edit_messages=False,
+                     can_delete_messages=False,
+                     can_invite_users=False,
+                     can_restrict_members=False,
+                     can_pin_messages=False,
+                     can_promote_members=False,
+                     can_manage_voice_chats=False,
+                )
+            except BadRequest as br:
+                message.reply_text(f"failed to demote: \n{br.message}")
+                return
+            query.message.edit_text(
+                text=f"<b>{mention_html(user_id, member.user.first_name or user_id)</b> was demoted by <b>{mention_html(query.from_user.id, query.from_user.first_name or query.from_user.id)}</b> in <b>{chat.title}</b>!",
+                parse_mode=ParseMode.HTML,
+                disable_web_page_preview=True,
+                timeout=60,
+                reply_markup=InlineKeyboardMarkup(
+                      [
+                        [
+                           InlineKeyboardButton(
+                                 text="Promote", 
+                                 callback_data="admim_promote={user_id}"
+                           ),
+                           InlineKeyboardButton(
+                                 text="Admin Cache", 
+                                 callback_data="admim_realod"
+                           ),
+                        ],
+                      ]
+                ),
+            )
+
+
+    context.bot.answer_callback_query(query.id)
 
 def get_help(chat):
     from tg_bot.modules.language import gs
