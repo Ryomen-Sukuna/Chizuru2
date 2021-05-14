@@ -1,3 +1,4 @@
+import os
 import html
 
 from telegram import ParseMode, Update, InlineKeyboardMarkup, InlineKeyboardButton
@@ -709,19 +710,18 @@ def admim_button(update: Update, context: CallbackContext):
             ADMIN_CACHE.pop(update.effective_chat.id)
         except:
             pass
-        context.bot.answer_callback_query(query.id, text="Admin Cache Refreshed!")
-        # return
+        query.answer("Admin Cache Refreshed!", show_alert=True)
 
     elif query_match == "admim_promote":
         member = chat.get_member(int(user_id))
         if member.status == "creator":
-           query.answer("That Person Is A Chat Creator! \nHow am I meant to promote him?", show_alert=True)
+           query.answer("This Person Is A Chat Creator! How am I meant to promote him?", show_alert=True)
            return
         if member.status == "kicked" or member.status == "left":
-           query.answer("That Person Is Not Even A Member In This Chat! \nHow am I meant to promote him?", show_alert=True)
+           query.answer("This Person Is Not Even A Member In This Chat! How am I meant to promote him?", show_alert=True)
            return
         if member.status == "administrator":
-           query.answer("That Person Is Already An Administrator! \nHow am I meant to promote him?", show_alert=True)
+           query.answer("This Person Is Already An Administrator! How am I meant to promote him?", show_alert=True)
            return
         if member.status != "administrator":
             # set same perms as bot - bot can't assign higher perms than itself!
@@ -765,13 +765,13 @@ def admim_button(update: Update, context: CallbackContext):
     elif query_match == "admim_demote":
         member = chat.get_member(int(user_id))
         if member.status == "creator":
-           query.answer("That Person Is A Chat Creator! \nHow am I meant to demote him?", show_alert=True)
+           query.answer("This Person Is A Chat Creator! How am I meant to demote him?", show_alert=True)
            return
         if member.status == "kicked" or member.status == "left":
-           query.answer("That Person Is Not Even A Member In This Chat! \nHow am I meant to demote him?", show_alert=True)
+           query.answer("This Person Is Not Even A Member In This Chat! How am I meant to demote him?", show_alert=True)
            return
         if member.status != "administrator":
-           query.answer("That Person Is Not Even An Administrator! \nHow am I meant to demote him?", show_alert=True)
+           query.answer("This Person Is Not Even An Administrator! How am I meant to demote him?", show_alert=True)
            return
         if member.status == "administrator":
             try:
