@@ -116,7 +116,7 @@ def promote(update: Update, context: CallbackContext) -> str:
                            ),
                            InlineKeyboardButton(
                                  text="Admin Cache", 
-                                 callback_data="admim_realod"
+                                 callback_data="admim_realod={user_id}"
                            ),
                         ],
                       ]
@@ -224,7 +224,7 @@ def promote(update: Update, context: CallbackContext) -> str:
                            ),
                            InlineKeyboardButton(
                                  text="Admin Cache", 
-                                 callback_data="admim_realod"
+                                 callback_data="admim_realod={user_id}"
                            ),
                         ],
                       ]
@@ -307,7 +307,7 @@ def demote(update: Update, context: CallbackContext) -> str:
                            ),
                            InlineKeyboardButton(
                                  text="Admin Cache", 
-                                 callback_data="admim_realod"
+                                 callback_data="admim_realod={user_id}"
                            ),
                         ],
                       ]
@@ -693,20 +693,25 @@ async def admins(client, message):
     await reply.edit_text(text_ping, disable_web_page_preview=True)
 
 
-
+# Callback Data For Promote / Demote
 @kigcallback(pattern=r"admim_.*")
 def admim_button(update: Update, context: CallbackContext):
-  chat = update.effective_chat
-  query = update.callback_query
-  message = update.effective_message
+    chat = update.effective_chat
+    query = update.callback_query
+    message = update.effective_message
 
-  if query.data != "admim_reload":
     # Split query_match & user_id 
     splitter = query.data.split("=")
     query_match = splitter[0]
     user_id = splitter[1]
+    if query_match == "admim_reload":
+        try:
+            ADMIN_CACHE.pop(update.effective_chat.id)
+        except:
+            pass
+        query.answer("Admin Cache Refreshed!")
 
-    if query_match == "admim_promote":
+    elif query_match == "admim_promote":
         member = chat.get_member(int(user_id))
         if member.status == "creator":
            query.answer("That Person Is A Chat Creator! \nHow am I meant to promote him?", show_alert=True)
@@ -749,7 +754,7 @@ def admim_button(update: Update, context: CallbackContext):
                            ),
                            InlineKeyboardButton(
                                  text="Admin Cache", 
-                                 callback_data="admim_realod"
+                                 callback_data="admim_realod={user_id}"
                            ),
                         ],
                       ]
@@ -799,20 +804,14 @@ def admim_button(update: Update, context: CallbackContext):
                            ),
                            InlineKeyboardButton(
                                  text="Admin Cache", 
-                                 callback_data="admim_realod"
+                                 callback_data="admim_realod={user_id}"
                            ),
                         ],
                       ]
                 ),
             )
-  elif query.data == "admim_reload":
-        try:
-            ADMIN_CACHE.pop(update.effective_chat.id)
-        except:
-            pass
-        query.answer("Admin Cache Refreshed!")
 
-  context.bot.answer_callback_query(query.id)
+    context.bot.answer_callback_query(query.id)
 
 
 
