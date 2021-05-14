@@ -73,8 +73,8 @@ async def demons(event):
            [Button.inline('Yes', data='demon_yes'),],
            [Button.inline('No', data='demon_no'),],
         ]
-        dimon = f"Found **{del_u} - Demon** In This Chat!\n\nWould You Like To Kill That Demon ?"
-        dimons = f"Found **{del_u} - Demons** In This Chat!\n\nWould You Like To Kill All That Demons ?"
+        dimon = f"Found **{del_u} - Demon** In This Chat!\n\nWould You Like To Hunt That Demon ?"
+        dimons = f"Found **{del_u} - Demons** In This Chat!\n\nWould You Like To Hunt Them All ?"
         demons = dimons if del_u > 1 else dimon
         await X.edit(
             demons,
@@ -127,7 +127,7 @@ async def dimonhandler(event):
 
 
 
-DEMONS = demons, events.NewMessage(pattern=f"^[!/]demons")
+DEMONS = demons, events.NewMessage(pattern=["^[!/]demons ?(.*)"])
 client.add_event_handler(*DEMONS)
 
 
