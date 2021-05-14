@@ -704,7 +704,7 @@ def admim_button(update: Update, context: CallbackContext):
     query_match = splitter[0]
     user_id = splitter[1]
 
-    if query_match == "admim_reload":
+    if query.data == "admim_reload":
           try:
               ADMIN_CACHE.pop(update.effective_chat.id)
           except:
