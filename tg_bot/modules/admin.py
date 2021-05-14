@@ -696,17 +696,11 @@ async def admins(client, message):
 
 @kigcallback(pattern=r"admim_.*")
 def admim_button(update: Update, context: CallbackContext):
-    chat = update.effective_chat
-    query = update.callback_query
-    message = update.effective_message
+  chat = update.effective_chat
+  query = update.callback_query
+  message = update.effective_message
 
-    if query.data == "admim_reload":
-          try:
-              ADMIN_CACHE.pop(update.effective_chat.id)
-          except:
-              pass
-          query.answer("Admin Cache Refreshed!")
-
+  if query.data != "admim_reload":
     # Split query_match & user_id 
     splitter = query.data.split("=")
     query_match = splitter[0]
@@ -811,8 +805,14 @@ def admim_button(update: Update, context: CallbackContext):
                       ]
                 ),
             )
+  elif query.data == "admim_reload":
+        try:
+            ADMIN_CACHE.pop(update.effective_chat.id)
+        except:
+            pass
+        query.answer("Admin Cache Refreshed!")
 
-    context.bot.answer_callback_query(query.id)
+  context.bot.answer_callback_query(query.id)
 
 
 
