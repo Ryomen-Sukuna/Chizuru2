@@ -712,7 +712,7 @@ def admim_button(update: Update, context: CallbackContext):
     query_match = splitter[0]
     user_id = splitter[1]
 
-    elif query_match == "admim_promote":
+    if query_match == "admim_promote":
         member = chat.get_member(int(user_id))
         if member.status == "creator":
            query.answer("That Person Is A Chat Creator! \nHow am I meant to promote him?", show_alert=True)
