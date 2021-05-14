@@ -93,11 +93,11 @@ def get_help(chat):
 
 
 PURGE_HANDLER = purge_messages, events.NewMessage(pattern="^[!/]purge ?(.*)")
-DEL_HANDLER = delete_messages, events.NewMessage(pattern=["^[!/]del", "^[!/]delete"])
+DEL_HANDLER = delete_messages, events.NewMessage(pattern="^[!/]del")
 
 client.add_event_handler(*PURGE_HANDLER)
 client.add_event_handler(*DEL_HANDLER)
 
 __mod_name__ = "Purges"
-__command_list__ = ["del", "purge"]
+__command_list__ = ["purge", "del"]
 __handlers__ = [PURGE_HANDLER, DEL_HANDLER]
