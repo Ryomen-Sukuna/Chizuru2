@@ -700,16 +700,17 @@ def admim_button(update: Update, context: CallbackContext):
     query = update.callback_query
     message = update.effective_message
 
-    splitter = query.data.split("=")
-    query_match = splitter[0]
-    user_id = splitter[1]
-
     if query.data == "admim_reload":
           try:
               ADMIN_CACHE.pop(update.effective_chat.id)
           except:
               pass
           query.answer("Admin Cache Refreshed!")
+
+    # Split query_match & user_id 
+    splitter = query.data.split("=")
+    query_match = splitter[0]
+    user_id = splitter[1]
 
     elif query_match == "admim_promote":
         member = chat.get_member(int(user_id))
