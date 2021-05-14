@@ -812,8 +812,9 @@ def admim_button(update: Update, context: CallbackContext):
                 ),
             )
 
-
     context.bot.answer_callback_query(query.id)
+
+
 
 def get_help(chat):
     from tg_bot.modules.language import gs
