@@ -116,7 +116,7 @@ def promote(update: Update, context: CallbackContext) -> str:
                            ),
                            InlineKeyboardButton(
                                  text="Admin Cache", 
-                                 callback_data="admim_realod={user_id}"
+                                 callback_data=f"admim_realod={user_id}"
                            ),
                         ],
                       ]
@@ -224,7 +224,7 @@ def promote(update: Update, context: CallbackContext) -> str:
                            ),
                            InlineKeyboardButton(
                                  text="Admin Cache", 
-                                 callback_data="admim_realod={user_id}"
+                                 callback_data=f"admim_realod={user_id}"
                            ),
                         ],
                       ]
@@ -307,7 +307,7 @@ def demote(update: Update, context: CallbackContext) -> str:
                            ),
                            InlineKeyboardButton(
                                  text="Admin Cache", 
-                                 callback_data="admim_realod={user_id}"
+                                 callback_data=f"admim_realod={user_id}"
                            ),
                         ],
                       ]
@@ -750,11 +750,11 @@ def admim_button(update: Update, context: CallbackContext):
                         [
                            InlineKeyboardButton(
                                  text="Demote", 
-                                 callback_data="admim_demote={user_id}"
+                                 callback_data=f"admim_demote={user_id}"
                            ),
                            InlineKeyboardButton(
                                  text="Admin Cache", 
-                                 callback_data="admim_realod={user_id}"
+                                 callback_data=f"admim_realod={user_id}"
                            ),
                         ],
                       ]
@@ -800,11 +800,11 @@ def admim_button(update: Update, context: CallbackContext):
                         [
                            InlineKeyboardButton(
                                  text="Promote", 
-                                 callback_data="admim_promote={user_id}"
+                                 callback_data=f"admim_promote={user_id}"
                            ),
                            InlineKeyboardButton(
                                  text="Admin Cache", 
-                                 callback_data="admim_realod={user_id}"
+                                 callback_data=f"admim_realod={user_id}"
                            ),
                         ],
                       ]
