@@ -1,14 +1,4 @@
-import random
-from tg_bot.modules.helper_funcs.fun.dares import DERE
-from tg_bot.modules.helper_funcs.fun.truths import TURUTH
-
-#===========================================================================================================================
-
-TRUTH = TURUTH
-DARE = DERE
-
-
-RUN_STRINGS = [
+RUN_STRINGS = (
     "Where do you think you're going?",
     "Huh? what? did they get away?",
     "ZZzzZZzz... Huh? what? oh, just them again, nevermind.",
@@ -58,9 +48,9 @@ RUN_STRINGS = [
     "Han shot first. So will I.",
     "What are you running after, a white rabbit?",
     "As The Doctor would say... RUN!",
-]
+)
 
-SLAP_BOT_TEMPLATES = (
+SLAP_Kigyō_TEMPLATES = (
     "Slap me one more time and I'll mute you.",
     "Stop slapping me. REEEEEEEEEEEEEE.",
     [
@@ -70,7 +60,7 @@ SLAP_BOT_TEMPLATES = (
     ],
 )
 
-SLAP_TEMPLATES = [
+SLAP_TEMPLATES = (
     "{user2} was shot by {user1}.",
     "{user2} walked into a cactus while trying to escape {user1}.",
     "{user2} drowned whilst trying to escape {user1}.",
@@ -178,105 +168,14 @@ SLAP_TEMPLATES = [
     "{user2} was turned into a Jojo reference!",
     "{user1} hits {user2} with {item}.",
     "Round 2!..Ready? .. FIGHT!!",
-]
-
-
-FRUIT = (
-   "Apple",
-   "Apricot",
-   "Avocado",
-   "Banana",
-   "Bilberry",
-   "Blackberry",
-   "Blueberry",
-   "Blackcurrant",
-   "Boysenberry",
-   "Currant",
-   "Cherry",
-   "Cherimoya",
-   "Chico fruit",
-   "Cloudberry",
-   "Coconut",
-   "Cranberry",
-   "Cucumber",
-   "Custard apple",
-   "Damson",
-   "Date",
-   "Dragonfruit",
-   "Durian",
-   "Elderberry",
-   "Feijoa",
-   "Fig",
-   "Goji berry",
-   "Gooseberry",
-   "Grape",
-   "Raisin",
-   "Grapefruit",
-   "Guava",
-   "Honeyberry",
-   "Huckleberry",
-   "Jabuticaba",
-   "Jackfruit",
-   "Jambul",
-   "Jujube",
-   "Juniper berry",
-   "Kiwano",
-   "Kiwifruit",
-   "Kumquat",
-   "Lemon",
-   "Lime",
-   "Loquat",
-   "Longan",
-   "Lychee",
-   "Mango",
-   "Mangosteen",
-   "Marionberry",
-   "Melon",
-   "Cantaloupe",
-   "Watermelon",
-   "Miracle fruit",
-   "Mulberry",
-   "Nectarine",
-   "Nance",
-   "Orange",
-   "Olive",
-   "Blood orange",
-   "Clementine",
-   "Mandarine",
-   "Tangerine",
-   "Papaya",
-   "Passionfruit",
-   "Peach",
-   "Pear",
-   "Persimmon",
-   "Physalis",
-   "Plantain",
-   "Plum",
-   "Prune",
-   "Pineapple",
-   "Plumcot",
-   "Pomegranate",
-   "Pomelo",
-   "Purple mangosteen",
-   "Quince",
-   "Raspberry",
-   "Salmonberry",
-   "Rambutan",
-   "Redcurrant",
-   "Salal berry",
-   "Salak",
-   "Satsuma",
-   "Soursop",
-   "Star fruit",
-   "Solanum quitoense",
-   "Strawberry",
-   "Tamarillo",
-   "Tamarind",
-   "Ugli fruit",
-   "Yuzu"
 )
 
-ITEMS = [
+PING_STRING = (
+    "PONG!!",
+    "I am here!",
+)
+
+ITEMS = (
     "cast iron skillet",
     "angry meow",
     "cricket bat",
@@ -288,70 +187,37 @@ ITEMS = [
     "rubber chicken",
     "spiked bat",
     "heavy rock",
-    "aladdin's chirag"
     "chunk of dirt",
     "ton of bricks",
     "rasengan",
-    "t.v. remote",
     "spirit bomb",
     "100-Type Guanyin Bodhisattva",
     "rasenshuriken",
     "Murasame",
     "ban",
-    "kit-kat",
-    "dairy-milk",
-    "gas-cylinder",
-    "chappal",
     "chunchunmaru",
     "Kubikiribōchō",
     "rasengan",
     "spherical flying kat",
-    random.choice(FRUIT),
-]
+)
 
-THROW = [
+THROW = (
     "throws",
     "flings",
     "chucks",
     "hurls",
-]
+)
 
-HIT = [
+HIT = (
     "hits",
     "whacks",
     "slaps",
     "smacks",
     "bashes",
     "pats",
-]
-
-
-HEART = (
-       "💖", "🤍", "🖤", "💜", "💙", "💚",
-       "🧡", "❤️", "🤎", "💕", "💓", "💗",
-       "💝", "💘", "❣", "♥️", "💛", "💞"
 )
 
-HUG_TEMPLATES = [
-    "{user1} {hug} {user2}.",
-    "{user1} {hug} {user2} Warmly.",
-    "{user1} {hug} {user2} With A" + f" {random.choice(HEART)}.",
-    "{user1} {hug} {user2} With Kindness."
-]
-
-KISS_TEMPLATES = [
-    "{user1} {kiss} {user2}.",
-    "{user1} {kiss} {user2} Warmly.",
-    "{user1} {kiss} {user2} With A" + f" {random.choice(HEART)}.",
-    "{user1} {kiss} {user2} With Kindness."
-]
-
-
-HUG = ("Hugs", "Hugged", "Kissed", "Pinches")
-KISS = ("Lip Kissed", "Neck Kissed", "Head Kissed", "Kissed", "Pinches")
-
-
-ABUSE_STRINGS = [
+ABUSE_STRINGS = (
     "Fuck off",
     "Stfu go fuck yourself",
     "Ur mum gey",
@@ -367,41 +233,7 @@ ABUSE_STRINGS = [
     "CUnt",
     " Gay is here",
     "Ur dad gey bc ",
-]
-
-
-GBUN = [
-    "Beware! This Bot-Admeme Can Gbun You Right Off The Map.",
-    "I Guess You've Forgot Spelling Of GBAN Maybe...?", 
-    "Don't Misuse Your Powers...",
-    "Nah, He/She Looks Innocent...",
-]
-
-GBAM = "<b>Beginning Of Global Bam For {user2}</b>  \n \nChat Id : <code>{chatid}</code> \nReason : <i>{reason}</i> \nGBammed By {user1}"                                                       
-
-GBAM_REASON = [
-    "sasta noob",
-    "sasta waifu stealer",
-    "sasta white-het hekur",
-    "sasta white-het codur",
-    "sasta white-het vala chintu",
-    "sasta hexa hekur",
-    "sasta hexa playur",
-    "sasta tiktokur💃🏾",
-    "sasta membor of team 7",
-    "sasta selmon boi",
-    "sasta fri-fire player",
-    "sasta chhota bhim",
-    "sasta chhapri",
-    "sasta jony sin",
-    "sasta chhapri nibba",
-    "sasta nibba",
-    "sasti ria chokroborti",
-    "sasti nibbi",
-    "sasta camper",
-]
-
-
+)
 
 EYES = [
     ["⌐■", "■"],
@@ -575,17 +407,15 @@ EARS = [
     ["(∩", ")⊃━☆ﾟ.*"],
 ]
 
-TOSS = [
+TOSS = (
     "Heads",
     "Tails",
-]
+)
 
 DECIDE = ("Yes.", "NoU.", "Maybe.")
 
-TABLE = [
+TABLE = (
     "(╯°□°）╯彡 ┻━┻",
     "I ran out of tables, will order more.",
-    "(╯°□°）╯彡 ┻━┻",
     "Go do some work instead of flippin tables.",
-    "(╯°□°）╯彡 ┻━┻",
-]
+)

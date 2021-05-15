@@ -13,8 +13,14 @@ from tg_bot import dispatcher, kp
 from pyrogram import filters
 from pyrogram.types import Message
 from tg_bot.modules.disable import DisableAbleCommandHandler
+from tg_bot.modules.language import gs
 from tg_bot.modules.helper_funcs.decorators import kigcmd
 
+
+def get_help(chat):
+    return gs(chat, "gtranslate_help")
+
+__mod_name__ = "Translator"
 
 
 trans = Translator()

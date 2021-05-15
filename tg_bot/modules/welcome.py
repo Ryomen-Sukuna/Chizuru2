@@ -271,17 +271,8 @@ def new_member(update: Update, context: CallbackContext):
                     else:
                         username = mention
 
-                    if "%%%" in cust_welcome:
-                        split = cust_welcome.split("%%%")
-                        if all(split):
-                            text = random.choice(split)
-                        else:
-                            text = cust_welcome
-                    else:
-                        text = cust_welcome
-
                     valid_format = escape_invalid_curly_brackets(
-                        text, VALID_WELCOME_FORMATTERS
+                        cust_welcome, VALID_WELCOME_FORMATTERS
                     )
                     res = valid_format.format(
                         first=escape_markdown(first_name),

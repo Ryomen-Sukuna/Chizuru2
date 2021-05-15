@@ -1,4 +1,3 @@
-import re
 import html
 import json
 import random
@@ -7,48 +6,18 @@ import urllib.request
 import urllib.parse
 import requests
 from telegram import ParseMode, Update, ChatPermissions
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.utils.helpers import escape_markdown
-from telegram.ext import Filters, CallbackContext
+from telegram.ext import CallbackContext
 from telegram.error import BadRequest
 
-import tg_bot.modules.fun_strings as fun
+import tg_bot.modules.fun_strings as fun_strings
 from tg_bot import dispatcher
 from tg_bot.modules.helper_funcs.chat_status import is_user_admin
 from tg_bot.modules.helper_funcs.extraction import extract_user
-from tg_bot.modules.helper_funcs.decorators import kigcmd, kigmsg, kigcallback
-
-
-# truth / dare
-@kigcmd(command="truth")
-def truth(update: Update, context: CallbackContext):
-    try:
-       try:
-          xyz = requests.get("https://elianaapi.herokuapp.com/games/truth").json()
-          truth = xyz.get("truth")
-          update.effective_message.reply_text(truth)
-       except:
-           update.effective_message.reply_text(random.choice(fun.TRUTH))
-    except:
-        pass
-
-@kigcmd(command="dare")
-def dare(update: Update, context: CallbackContext):
-    try:
-       try:
-          xyz = requests.get("https://elianaapi.herokuapp.com/games/dares").json()
-          truth = xyz.get("dare")
-          update.effective_message.reply_text(truth)
-       except:
-           update.effective_message.reply_text(random.choice(fun.DARE))
-    except:
-        pass
-
-
+from tg_bot.modules.helper_funcs.decorators import kigcmd
 
 @kigcmd(command='runs')
 def runs(update: Update, context: CallbackContext):
-    update.effective_message.reply_text(random.choice(fun.RUN_STRINGS))
+    update.effective_message.reply_text(random.choice(fun_strings.RUN_STRINGS))
 
 @kigcmd(command='slap')
 def slap(update: Update, context: CallbackContext):
@@ -66,7 +35,7 @@ def slap(update: Update, context: CallbackContext):
     user_id = extract_user(message, args)
 
     if user_id == bot.id:
-        temp = random.choice(fun.SLAP_BOT_TEMPLATES)
+        temp = random.choice(fun_strings.SLAP_Kigyō_TEMPLATES)
 
         if isinstance(temp, list):
             if temp[2] == "tmute":
@@ -96,10 +65,10 @@ def slap(update: Update, context: CallbackContext):
         user1 = bot.first_name
         user2 = curr_user
 
-    temp = random.choice(fun.SLAP_TEMPLATES)
-    item = random.choice(fun.ITEMS)
-    hit = random.choice(fun.HIT)
-    throw = random.choice(fun.THROW)
+    temp = random.choice(fun_strings.SLAP_TEMPLATES)
+    item = random.choice(fun_strings.ITEMS)
+    hit = random.choice(fun_strings.HIT)
+    throw = random.choice(fun_strings.THROW)
     reply = temp.format(user1=user1, user2=user2, item=item, hits=hit, throws=throw)
 
     reply_text(reply, parse_mode=ParseMode.HTML)
@@ -144,84 +113,42 @@ def pat(update: Update, context: CallbackContext):
             reply_to_message_id=msg_id,
         )
 
-
-@kigcmd(command='hug')
-def hug(update: Update, context: CallbackContext):
-    args = context.args
-    msg = update.effective_message  # type: Optional[Message]
-
-    # reply to correct message
-    reply_to = msg.reply_to_message if msg.reply_to_message else msg
-
-    # get user who sent message
-    if msg.from_user.username:
-        curr_user = "@" + escape_markdown(msg.from_user.username)
-    else:
-        curr_user = "[{}](tg://user?id={})".format(
-            msg.from_user.first_name, msg.from_user.id
-        )
-
-    user_id = extract_user(update.effective_message, args)
-    if user_id:
-        hugged_user = context.bot.get_chat(user_id)
-        user1 = curr_user
-        if hugged_user.username:
-            user2 = "@" + escape_markdown(hugged_user.username)
-        else:
-            user2 = "[{}](tg://user?id={})".format(
-                hugged_user.first_name, hugged_user.id
-            )
-
-    # if no target found, bot targets the sender
-    else:
-        user1 = "Uwvv! [{}](tg://user?id={})".format(
-            context.bot.first_name, context.bot.id
-        )
-        user2 = curr_user
-
-    temp = random.choice(fun.HUG_TEMPLATES)
-    hug = random.choice(fun.HUG)
-    hugg = temp.format(user1=user1, user2=user2, hug=hug)
-    try:
-        hug_animu = requests.get('https://some-random-api.ml/animu/hug').json()
-        reply_to.reply_animation(hug_animu['link'], caption=hugg, parse_mode=ParseMode.MARKDOWN)
-    except:
-        reply_to.reply_text(hugg, parse_mode=ParseMode.MARKDOWN)
-
-
 @kigcmd(command='roll')
 def roll(update: Update, context: CallbackContext):
     update.message.reply_text(random.choice(range(1, 7)))
 
 @kigcmd(command='toss')
 def toss(update: Update, context: CallbackContext):
-    update.message.reply_text(random.choice(fun.TOSS))
+    update.message.reply_text(random.choice(fun_strings.TOSS))
+
+@kigcmd(command='shrug')
+def shrug(update: Update, context: CallbackContext):
+    msg = update.effective_message
+    reply_text = (
+        msg.reply_to_message.reply_text if msg.reply_to_message else msg.reply_text
+    )
+    reply_text(r"¯\_(ツ)_/¯")
+
+@kigcmd(command='rlg')
+def rlg(update: Update, context: CallbackContext):
+    eyes = random.choice(fun_strings.EYES)
+    mouth = random.choice(fun_strings.MOUTHS)
+    ears = random.choice(fun_strings.EARS)
+
+    if len(eyes) == 2:
+        repl = ears[0] + eyes[0] + mouth[0] + eyes[1] + ears[1]
+    else:
+        repl = ears[0] + eyes[0] + mouth[0] + eyes[0] + ears[1]
+    update.message.reply_text(repl)
 
 @kigcmd(command='decide')
-def yesnowtf(update: Update, context: CallbackContext):
-    msg = update.effective_message
-    chat = update.effective_chat
-    res = requests.get("https://yesno.wtf/api")
-    if res.status_code != 200:
-         msg.reply_text(random.choice(fun.DECIDE))
-         return
-    else:
-        res = res.json()
-    try:
-        context.bot.send_animation(
-            chat.id, animation=res["image"], caption=str(res["answer"]).upper()
-        )
-    except BadRequest:
-        return
-
-@kigmsg(Filters.regex(r"(?i)^Chizuru\?"), friendly="decide")
 def decide(update: Update, context: CallbackContext):
     reply_text = (
         update.effective_message.reply_to_message.reply_text
         if update.effective_message.reply_to_message
         else update.effective_message.reply_text
     )
-    reply_text(random.choice(fun.DECIDE))
+    reply_text(random.choice(fun_strings.DECIDE))
 
 @kigcmd(command='table')
 def table(update: Update, context: CallbackContext):
@@ -230,58 +157,11 @@ def table(update: Update, context: CallbackContext):
         if update.effective_message.reply_to_message
         else update.effective_message.reply_text
     )
-    reply_text(random.choice(fun.TABLE))
+    reply_text(random.choice(fun_strings.TABLE))
 
-
-# Superhero Quote 
-SQUOTES = InlineKeyboardMarkup(
-                [
-                  [
-                    InlineKeyboardButton(text="Change", callback_data="squote_change"),
-                  ],
-                ]
-          )
-@kigcmd(command='squote')
-def squote(update: Update, context: CallbackContext):
-    try:
-        animu = requests.get('https://superhero-quotes.herokuapp.com/random').json()
-        if animu['StatusCode'] == 200:
-           banner = "DCU" if animu['Banner'] == "DC Universe (DCU)" else "MCU"
-           update.effective_message.reply_text(f'❝ <em>{animu["Stuff"]["data"]["quote"]}</em> ❞'
-                      f'\n\n- <b>{animu["Stuff"]["data"]["author"]}</b> || ( <b>{banner}</b> )',
-                       parse_mode=ParseMode.HTML,
-                       reply_markup=SQUOTES,
-           )
-    except:
-        pass
-
-@kigcallback(pattern=r"squote_.*")
-def squote_button(update, context):
-    query = update.callback_query
-    change = re.match(r"squote_change", query.data)
-
-    try:
-        if change:
-            animu = requests.get('https://superhero-quotes.herokuapp.com/random').json()
-            if animu["StatusCode"] == 200:
-                banner = "DCU" if animu["Banner"] == "DC Universe (DCU)" else "MCU"
-                query.message.edit_text(
-                        f"❝ <em>{animu['Stuff']['data']['quote']}</em> ❞"
-                        f"\n\n- <b>{animu['Stuff']['data']['author']}</b> || ( <b>{banner}</b> )",
-                        parse_mode=ParseMode.HTML,
-                        reply_markup=SQUOTES,
-                )
-            else:
-                query.answer("API Is Down! Try Again!")
-
-        context.bot.answer_callback_query(query.id)
-
-    except BadRequest:
-        pass
-
-
-__mod_name__ = "Fun"
+from tg_bot.modules.language import gs
 
 def get_help(chat):
-    from tg_bot.modules.language import gs
     return gs(chat, "fun_help")
+
+__mod_name__ = "Fun"
