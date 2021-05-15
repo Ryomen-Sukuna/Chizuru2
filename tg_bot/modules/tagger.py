@@ -13,8 +13,8 @@ from telegram.utils.helpers import mention_html
 from telegram.error import BadRequest
 
 
-@user_admin
 @kigcmd(command='tag', filters=Filters.chat_type.groups)
+@user_admin
 def tag(update: Update, context: CallbackContext):
     message = update.effective_message
     chat_title = message.chat.title
@@ -61,8 +61,8 @@ def tag(update: Update, context: CallbackContext):
     )
 
 
-@user_admin
 @kigcmd(command='untag', filters=Filters.chat_type.groups)
+@user_admin
 def untag(update: Update, context: CallbackContext):
     message = update.effective_message
     chat_title = message.chat.title
@@ -136,9 +136,9 @@ def untagme(update: Update, context: CallbackContext):
     )
 
 
-@loggable
-@user_admin
 @kigcmd(command='tagall', filters=Filters.chat_type.groups)
+@user_admin
+@loggable
 def tagall(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
@@ -178,7 +178,6 @@ def tagall(update: Update, context: CallbackContext):
     return log_message
 
 
-@loggable
 @kigcmd(command='untagall', filters=Filters.chat_type.groups)
 def untagall(update: Update, context: CallbackContext):
     chat = update.effective_chat
@@ -187,7 +186,7 @@ def untagall(update: Update, context: CallbackContext):
     if member.status != "creator" and user.id not in SUDO_USERS:
         update.effective_message.reply_text(
             "Only the chat owner can untag all users at once.")
-        return ""
+        return
     else:
         update.effective_message.reply_text(
             f"Are you sure you would like to untag ALL users in {chat.title}? This action cannot be undone.",
@@ -247,6 +246,7 @@ def addtag_button(update: Update, context: CallbackContext):
             query.answer("You're not the user being added in tag list!")
 
 
+@loggable
 @kigcallback(pattern=r"untagall_.*")
 def untagall_btn(update: Update, context: CallbackContext):
     query = update.callback_query
