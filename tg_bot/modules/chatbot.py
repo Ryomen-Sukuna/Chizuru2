@@ -104,7 +104,7 @@ def get_response(update: Update):
 
 
 # @kigmsg(Filters.all & ((~Filters.update.edited_message & ~Filters.forwarded) & (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/"))) & Filters.chat_type.groups)
-@run_async
+# @run_async
 def chatbot(update, context):
     message = update.effective_message
     chat = update.effective_chat
