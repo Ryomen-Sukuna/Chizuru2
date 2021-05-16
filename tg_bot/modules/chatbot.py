@@ -7,6 +7,7 @@ from telegram.utils.helpers import mention_html
 from telegram.ext import CallbackContext, Filters
 from telegram.error import BadRequest, RetryAfter, Unauthorized
 
+from tg_bot import ERROR_DUMP
 import tg_bot.modules.sql.chatbot_sql as sql
 from tg_bot.modules.log_channel import gloggable
 from tg_bot.modules.helper_funcs.chat_status import dev_plus
@@ -49,9 +50,11 @@ def chatmode(update: Update, context: CallbackContext):
         if is_chat:
             sql.del_chat(chat.id)
             message.reply_text("Chatbot successfully disabled for this group!")
-            logger = (f"<b>{html.escape(chat.title)}:</b>\n"
-                      f"#AI_DISABLED\n"
-                      f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n")
+            logger = (
+               f"<b>{html.escape(chat.title)}:</b>\n"
+               f"#AI_DISABLED\n"
+               f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
+            )
             return logger
         else:
             message.reply_text("Chatbot is already disabled for this group!")
@@ -61,9 +64,11 @@ def chatmode(update: Update, context: CallbackContext):
         if not is_chat:
             sql.add_chat(chat.id, True)
             message.reply_text("Chatbot successfully enabled for this group!")
-            logger = (f"<b>{html.escape(chat.title)}:</b>\n"
-                      f"#AI_ENABLED\n"
-                      f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n")
+            logger = (
+               f"<b>{html.escape(chat.title)}:</b>\n"
+               f"#AI_ENABLED\n"
+               f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
+            )
             return logger
         else:
             message.reply_text("Chatbot is already enabled for this group!")
@@ -129,21 +134,18 @@ def chatbot(update: Update, context: CallbackContext):
         except BadRequest as br:
             bot.sendMessage(
                    ERROR_DUMP,
-                   timeout=60,
                    f"AI ERROR: BadRequest \nChat: {'@' + chat.username or chat.title} (<code>{chat.id}</code>)\n\n{br}",
                    parse_mode=ParseMode.HTML,
             )
         except Unauthorized as u:
             bot.sendMessage(
                    ERROR_DUMP,
-                   timeout=60,
                    f"AI ERROR: Unauthorized \nChat: {'@' + chat.username or chat.title} (<code>{chat.id}</code>)\n\n{u}",
                    parse_mode=ParseMode.HTML,
             )
         except Exception as e:
             bot.sendMessage(
                    ERROR_DUMP,
-                   timeout=60,
                    f"AI ERROR: Exception \nChat: {'@' + chat.username or chat.title} (<code>{chat.id}</code>)\n\n{e}",
                    parse_mode=ParseMode.HTML,
             )
