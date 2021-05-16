@@ -7,7 +7,6 @@ from telegram.ext import Filters
 from telegram.utils.helpers import mention_html
 from tg_bot.modules.helper_funcs.decorators import kigcmd, kigmsg
 from alphabet_detector import AlphabetDetector
-from tg_bot.modules.sql.approve_sql import is_approved
 import tg_bot.modules.sql.locks_sql as sql
 from tg_bot import dispatcher, SUDO_USERS, log
 from tg_bot.modules.disable import DisableAbleCommandHandler
@@ -350,8 +349,6 @@ def del_lockables(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     message = update.effective_message  # type: Optional[Message]
     user = update.effective_user
-    if is_approved(chat.id, user.id):
-        return
     for lockable, filter in LOCK_TYPES.items():
         if lockable == "rtl":
             if sql.is_locked(chat.id, lockable) and can_delete(chat, context.bot.id):
