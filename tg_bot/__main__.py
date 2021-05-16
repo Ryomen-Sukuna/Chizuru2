@@ -6,19 +6,27 @@ Dank-del
 
 import importlib
 import re
-from typing import Optional
+import json
+import random
+import traceback
+from typing import Optional, List
 from sys import argv
-from pyrogram import idle
+import requests
+from pyrogram import idle, Client
 from telegram import Update, ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import (TelegramError, Unauthorized, BadRequest,
                             TimedOut, ChatMigrated, NetworkError)
 from telegram.ext import (
     CallbackContext,
+    CommandHandler,
+    MessageHandler,
+    CallbackQueryHandler,
     Filters
 )
 from telegram.ext.dispatcher import DispatcherHandlerStop
 from telegram.utils.helpers import escape_markdown
 from tg_bot import (
+    RentalBot,
     dispatcher,
     updater,
     TOKEN,
@@ -28,9 +36,9 @@ from tg_bot import (
     PORT,
     URL,
     log,
+    ALLOW_EXCL,
     telethn,
     kp,
-    KigyoINIT
 )
 
 # needed to dynamically load modules
@@ -39,7 +47,27 @@ from tg_bot.modules import ALL_MODULES
 from tg_bot.modules.helper_funcs.chat_status import is_user_admin
 from tg_bot.modules.helper_funcs.misc import paginate_modules
 from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback, kigmsg
+from tg_bot.modules.helper import get_help_btns
 from tg_bot.modules.language import gs
+
+SUPPORT_CHAT = "ElitesOfSupport"
+START_IMG = "https://telegra.ph/file/e5100e06c03767af80023.jpg"
+
+buttuns = [
+    [        
+        InlineKeyboardButton(
+              text="About", callback_data="aboutmanu_"
+        ),
+    ],
+    [
+        InlineKeyboardButton(
+              text="Try Inline",
+              switch_inline_query_current_chat="",
+        ),
+    ],
+    
+]
+
 
 
 IMPORTED = {}
@@ -133,8 +161,8 @@ def start(update: Update, context: CallbackContext):
         if len(args) >= 1:
             if args[0].lower() == "help":
                 send_help(update.effective_chat.id, (gs(chat.id, "pm_help_text")))
-            elif args[0].lower() == "markdownhelp":
-                IMPORTED["extras"].markdown_help_sender(update)
+            elif args[0].lower() in ["markdownhelp", "markdown"]:
+                IMPORTED["misc"].markdown_help(update)
             elif args[0].lower() == "nations":
                 IMPORTED["nations"].send_nations(update)
             elif args[0].lower().startswith("stngs_"):
@@ -152,57 +180,21 @@ def start(update: Update, context: CallbackContext):
         else:
             first_name = update.effective_user.first_name
             update.effective_message.reply_text(
-                text=gs(chat.id, "pm_start_text").format(
-                    escape_markdown(first_name),
-                    escape_markdown(context.bot.first_name),
-                    OWNER_ID,
-                ),
-                parse_mode=ParseMode.MARKDOWN,
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton(
-                                text=gs(chat.id, "support_chat_link_btn"),
-                                url=f"https://t.me/YorktownEagleUnion",
-                            ),
-                            InlineKeyboardButton(
-                                text=gs(chat.id, "updates_channel_link_btn"),
-                                url="https://t.me/KigyoUpdates",
-                            ),
-                            InlineKeyboardButton(
-                                text=gs(chat.id, "src_btn"),
-                                url="https://github.com/Dank-del/EnterpriseALRobot",
-                            ),
-                            
-                        ],
-
-                        [
-
-                             InlineKeyboardButton(
-                                 text="Try inline",
-                                 switch_inline_query_current_chat="",
-                             ),
-                             InlineKeyboardButton(
-                                text="Help",
-                                callback_data="help_back",
-                                ),
-                            InlineKeyboardButton(
-                                text=gs(chat.id, "add_bot_to_group_btn"),
-                                url="t.me/{}?startgroup=true".format(
-                                    context.bot.username
-                                ),
-                            ),
-                        ]
-                        
-                    ]
-                ),
+                    gs(chat.id, "pm_start_text").format(
+                           escape_markdown(context.bot.first_name),
+                           START_IMG,
+                           START_IMG,
+                           SUPPORT_CHAT,
+                    ),
+                    parse_mode=ParseMode.MARKDOWN,
+                    reply_markup=InlineKeyboardMarkup(buttuns),
             )
     else:
         update.effective_message.reply_text(gs(chat.id, "grp_start_text"))
 
 
 # for test purposes
-def error_callback(update, context):
+def error_callback(update: Update, context: CallbackContext):
     '''#TODO
 
     Params:
@@ -231,8 +223,8 @@ def error_callback(update, context):
         pass
         # handle all other telegram related errors
 
-@kigcallback(pattern=r'help_')
-def help_button(update, context):
+@kigcallback(pattern=r'help_.*')
+def help_button(update: Update, context: CallbackContext):
     '''#TODO
 
     Params:
@@ -246,32 +238,33 @@ def help_button(update, context):
     next_match = re.match(r"help_next\((.+?)\)", query.data)
     back_match = re.match(r"help_back", query.data)
     chat = update.effective_chat
-    print(query.message.chat.id)
 
     try:
         if mod_match:
             module = mod_match.group(1)
-            help_list = HELPABLE[module].get_help(update.effective_chat.id)
-            if isinstance(help_list, list):
-                help_text = help_list[0]
-                help_buttons = help_list[1:]
-            elif isinstance(help_list, str):
-                help_text = help_list
-                help_buttons = []
             text = (
                 "Here is the help for the *{}* module:\n".format(
                     HELPABLE[module].__mod_name__
                 )
-                + help_text
+                + HELPABLE[module].get_help(update.effective_chat.id)
             )
-            help_buttons.append(
-                [InlineKeyboardButton(text="Back", callback_data="help_back"),
-                InlineKeyboardButton(text='Report Error', url='https://t.me/YorkTownEagleUnion')]
-            )
+            try:
+                x = get_help_btns(HELPABLE[module].__mod_name__)
+                if x is not None:
+                     markup = InlineKeyboardMarkup(x)
+                else:
+                     markup = InlineKeyboardMarkup(
+                                    [[InlineKeyboardButton(text="Back", callback_data="help_back")]]
+                              )
+            except:
+                markup = InlineKeyboardMarkup(
+                               [[InlineKeyboardButton(text="Back", callback_data="help_back")]]
+                         )
             query.message.edit_text(
                 text=text,
+                reply_markup=markup,
+                disable_web_page_preview=True,
                 parse_mode=ParseMode.MARKDOWN,
-                reply_markup=InlineKeyboardMarkup(help_buttons),
             )
 
         elif prev_match:
@@ -310,8 +303,134 @@ def help_button(update, context):
     except BadRequest:
         pass
 
+
+@kigcallback(pattern=r'aboutmanu_.*')
+def about_callback(update: Update, context: CallbackContext):
+    chat = update.effective_chat
+    query = update.callback_query
+    if query.data == "aboutmanu_":
+        query.message.edit_text(
+            text=f"*Hey There! My Name Is {dispatcher.bot.first_name}. \n\nI Am An Anime Themed Group Management Bot.* \n_Build By Weebs For Weebs_"
+                 f"\n\nI Specialize In Managing Anime And Similar Themed Groups With Additional Features."
+                 f"\n\nIf Any Question About {dispatcher.bot.first_name}, Simply [Click Here](https://telegra.ph/Chizuru---Guides-11-27)", 
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
+            reply_markup=InlineKeyboardMarkup(
+                [
+                  [
+                    InlineKeyboardButton(text="How To Use", callback_data="aboutmanu_howto"),
+                    InlineKeyboardButton(text="T & C", callback_data="aboutmanu_tac")
+                  ],
+                 [
+                    InlineKeyboardButton(text="Back", callback_data="aboutmanu_back")
+                 ]
+                ]
+            ),
+        )
+        query.answer("About Menu")
+
+    elif query.data == "aboutmanu_back":
+        query.message.edit_text(
+                gs(chat.id, "pm_start_text").format(
+                     escape_markdown(context.bot.first_name),
+                     START_IMG,
+                     START_IMG,
+                     SUPPORT_CHAT,
+                ),
+                reply_markup=InlineKeyboardMarkup(buttuns),
+                parse_mode=ParseMode.MARKDOWN,
+                timeout=60, 
+            )
+        query.answer("Welcome Back!")
+        
+    elif query.data == "aboutmanu_howto":
+        query.message.edit_text(
+            text="*Basic Help:*"
+                f"\nTo Add {dispatcher.bot.first_name} To Your Chats, Simply [Click Here](http://t.me/{dispatcher.bot.username}?startgroup=true) And Select Chat. \n", 
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton(text="Admins Settings", callback_data="aboutmanu_permis"),
+                InlineKeyboardButton(text="Anti-Spam", callback_data="aboutmanu_spamprot")],
+                [InlineKeyboardButton(text="Back", callback_data="aboutmanu_")]
+            ]),
+        )
+        query.answer("How To Use")
+
+    elif query.data == "aboutmanu_credit":
+        query.message.edit_text(
+            text=f"*{dispatcher.bot.first_name} Is A Powerful Bot For Managing Groups With Additional Features.*"
+                 f"\n\nFork Of [Marie](https://github.com/PaulSonOfLars/tgbot)."
+                 f"\n\n{dispatcher.bot.first_name}'s Licensed Under The GNU _(General Public License v3.0)_"
+                 f"\n\nHere Is The [Source Code](t.me/{SUPPORT_CHAT})."
+                 f"\n\nIf Any Suggestions About {dispatcher.bot.first_name}, \nLet Us Know At @{SUPPORT_CHAT}.",
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Back", callback_data="aboutmanu_tac")]]),
+        )
+        query.answer("Credits")
+
+    elif query.data == "aboutmanu_permis":
+        query.message.edit_text(
+            text="<b>Admin Permissions:</b>"
+                f"\nTo avoid slowing down, {dispatcher.bot.first_name} caches admin rights for each user. This cache lasts about 10 minutes; this may change in the future. This means that if you promote a user manually (without using the /promote command), {dispatcher.bot.first_name} will only find out ~10 minutes later."
+                 "\n\nIf you are getting a message saying:"
+                 "\n<Code>You must be this chat administrator to perform this action!</code>"
+                f"\nThis has nothing to do with {dispatcher.bot.first_name}'s rights; this is all about YOUR permissions as an admin. {dispatcher.bot.first_name} respects admin permissions; if you do not have the Ban Users permission as a telegram admin, you won't be able to ban users with {dispatcher.bot.first_name}. Similarly, to change {dispatcher.bot.first_name} settings, you need to have the Change group info permission."
+                f"\n\nThe message very clearly says that you need these rights - <i>not {dispatcher.bot.first_name}.</i>",
+            parse_mode=ParseMode.HTML,
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Back", callback_data="aboutmanu_howto")]]),
+        )
+        query.answer("Admin Permissions")
+
+    elif query.data == "aboutmanu_spamprot":
+        query.message.edit_text(
+            text=gs(chat.id, "antispam_help"),
+            parse_mode=ParseMode.MARKDOWN,
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton(text="NPL", callback_data="aboutmanu_spamprotcf")],
+                [InlineKeyboardButton(text="Back", callback_data="aboutmanu_howto")]
+            ]), 
+        )
+        query.answer("Antispam")
+
+    elif query.data == "aboutmanu_spamprotcf":
+        query.message.edit_text(
+            text=gs(chat.id, "nlp_help"),
+            parse_mode=ParseMode.MARKDOWN,
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton(text="Back", callback_data="aboutmanu_spamprot")]
+            ]), 
+        )
+        query.answer("Chatroom Spam Prediction")
+
+    elif query.data == "aboutmanu_tac":
+        query.message.edit_text(
+            text="<b>Terms and Conditions:</b>\n"
+                 "\n<i>To Use This Bot, You Need To Read Terms and Conditions</i>\n"
+                 "\n∘ Watch your group, if someone \n  spamming your group, you can \n  use report feature from your \n  Telegram Client."
+                 "\n∘ Make sure antiflood is enabled, so \n  nobody can ruin your group."
+                 "\n∘ Do not spam commands, buttons, \n  or anything in bot PM, else you will \n  be Gbanned."
+                f"\n∘ If you need to ask anything about \n  this bot, Go @{SUPPORT_CHAT}."
+                 "\n∘ If you asking nonsense in Support \n  Chat, you will get banned."
+                 "\n∘ Sharing any files/videos others \n  than about bot in Support Chat is \n  prohibited."
+                 "\n∘ Sharing NSFW in Support Chat,\n  will reward you banned/gbanned \n  and reported to Telegram as well."
+                 "\n\n<i>T & C will be changed anytime</i>\n",
+            parse_mode=ParseMode.HTML,
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                      InlineKeyboardButton(text="Credits", callback_data="aboutmanu_credit"),
+                      InlineKeyboardButton(text="Back", callback_data="aboutmanu_")
+                    ] 
+                ]
+            )
+        )
+        query.answer("Terms & Conditions")
+
+
 @kigcmd(command='help')
-def get_help(update, context):
+def get_help(update: Update, context: CallbackContext):
     '''#TODO
 
     Params:
@@ -538,17 +657,6 @@ def get_settings(update: Update, context: CallbackContext):
     else:
         send_settings(chat.id, user.id, True)
 
-@kigcmd(command='donate')
-def donate(update: Update, context: CallbackContext):
-    '''#TODO
-
-    Params:
-        update: Update           -
-        context: CallbackContext -
-    '''
-
-    update.effective_message.reply_text("I'm free for everyone! >_<")
-
 @kigmsg((Filters.status_update.migrate))
 def migrate_chats(update: Update, context: CallbackContext):
     '''#TODO
@@ -590,10 +698,10 @@ def main():
             updater.bot.set_webhook(url=URL + TOKEN)
 
     else:
-        log.info(f"Kigyo started, Using long polling. | BOT: [@{dispatcher.bot.username}]")
-        KigyoINIT.bot_id = dispatcher.bot.id
-        KigyoINIT.bot_username = dispatcher.bot.username
-        KigyoINIT.bot_name = dispatcher.bot.first_name
+        log.info(f"Using long polling. | BOT: [@{dispatcher.bot.username}]")
+        RentalBot.bot_id = dispatcher.bot.id
+        RentalBot.bot_username = dispatcher.bot.username
+        RentalBot.bot_name = dispatcher.bot.first_name
         updater.start_polling(timeout=15, read_latency=4, drop_pending_updates=True)
     if len(argv) not in (1, 3, 4):
         telethn.disconnect()
@@ -603,7 +711,7 @@ def main():
 
 if __name__ == "__main__":
     kp.start()
-    log.info("[KIGYO] Successfully loaded modules: " + str(ALL_MODULES))
+    log.info("Successfully loaded modules: " + str(ALL_MODULES))
     telethn.start(bot_token=TOKEN)
     main()
     idle()
