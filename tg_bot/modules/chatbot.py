@@ -62,9 +62,9 @@ def chatmode(update: Update, context: CallbackContext):
         else:
             message.reply_text("Chatbot is already enabled for this group!")
             return ""
-     else:
-          message.reply_text("Chatbot Status For This Group: <i>{}</i>".format("Enabled" if is_chat else "Disabled"))
-          return ""
+    else:
+         message.reply_text("Chatbot Status For This Group: <i>{}</i>".format("Enabled" if is_chat else "Disabled"))
+         return ""
 
 
 def check_message(context: CallbackContext, message):
