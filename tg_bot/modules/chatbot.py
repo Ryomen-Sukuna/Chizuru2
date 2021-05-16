@@ -19,7 +19,7 @@ from tg_bot.modules.helper_funcs.chat_status import user_admin
 @kigcmd(command='chatbot', pass_args=True, filters=Filters.chat_type.groups)
 @user_admin
 @gloggable
-def chatmode(update: Update, context: CallbackContext):
+def chatmode(update, context):
     message = update.effective_message
     chat = update.effective_chat
     user = update.effective_user
@@ -83,7 +83,7 @@ def chatmode(update: Update, context: CallbackContext):
          return ""
 
 
-def checker(context: CallbackContext, message):
+def checker(context, message):
     abc = False
     if message.text.lower() == f"@{context.bot.username}".lower():
         abc = True
@@ -95,7 +95,7 @@ def checker(context: CallbackContext, message):
 
     return abc
 
-def get_response(update: Update, _):
+def get_response(update):
      user = update.effective_user
      message = update.effective_message
      url = f"http://api.brainshop.ai/get?bid=156213&key=AFL4yzDEQfAQkbyZ&uid={user.id}&msg={message.text}"
@@ -104,7 +104,7 @@ def get_response(update: Update, _):
  
 
 # Chabot
-def chatbot(update, context):
+def chatbot(update: Update, context: CallbackContext):
     message = update.effective_message
     chat = update.effective_chat
     is_chat = sql.is_chat(chat.id)
