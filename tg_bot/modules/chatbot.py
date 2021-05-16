@@ -26,7 +26,11 @@ def chatmode(update: Update, context: CallbackContext):
     is_chat = sql.is_chat(chat.id)
     args = message.text.split(" ", 1)
     if len(args) == 1:
-        message.reply_text("Chatbot Status For This Group: <i>{}</i>".format("Enabled" if is_chat else "Disabled"))
+        message.reply_text("Chatbot Status For This Group: <i>{}</i>".
+               format("Enabled" if is_chat else "Disabled"),
+               parse_mode=ParseMode.HTML,
+               timeout=60,
+        )
         return ""
 
     if args[1].lower() in ("yes", "on"):
@@ -66,7 +70,11 @@ def chatmode(update: Update, context: CallbackContext):
             return ""
 
     else:
-         message.reply_text("Chatbot Status For This Group: <i>{}</i>".format("Enabled" if is_chat else "Disabled"))
+         message.reply_text("Chatbot Status For This Group: <i>{}</i>".
+                format("Enabled" if is_chat else "Disabled"),
+                parse_mode=ParseMode.HTML,
+                timeout=60,
+         )
          return ""
 
 
@@ -105,13 +113,14 @@ def chatbot(update: Update, context: CallbackContext):
     message = update.effective_message
     chat = update.effective_chat
     is_chat = sql.is_chat(chat.id)
+    bot = context.bot
     if not is_chat:
         return
     if message.text and not message.document:
         if not check_message(context, message):
             return
         try:
-            context.bot.send_chat_action(chat.id, action='typing')
+            bot.send_chat_action(chat.id, action='typing')
             rep = get_response(update)
             sleep(0.5)
             message.reply_text(rep, timeout=60)
@@ -120,18 +129,21 @@ def chatbot(update: Update, context: CallbackContext):
         except BadRequest as br:
             bot.sendMessage(
                    ERROR_DUMP,
+                   timeout=60,
                    f"AI ERROR: BadRequest \nChat: {'@' + chat.username or chat.title} (<code>{chat.id}</code>)\n\n{br}",
                    parse_mode=ParseMode.HTML,
             )
         except Unauthorized as u:
             bot.sendMessage(
                    ERROR_DUMP,
+                   timeout=60,
                    f"AI ERROR: Unauthorized \nChat: {'@' + chat.username or chat.title} (<code>{chat.id}</code>)\n\n{u}",
                    parse_mode=ParseMode.HTML,
             )
         except Exception as e:
             bot.sendMessage(
                    ERROR_DUMP,
+                   timeout=60,
                    f"AI ERROR: Exception \nChat: {'@' + chat.username or chat.title} (<code>{chat.id}</code>)\n\n{e}",
                    parse_mode=ParseMode.HTML,
             )
