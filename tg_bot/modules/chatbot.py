@@ -67,19 +67,18 @@ def get_response(user, msg):
      return response[cnt]
 
 
-@kigmsg(Filters.all & (~Filters.update.edited_message & ~Filters.forwarded) & (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/")) & Filters.groups)
+@kigmsg(Filters.all & (~Filters.update.edited_message & ~Filters.forwarded) & (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/")) & Filters.chat_type.groups)
 def chatbot(update: Update, context: CallbackContext):
     msg = update.effective_message
     chat = update.effective_chat
     is_chat = sql.is_chat(chat.id)
-    bot = context.bot
     if not is_chat:
         return
     if msg.text and not msg.document:
         if not check_message(context, msg):
             return
         try:
-            bot.send_chat_action(chat.id, action='typing')
+            context.bot.send_chat_action(chat.id, action='typing')
             rep = get_response(user, msg)
             sleep(0.3)
             msg.reply_text(rep, timeout=60)
@@ -91,7 +90,7 @@ def chatbot(update: Update, context: CallbackContext):
 @dev_plus
 def listchatbot(update: Update, context: CallbackContext):
     chats = sql.get_all_chats()
-    text = "<b>AI-Enabled Chats:</b>\n\n"
+    text = "<b>AI-Enabled Chats:</b>\n"
     for chat in chats:
         try:
             x = context.bot.get_chat(int(*chat))
