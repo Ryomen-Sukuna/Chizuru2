@@ -40,6 +40,7 @@ def chatmode(update: Update, context: CallbackContext):
         else:
             message.reply_text("Chatbot is already enabled for this group!")
             return ""
+
     elif args[1].lower() in ("off", "no"):
         if is_chat:
             sql.del_chat(chat.id)
@@ -51,6 +52,19 @@ def chatmode(update: Update, context: CallbackContext):
         else:
             message.reply_text("Chatbot is already disabled for this group!")
             return ""
+
+    elif args[1].lower() in ("random"):
+        if not is_chat:
+            sql.add_chat(chat.id, True)
+            message.reply_text("Chatbot successfully enabled for this group!")
+            logger = (f"<b>{html.escape(chat.title)}:</b>\n"
+                      f"#AI_ENABLED\n"
+                      f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n")
+            return logger
+        else:
+            message.reply_text("Chatbot is already enabled for this group!")
+            return ""
+
     else:
          message.reply_text("Chatbot Status For This Group: <i>{}</i>".format("Enabled" if is_chat else "Disabled"))
          return ""
