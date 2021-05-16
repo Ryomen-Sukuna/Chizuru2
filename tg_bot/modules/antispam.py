@@ -16,8 +16,8 @@ from tg_bot import (
     sw,
     dispatcher,
     log,
-    KInit,
-    KigyoINIT,
+    Rent as KInit,
+    RentalBot as KigyoINIT,
 )
 from tg_bot.modules.helper_funcs.chat_status import (
     is_user_admin,
