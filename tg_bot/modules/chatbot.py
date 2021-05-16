@@ -116,23 +116,24 @@ def get_response(update: Update):
 
 
 @kigmsg(Filters.all & ((~Filters.update.edited_message & ~Filters.forwarded) & (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/"))) & Filters.chat_type.groups)
-def chatbot(update: Update, context: CallbackContext):
+def chatbot(update, context):
     message = update.effective_message
     chat = update.effective_chat
     is_chat = sql.is_chat(chat.id)
     bot = context.bot
     if not is_chat:
         return
-    if not message.text and message.document:
+    if not message.text:
         return
     if checker(context, message):
         try:
+
             bot.send_chat_action(chat.id, action='typing')
             rep = get_response(update)
             sleep(0.5)
             message.reply_text(rep)
 
-        except RetryAfter as e:
+        except RetryAfter:
             return
 
         except BadRequest as br:
@@ -180,7 +181,7 @@ def listchatbot(update: Update, context: CallbackContext):
             title = x.title
             uname = x.username if x.username else None
             fullname = f"<a href='https://t.me/'{uname}>{title}</a>" if uname is not None else title
-            totalchats += f"\n• {fullname} (<code<{chat_id}</code>)"
+            totalchats += f"\n• {fullname} (<code>{chat_id}</code>)"
 
     if totalchats.endswith(":\n"):
         message.reply_text("There Are No Active Chats With AI Feature!")
