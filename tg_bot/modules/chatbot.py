@@ -29,7 +29,7 @@ def chatmode(update: Update, context: CallbackContext):
         return ""
     if args[1].lower() in ("yes", "on"):
         if not is_chat:
-            sql.add_chat(chat.id, ses_id, expires)
+            sql.add_chat(chat.id)
             msg.reply_text("AI successfully enabled for this chat!")
             logger = (f"<b>{html.escape(chat.title)}:</b>\n"
                       f"#AI_ENABLED\n"
