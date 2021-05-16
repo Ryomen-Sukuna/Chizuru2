@@ -116,6 +116,7 @@ WHITELIST_USERS = get_user_list("whitelists")
 spamwatch_api = Rent.SPAMWATCH_API
 WALL_API = Rent.WALL_API
 CF_API_KEY = Rent.CF_API_KEY
+INFOPIC = False
 
 # SpamWatch
 sw = Rent.init_sw()
