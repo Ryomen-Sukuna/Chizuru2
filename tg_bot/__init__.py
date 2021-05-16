@@ -117,6 +117,7 @@ spamwatch_api = Rent.SPAMWATCH_API
 WALL_API = Rent.WALL_API
 CF_API_KEY = Rent.CF_API_KEY
 INFOPIC = False
+SBP_MODE = False
 
 # SpamWatch
 sw = Rent.init_sw()
