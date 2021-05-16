@@ -62,9 +62,21 @@ def check_message(context: CallbackContext, message):
         return False
 
 def get_response(user, msg):
-     response = requests.get(f"http://api.brainshop.ai/get?bid=156213&key=AFL4yzDEQfAQkbyZ&uid={user.id}&msg={msg.text}").json()
+     url = "https://acobot-brainshop-ai-v1.p.rapidapi.com/get"
+     querystring = {
+          "bid": "156213",
+          "key": "AFL4yzDEQfAQkbyZ",
+          "uid": user.id,
+          "msg": msg.text
+     }
+     headers = {
+         'x-rapidapi-key': "e91d04a576mshac8d48e78a1f675p1d378fjsnc50315bee616",
+         'x-rapidapi-host': "acobot-brainshop-ai-v1.p.rapidapi.com"
+     }
 
-     return response[cnt]
+     response = requests.request("GET", url, headers=headers, params=querystring)
+
+     return response.text
 
 
 @kigmsg(Filters.all & (~Filters.update.edited_message & ~Filters.forwarded) & (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/")) & Filters.chat_type.groups)
