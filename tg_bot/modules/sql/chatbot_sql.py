@@ -1,17 +1,15 @@
 import threading
 
+from sqlalchemy import Column, String
 from tg_bot.modules.sql import BASE, SESSION
-from sqlalchemy import Column, String, Boolean
 
 
 class ChatbotChats(BASE):
     __tablename__ = "chatbot_chats"
     chat_id = Column(String(14), primary_key=True)
-    random = Column(Boolean)
 
-    def __init__(self, chat_id: str, random: bool = False):
+    def __init__(self, chat_id: str):
         self.chat_id = chat_id
-        self.random = random
 
     def __repr__(self):
         return "chatbot for {}".format(self.chat_id)
@@ -19,7 +17,6 @@ class ChatbotChats(BASE):
 
 
 ChatbotChats.__table__.create(checkfirst=True)
-
 INSERTION_LOCK = threading.RLock()
 
 
@@ -33,22 +30,12 @@ def is_chat(chat_id):
     finally:
         SESSION.close()
 
-def is_random(chat_id):
-    random = False
-    try:
-       chatbot = SESSION.query(ChatbotChats).get(str(chat_id))
-       if chatbot:
-           random = chatbot.random
-       return random
-    finally:
-        SESSION.close()
 
-
-def add_chat(chat_id, random: bool = False):
+def add_chat(chat_id):
     with INSERTION_LOCK:
         chatbot = SESSION.query(ChatbotChats).get(str(chat_id))
         if not chatbot:
-            autochat = ChatbotChats(str(chat_id), random)
+            autochat = ChatbotChats(str(chat_id))
             SESSION.add(chatbot)
 
         SESSION.commit()
