@@ -52,11 +52,11 @@ def chatmode(update: Update, context: CallbackContext):
 
 
 def check_message(context: CallbackContext, message):
-    if message.text.lower() == f"@{context.bot.get_me().username}".lower():
+    if message.text.lower() == f"@{context.bot.username}".lower():
         return True
     reply_msg = message.reply_to_message
     if reply_msg:
-        if reply_msg.from_user.id == context.bot.get_me().id:
+        if reply_msg.from_user.id == context.bot.id:
             return True
     else:
         return False
