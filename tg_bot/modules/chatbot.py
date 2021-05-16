@@ -95,25 +95,25 @@ def checker(context: CallbackContext, message):
 
     return abc
 
-def get_response(update: Update):
+def get_response(update: Update, _):
      user = update.effective_user
      message = update.effective_message
-     url = "http://api.brainshop.ai/get?bid=156213&key=AFL4yzDEQfAQkbyZ&uid={}&msg={}"
-     response = requests.get(url.format(user.id, message.text)).json
-     return response["cnt"]
+     url = f"http://api.brainshop.ai/get?bid=156213&key=AFL4yzDEQfAQkbyZ&uid={user.id}&msg={message.text}"
+     response = requests.get(url).json()
+     return response['cnt']
+ 
 
 
-# @kigmsg(Filters.all & ((~Filters.update.edited_message & ~Filters.forwarded) & (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/"))) & Filters.chat_type.groups)
-# @run_async
+@kigmsg(Filters.text & ((~Filters.update.edited_message & ~Filters.forwarded) & (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/"))) & Filters.chat_type.groups, run_async=False)
 def chatbot(update, context):
     message = update.effective_message
     chat = update.effective_chat
-   # is_chat = sql.is_chat(chat.id)
+    is_chat = sql.is_chat(chat.id)
     bot = context.bot
-   # if not is_chat:
-   #     return
-   # if not message.text:
-   #     return
+    if not is_chat:
+        return
+    if not message.text and message.document:
+        return
     if checker(context, message):
         bot.send_chat_action(chat.id, action='typing')
         rep = get_response(update)
@@ -159,10 +159,10 @@ def listchatbot(update: Update, context: CallbackContext):
 
 
 
-CHATBOT_HNDL = MessageHandler(
-    Filters.text & (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/")), chatbot
-)
-dispatcher.add_handler(CHATBOT_HNDL)
+# CHATBOT_HNDL = MessageHandler(
+#     Filters.text & (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/")), chatbot
+# )
+# dispatcher.add_handler(CHATBOT_HNDL)
 
 __mod_name__ = "Chatbot"
 __command_list__ = ["chatbot", "listchatbot"]
