@@ -16,77 +16,67 @@ from ptbcontrib.postgres_persistence import PostgresPersistence
 StartTime = time.time()
 
 def get_user_list(key):
-    # Import here to evade a circular import
-    from tg_bot.modules.sql import nation_sql
-    royals = nation_sql.get_royals(key)
-    return [a.user_id for a in royals]
+      # Import here to evade a circular import
+      with open('{}/tg_bot/{}'.format(os.getcwd(), 'elevated_users.json'),
+                'r') as royals:
+              return json.load(royals)[key]
 
 # enable logging
-FORMAT = "[Enterprise] %(message)s"
+FORMAT = "[RentalBot] %(message)s"
 logging.basicConfig(handlers=[RichHandler()], level=logging.INFO, format=FORMAT, datefmt="[%X]")
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 log = logging.getLogger("rich")
 
-log.info("[KIGYO] Kigyo is starting. | An Eagle Union Project. | Licensed under GPLv3.")
+# if version < 3.9, stop bot.
+if sys.version_info[0] < 3 or sys.version_info[1] < 9:
+	log.error(
+	    "[@LustPriest] You MUST have a python version of at least 3.9! Multiple features depend on this. Bot quitting."
+	)
+	quit(1)
 
-log.info("[KIGYO] Not affiliated to Azur Lane or Yostar in any way whatsoever.")
-log.info("[KIGYO] Project maintained by: github.com/Dank-del (t.me/dank_as_fuck)")
 
-# if version < 3.6, stop bot.
-if sys.version_info[0] < 3 or sys.version_info[1] < 7:
-    log.error(
-        "[KIGYO] You MUST have a python version of at least 3.7! Multiple features depend on this. Bot quitting."
-    )
-    quit(1)
-
-parser = ConfigParser()
-parser.read("config.ini")
-kigconfig = parser["kigconfig"]
-
-class KigyoINIT:
-    def __init__(self, parser):
-        self.parser = parser
-        self.SYS_ADMIN = self.parser.getint('SYS_ADMIN', 0)
-        self.OWNER_ID = self.parser.getint('OWNER_ID')
-        self.OWNER_USERNAME = self.parser.get('OWNER_USERNAME', None)
-        self.APP_ID = self.parser.getint("APP_ID")
-        self.API_HASH = self.parser.get("API_HASH")
-        self.WEBHOOK = self.parser.getboolean('WEBHOOK', False)
-        self.URL = self.parser.get('URL', None)
-        self.CERT_PATH = self.parser.get('CERT_PATH', None)
-        self.PORT = self.parser.getint('PORT', None)
-        self.INFOPIC = self.parser.getboolean('INFOPIC', False)
-        self.DEL_CMDS = self.parser.getboolean("DEL_CMDS", False)
-        self.STRICT_GBAN = self.parser.getboolean("STRICT_GBAN", False)
-        self.ALLOW_EXCL = self.parser.getboolean("ALLOW_EXCL", False)
-        self.CUSTOM_CMD = ['/', '!']
-        self.BAN_STICKER = self.parser.get("BAN_STICKER", None)
-        self.TOKEN = self.parser.get("TOKEN")
-        self.DB_URI = self.parser.get("SQLALCHEMY_DATABASE_URI")
-        self.LOAD = self.parser.get("LOAD").split()
-        self.LOAD = list(map(str, self.LOAD))
-        self.MESSAGE_DUMP = self.parser.getint('MESSAGE_DUMP', None)
-        self.GBAN_LOGS = self.parser.getint('GBAN_LOGS', None)
-        self.NO_LOAD = self.parser.get("NO_LOAD").split()
-        self.NO_LOAD = list(map(str, self.NO_LOAD))
-        self.spamwatch_api = self.parser.get('spamwatch_api', None)
-        self.CASH_API_KEY = self.parser.get('CASH_API_KEY', None)
-        self.TIME_API_KEY = self.parser.get('TIME_API_KEY', None)
-        self.WALL_API = self.parser.get('WALL_API', None)
-        self.LASTFM_API_KEY = self.parser.get('LASTFM_API_KEY', None)
-        self.CF_API_KEY =  self.parser.get("CF_API_KEY", None)
-        self.bot_id = 0 #placeholder
-        self.bot_name = "Kigyo" #placeholder
-        self.bot_username = "KigyoRobot" #placeholder
+class RentalBot:
+    def __init__(self, rent):
+        self.rent = rent
+        self.SYS_ADMIN = self.rent.SYS_ADMIN
+        self.OWNER_ID = self.rent.OWNER_ID
+        self.OWNER_USERNAME = self.rent.OWNER_USERNAME
+        self.APP_ID = self.rent.API_ID
+        self.API_HASH = self.rent.API_HASH
+        self.WEBHOOK = self.rent.WEBHOOK
+        self.URL = self.rent.URL
+        self.CERT_PATH = self.rent.DEL_CMDS
+        self.PORT = self.rent.PORT
+        self.DEL_CMDS = self.rent.DEL_CMDS
+        self.STRICT_GBAN = self.rent.STRICT_GBAN
+        self.ALLOW_EXCL = self.rent.ALLOW_EXCL
+        self.CUSTOM_CMD = self.rent.CUSTOM_CMD
+        self.BAN_STICKER = self.rent.BAN_STICKER
+        self.TOKEN = self.rent.TOKEN
+        self.DB_URI = self.rent.DB_URI
+        self.loadbeta = self.rent.LOAD.split()
+        self.LOAD = list(map(str, self.loadbeta))
+        self.MESSAGE_DUMP = self.rent.MESSAGE_DUMP
+        self.JOIN_LOGGER = self.rent.JOIN_LOGGER
+        self.ERROR_DUMP = self.rent.ERROR_DUMP
+        self.GBAN_LOGS = self.rent.GBAN_LOGS
+        self.no_loadbeta = self.rent.NO_LOAD.split()
+        self.NO_LOAD = list(map(str, self.no_loadbeta))
+        self.spamwatch_api = self.rent.SPAMWATCH_API
+        self.WALL_API = self.rent.WALL_API
+        self.CF_API_KEY =  self.rent.CF_API_KEY
+        self.bot_id = 1736276154 #placeholder
+        self.bot_name = "Chizuru V2" #placeholder
+        self.bot_username = "ElitesOfBot" #placeholder
 
 
     def init_sw(self):
-        if self.spamwatch_api is None:
+        if self.SPAMWATCH_API is None:
             log.warning("SpamWatch API key is missing! Check your config.ini")
             return None
         else:
             try:
-                sw = spamwatch.Client(spamwatch_api)
+                sw = spamwatch.Client(SPAMWATCH_API)
                 return sw
             except:
                 sw = None
@@ -94,50 +84,47 @@ class KigyoINIT:
                 return sw
 
 
-KInit = KigyoINIT(parser=kigconfig)
+from tg_bot.config import Rental
+Rent = RentalBot(Rental)
 
-SYS_ADMIN = KInit.SYS_ADMIN
-OWNER_ID = KInit.OWNER_ID
-OWNER_USERNAME = KInit.OWNER_USERNAME
-APP_ID = KInit.APP_ID
-API_HASH = KInit.API_HASH
-WEBHOOK = KInit.WEBHOOK
-URL = KInit.URL
-CERT_PATH = KInit.CERT_PATH
-PORT = KInit.PORT
-INFOPIC = KInit.INFOPIC
-DEL_CMDS = KInit.DEL_CMDS
-ALLOW_EXCL = KInit.ALLOW_EXCL
-CUSTOM_CMD = KInit.CUSTOM_CMD
-BAN_STICKER = KInit.BAN_STICKER
-TOKEN = KInit.TOKEN
-DB_URI = KInit.DB_URI
-LOAD = KInit.LOAD
-MESSAGE_DUMP = KInit.MESSAGE_DUMP
-GBAN_LOGS = KInit.GBAN_LOGS
-NO_LOAD = KInit.NO_LOAD
-SUDO_USERS = [OWNER_ID] + get_user_list("sudos")
+SYS_ADMIN = Rent.SYS_ADMIN
+OWNER_ID = Rent.OWNER_ID
+OWNER_USERNAME = Rent.OWNER_USERNAME
+APP_ID = Rent.APP_ID
+API_HASH = Rent.API_HASH
+WEBHOOK = Rent.WEBHOOK
+URL = Rent.URL
+CERT_PATH = Rent.CERT_PATH
+PORT = Rent.PORT
+DEL_CMDS = Rent.DEL_CMDS
+ALLOW_EXCL = Rent.ALLOW_EXCL
+CUSTOM_CMD = Rent.CUSTOM_CMD
+BAN_STICKER = Rent.BAN_STICKER
+TOKEN = Rent.TOKEN
+DB_URI = Rent.DB_URI
+LOAD = Rent.LOAD
+MESSAGE_DUMP = Rent.MESSAGE_DUMP
+JOIN_LOGGER = Rent.JOIN_LOGGER
+ERROR_DUMP = Rent.ERROR_DUMP
+GBAN_LOGS = Rent.GBAN_LOGS
+NO_LOAD = Rent.NO_LOAD
 DEV_USERS = [OWNER_ID] + get_user_list("devs")
+SUDO_USERS = [OWNER_ID] + get_user_list("sudos")
 SUPPORT_USERS = get_user_list("supports")
 SARDEGNA_USERS = get_user_list("sardegnas")
 WHITELIST_USERS = get_user_list("whitelists")
-SPAMMERS = get_user_list("spammers")
-spamwatch_api = KInit.spamwatch_api
-CASH_API_KEY = KInit.CASH_API_KEY
-TIME_API_KEY = KInit.TIME_API_KEY
-WALL_API = KInit.WALL_API
-LASTFM_API_KEY = KInit.LASTFM_API_KEY
-CF_API_KEY = KInit.CF_API_KEY
-
-SPB_MODE = kigconfig.getboolean('SPB_MODE', False)
+spamwatch_api = Rent.SPAMWATCH_API
+WALL_API = Rent.WALL_API
+CF_API_KEY = Rent.CF_API_KEY
 
 # SpamWatch
-sw = KInit.init_sw()
+sw = Rent.init_sw()
 
 from tg_bot.modules.sql import SESSION
 
 updater = tg.Updater(TOKEN, workers=min(32, os.cpu_count() + 4), request_kwargs={"read_timeout": 10, "connect_timeout": 10}, persistence=PostgresPersistence(SESSION))
 telethn = TelegramClient(MemorySession(), APP_ID, API_HASH)
+client = telethn
 dispatcher = updater.dispatcher
 
 kp = Client(":memory:", api_id=APP_ID, api_hash=API_HASH, bot_token=TOKEN, workers=min(32, os.cpu_count() + 4))
@@ -172,16 +159,6 @@ async def get_entity(client, entity):
     return entity, entity_client
 
 # Load at end to ensure all prev variables have been set
-from tg_bot.modules.helper_funcs.handlers import CustomCommandHandler
-
 if CUSTOM_CMD and len(CUSTOM_CMD) >= 1:
+    from tg_bot.modules.helper_funcs.handlers import CustomCommandHandler
     tg.CommandHandler = CustomCommandHandler
-
-
-def spamfilters(text, user_id, chat_id):
-    # print("{} | {} | {}".format(text, user_id, chat_id))
-    if int(user_id) in SPAMMERS:
-        print("This user is a spammer!")
-        return True
-    else:
-        return False
