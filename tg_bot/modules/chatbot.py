@@ -86,8 +86,8 @@ def chatmode(update, context):
 
 def is_random_chat():
      xy = False
-     z = random.randrange(150)
-     xxx = 15 if int(xxx) <= 15 else int(z)
+     z = random.randrange(5)
+     xxx = 2 if int(xxx) <= 3 else int(z)
      x, y = random.randrange(int(xxx)), random.randrange(int(xxx))
      if int(x) == int(y):
            xy = True
@@ -226,8 +226,8 @@ CHATBOT_HANDLER = MessageHandler(
 )
 CHATBOT_RANDOM_HANDLER = MessageHandler(
      Filters.text & ((~Filters.update.edited_message & ~Filters.forwarded) &
-     (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/")) &
-     Filters.chat_type.groups), chatbot_random
+     (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/") &
+     ~Filters.regex(r"^@")) & Filters.chat_type.groups), chatbot_random
 )
 dispatcher.add_handler(CHATBOT_HANDLER)
 dispatcher.add_handler(CHATBOT_RANDOM_HANDLER)
