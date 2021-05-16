@@ -84,16 +84,18 @@ def chatmode(update: Update, context: CallbackContext):
 
 
 def check_message(context: CallbackContext, message):
+    abc = False
     if message.text.lower() == f"@{context.bot.username}".lower():
-        return True
+        abc = True
+
     reply_msg = message.reply_to_message
     if reply_msg:
         if reply_msg.from_user.id == context.bot.id:
-            return True
-    else:
-        return False
+            abc = True
 
-def get_response(update: Update, _):
+    return abc
+
+def get_response(update: Update):
      user = update.effective_user
      message = update.effective_message
 
@@ -128,21 +130,25 @@ def chatbot(update: Update, context: CallbackContext):
             bot.send_chat_action(chat.id, action='typing')
             rep = get_response(update)
             sleep(0.5)
-            message.reply_text(rep, timeout=60)
+            message.reply_text(rep)
+
         except RetryAfter as e:
             return
+
         except BadRequest as br:
             bot.sendMessage(
                    ERROR_DUMP,
                    f"AI ERROR: BadRequest \nChat: {'@' + chat.username or chat.title} (<code>{chat.id}</code>)\n\n{br}",
                    parse_mode=ParseMode.HTML,
             )
+
         except Unauthorized as u:
             bot.sendMessage(
                    ERROR_DUMP,
                    f"AI ERROR: Unauthorized \nChat: {'@' + chat.username or chat.title} (<code>{chat.id}</code>)\n\n{u}",
                    parse_mode=ParseMode.HTML,
             )
+
         except Exception as e:
             bot.sendMessage(
                    ERROR_DUMP,
