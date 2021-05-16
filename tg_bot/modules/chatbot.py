@@ -31,7 +31,7 @@ def chatmode(update: Update, context: CallbackContext):
 
     if args[1].lower() in ("yes", "on"):
         if not is_chat:
-            sql.add_chat(chat.id)
+            sql.add_chat(chat.id, False)
             message.reply_text("Chatbot successfully enabled for this group!")
             logger = (f"<b>{html.escape(chat.title)}:</b>\n"
                       f"#AI_ENABLED\n"
