@@ -4,15 +4,15 @@ from time import sleep, time
 
 from telegram import Update, ParseMode
 from telegram.utils.helpers import mention_html
-from telegram.ext import MessageHandler, CallbackContext, Filters, run_async
 from telegram.error import BadRequest, RetryAfter, Unauthorized
+from telegram.ext import MessageHandler, CallbackContext, Filters
 
 from tg_bot import dispatcher, ERROR_DUMP
 import tg_bot.modules.sql.chatbot_sql as sql
 from tg_bot.modules.log_channel import gloggable
+from tg_bot.modules.helper_funcs.decorators import kigcmd
 from tg_bot.modules.helper_funcs.chat_status import dev_plus
 from tg_bot.modules.helper_funcs.chat_status import user_admin
-from tg_bot.modules.helper_funcs.decorators import kigcmd, kigmsg
 
 
 
@@ -103,8 +103,7 @@ def get_response(update: Update, _):
      return response['cnt']
  
 
-
-@kigmsg(Filters.text & ((~Filters.update.edited_message & ~Filters.forwarded) & (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/"))) & Filters.chat_type.groups, run_async=False)
+# Chabot
 def chatbot(update, context):
     message = update.effective_message
     chat = update.effective_chat
@@ -159,10 +158,16 @@ def listchatbot(update: Update, context: CallbackContext):
 
 
 
-# CHATBOT_HNDL = MessageHandler(
-#     Filters.text & (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/")), chatbot
-# )
-# dispatcher.add_handler(CHATBOT_HNDL)
+CHATBOT_HANDLER = MessageHandler(
+     Filters.text & ((~Filters.update.edited_message & ~Filters.forwarded) &
+     (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/")) &
+     Filters.chat_type.groups), chatbot
+)
+dispatcher.add_handler(CHATBOT_HANDLER)
 
 __mod_name__ = "Chatbot"
-__command_list__ = ["chatbot", "listchatbot"]
+__handlers__ = [CHATBOT_HANDLER]
+__command_list__ = [
+                 "chatbot",
+                 "listchatbot",
+                   ]
