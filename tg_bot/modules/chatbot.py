@@ -99,7 +99,7 @@ def get_response(update: Update):
      user = update.effective_user
      message = update.effective_message
      url = "http://api.brainshop.ai/get?bid=156213&key=AFL4yzDEQfAQkbyZ&uid={}&msg={}"
-     response = requests.get(url.format(user.id, message)).json
+     response = requests.get(url.format(user.id, message.text)).json
      return response["cnt"]
 
 
@@ -109,10 +109,10 @@ def chatbot(update, context):
     chat = update.effective_chat
     is_chat = sql.is_chat(chat.id)
     bot = context.bot
-    if not is_chat:
-        return
-    if not message.text:
-        return
+   # if not is_chat:
+   #     return
+   # if not message.text:
+   #     return
     if checker(context, message):
         try:
 
