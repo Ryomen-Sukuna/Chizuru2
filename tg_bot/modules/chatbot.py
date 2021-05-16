@@ -4,7 +4,7 @@ from time import sleep, time
 
 from telegram import Update, ParseMode
 from telegram.utils.helpers import mention_html
-from telegram.ext import CallbackContext, Filters
+from telegram.ext import MessageHandler, CallbackContext, Filters, run_async
 from telegram.error import BadRequest, RetryAfter, Unauthorized
 
 from tg_bot import dispatcher, ERROR_DUMP
@@ -104,6 +104,7 @@ def get_response(update: Update):
 
 
 # @kigmsg(Filters.all & ((~Filters.update.edited_message & ~Filters.forwarded) & (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/"))) & Filters.chat_type.groups)
+@run_async
 def chatbot(update, context):
     message = update.effective_message
     chat = update.effective_chat
