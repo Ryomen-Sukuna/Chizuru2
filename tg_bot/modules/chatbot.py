@@ -1,5 +1,4 @@
 import html
-import random
 import requests
 from time import sleep, time
 
@@ -61,20 +60,6 @@ def chatmode(update, context):
             message.reply_text("Chatbot is already disabled for this group!")
             return ""
 
-    elif args[1].lower() in ("random"):
-        if not is_chat:
-            sql.add_chat(chat.id, True)
-            message.reply_text("Chatbot successfully enabled for this group!")
-            logger = (
-               f"<b>{html.escape(chat.title)}:</b>\n"
-               f"#AI_ENABLED\n"
-               f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
-            )
-            return logger
-        else:
-            message.reply_text("Chatbot is already enabled for this group!")
-            return ""
-
     else:
          message.reply_text("Chatbot Status For This Group: <i>{}</i>".
                 format("Enabled" if is_chat else "Disabled"),
@@ -83,15 +68,6 @@ def chatmode(update, context):
          )
          return ""
 
-
-def is_random_chat():
-     xy = False
-     z = random.randrange(5)
-     xxx = 2 if int(xxx) <= 3 else int(z)
-     x, y = random.randrange(int(xxx)), random.randrange(int(xxx))
-     if int(x) == int(y):
-           xy = True
-     return xy
 
 def checker(context, message):
     abc = False
@@ -156,31 +132,6 @@ def chatbot(update: Update, context: CallbackContext):
             )
 
 
-def chatbot_random(update: Update, context: CallbackContext):
-    message = update.effective_message
-    chat = update.effective_chat
-    is_random = sql.is_random(chat.id)
-    is_chat = sql.is_chat(chat.id)
-    bot = context.bot
-    if not is_chat:
-        return
-    if not message.text and message.document:
-        return
-    if not is_random:
-        return 
-    if is_random_chat():
-        try:
-            rep = get_response(update)
-            sleep(0.5)
-            message.reply_text(rep)
-        except Exception as e:
-            bot.sendMessage(
-                   ERROR_DUMP,
-                   f"Random-AI ERROR: Exception \nChat: {'@' + chat.username or chat.title} (<code>{chat.id}</code>)\n\n{e}",
-                   parse_mode=ParseMode.HTML,
-            )
-
-
 @kigcmd(command='listchatbot')
 @dev_plus
 def listchatbot(update: Update, context: CallbackContext):
@@ -224,15 +175,9 @@ CHATBOT_HANDLER = MessageHandler(
      (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/")) &
      Filters.chat_type.groups), chatbot
 )
-CHATBOT_RANDOM_HANDLER = MessageHandler(
-     Filters.text & ((~Filters.update.edited_message & ~Filters.forwarded) &
-     (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/") &
-     ~Filters.regex(r"^@")) & Filters.chat_type.groups), chatbot_random
-)
 dispatcher.add_handler(CHATBOT_HANDLER)
-dispatcher.add_handler(CHATBOT_RANDOM_HANDLER)
 
 
 __mod_name__ = "Chatbot"
-__handlers__ = [CHATBOT_HANDLER, CHATBOT_RANDOM_HANDLER]
+__handlers__ = [CHATBOT_HANDLER]
 __command_list__ = ["chatbot", "listchatbot"]
