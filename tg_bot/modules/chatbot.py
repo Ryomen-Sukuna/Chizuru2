@@ -7,7 +7,7 @@ from telegram.utils.helpers import mention_html
 from telegram.ext import CallbackContext, Filters
 from telegram.error import BadRequest, RetryAfter, Unauthorized
 
-from tg_bot import ERROR_DUMP
+from tg_bot import dispatcher, ERROR_DUMP
 import tg_bot.modules.sql.chatbot_sql as sql
 from tg_bot.modules.log_channel import gloggable
 from tg_bot.modules.helper_funcs.chat_status import dev_plus
@@ -103,47 +103,22 @@ def get_response(update: Update):
      return response["cnt"]
 
 
-@kigmsg(Filters.all & ((~Filters.update.edited_message & ~Filters.forwarded) & (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/"))) & Filters.chat_type.groups)
+# @kigmsg(Filters.all & ((~Filters.update.edited_message & ~Filters.forwarded) & (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/"))) & Filters.chat_type.groups)
 def chatbot(update, context):
     message = update.effective_message
     chat = update.effective_chat
-    is_chat = sql.is_chat(chat.id)
+   # is_chat = sql.is_chat(chat.id)
     bot = context.bot
    # if not is_chat:
    #     return
    # if not message.text:
    #     return
     if checker(context, message):
-        try:
+        bot.send_chat_action(chat.id, action='typing')
+        rep = get_response(update)
+        sleep(0.5)
+        message.reply_text(rep)
 
-            bot.send_chat_action(chat.id, action='typing')
-            rep = get_response(update)
-            sleep(0.5)
-            message.reply_text(rep)
-
-        except RetryAfter:
-            return
-
-        except BadRequest as br:
-            bot.sendMessage(
-                   ERROR_DUMP,
-                   f"AI ERROR: BadRequest \nChat: {'@' + chat.username or chat.title} (<code>{chat.id}</code>)\n\n{br}",
-                   parse_mode=ParseMode.HTML,
-            )
-
-        except Unauthorized as u:
-            bot.sendMessage(
-                   ERROR_DUMP,
-                   f"AI ERROR: Unauthorized \nChat: {'@' + chat.username or chat.title} (<code>{chat.id}</code>)\n\n{u}",
-                   parse_mode=ParseMode.HTML,
-            )
-
-        except Exception as e:
-            bot.sendMessage(
-                   ERROR_DUMP,
-                   f"AI ERROR: Exception \nChat: {'@' + chat.username or chat.title} (<code>{chat.id}</code>)\n\n{e}",
-                   parse_mode=ParseMode.HTML,
-            )
 
 
 @kigcmd(command='listchatbot')
@@ -182,6 +157,11 @@ def listchatbot(update: Update, context: CallbackContext):
     )
 
 
+
+CHATBOT_HNDL = MessageHandler(
+    Filters.text & (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/")), chatbot
+)
+dispatcher.add_handler(CHATBOT_HNDL)
 
 __mod_name__ = "Chatbot"
 __command_list__ = ["chatbot", "listchatbot"]
