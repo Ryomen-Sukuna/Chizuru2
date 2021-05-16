@@ -62,7 +62,7 @@ class RentalBot:
         self.GBAN_LOGS = self.rent.GBAN_LOGS
         self.no_loadbeta = self.rent.NO_LOAD.split()
         self.NO_LOAD = list(map(str, self.no_loadbeta))
-        self.spamwatch_api = self.rent.SPAMWATCH_API
+        self.SPAMWATCH_API = self.rent.SPAMWATCH_API
         self.WALL_API = self.rent.WALL_API
         self.CF_API_KEY =  self.rent.CF_API_KEY
         self.bot_id = 1736276154 #placeholder
