@@ -1,4 +1,5 @@
 import html
+import random
 import requests
 from time import sleep, time
 
@@ -83,6 +84,15 @@ def chatmode(update, context):
          return ""
 
 
+def is_random_chat():
+     xy = False
+     z = random.randrange(150)
+     xxx = 15 if int(xxx) <= 15 else int(z)
+     x, y = random.randrange(int(xxx)), random.randrange(int(xxx))
+     if int(x) == int(y):
+           xy = True
+     return xy
+
 def checker(context, message):
     abc = False
     if message.text.lower() == f"@{context.bot.username}".lower():
@@ -114,11 +124,61 @@ def chatbot(update: Update, context: CallbackContext):
     if not message.text and message.document:
         return
     if checker(context, message):
-        bot.send_chat_action(chat.id, action='typing')
-        rep = get_response(update)
-        sleep(0.5)
-        message.reply_text(rep)
+        try:
 
+            bot.send_chat_action(chat.id, action='typing')
+            rep = get_response(update)
+            sleep(0.5)
+            message.reply_text(rep)
+
+        except RetryAfter:
+            return
+
+        except BadRequest as br:
+            bot.sendMessage(
+                   ERROR_DUMP,
+                   f"AI ERROR: BadRequest \nChat: {'@' + chat.username or chat.title} (<code>{chat.id}</code>)\n\n{br}",
+                   parse_mode=ParseMode.HTML,
+            )
+
+        except Unauthorized as u:
+            bot.sendMessage(
+                   ERROR_DUMP,
+                   f"AI ERROR: Unauthorized \nChat: {'@' + chat.username or chat.title} (<code>{chat.id}</code>)\n\n{u}",
+                   parse_mode=ParseMode.HTML,
+            )
+
+        except Exception as e:
+            bot.sendMessage(
+                   ERROR_DUMP,
+                   f"AI ERROR: Exception \nChat: {'@' + chat.username or chat.title} (<code>{chat.id}</code>)\n\n{e}",
+                   parse_mode=ParseMode.HTML,
+            )
+
+
+def chatbot_random(update: Update, context: CallbackContext):
+    message = update.effective_message
+    chat = update.effective_chat
+    is_random = sql.is_random(chat.id)
+    is_chat = sql.is_chat(chat.id)
+    bot = context.bot
+    if not is_chat:
+        return
+    if not message.text and message.document:
+        return
+    if not is_random:
+        return 
+    if is_random_chat():
+        try:
+            rep = get_response(update)
+            sleep(0.5)
+            message.reply_text(rep)
+        except Exception as e:
+            bot.sendMessage(
+                   ERROR_DUMP,
+                   f"Random-AI ERROR: Exception \nChat: {'@' + chat.username or chat.title} (<code>{chat.id}</code>)\n\n{e}",
+                   parse_mode=ParseMode.HTML,
+            )
 
 
 @kigcmd(command='listchatbot')
@@ -158,16 +218,21 @@ def listchatbot(update: Update, context: CallbackContext):
 
 
 
+# Handlers
 CHATBOT_HANDLER = MessageHandler(
      Filters.text & ((~Filters.update.edited_message & ~Filters.forwarded) &
      (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/")) &
      Filters.chat_type.groups), chatbot
 )
+CHATBOT_RANDOM_HANDLER = MessageHandler(
+     Filters.text & ((~Filters.update.edited_message & ~Filters.forwarded) &
+     (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/")) &
+     Filters.chat_type.groups), chatbot_random
+)
 dispatcher.add_handler(CHATBOT_HANDLER)
+dispatcher.add_handler(CHATBOT_RANDOM_HANDLER)
+
 
 __mod_name__ = "Chatbot"
-__handlers__ = [CHATBOT_HANDLER]
-__command_list__ = [
-                 "chatbot",
-                 "listchatbot",
-                   ]
+__handlers__ = [CHATBOT_HANDLER, CHATBOT_RANDOM_HANDLER]
+__command_list__ = ["chatbot", "listchatbot"]
