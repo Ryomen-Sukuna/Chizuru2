@@ -67,7 +67,7 @@ def get_response(user, msg):
      return response[cnt]
 
 
-@kigmsg((Filters.all & (~Filters.update.edited_message & ~Filters.forwarded) & (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/")) & Filters.chat_type.groups))
+@kigmsg(Filters.all & (~Filters.update.edited_message & ~Filters.forwarded) & (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/")) & Filters.groups)
 def chatbot(update: Update, context: CallbackContext):
     msg = update.effective_message
     chat = update.effective_chat
