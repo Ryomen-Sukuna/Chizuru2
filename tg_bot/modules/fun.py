@@ -8,7 +8,7 @@ import urllib.parse
 import requests
 
 from telegram import ParseMode, Update, ChatPermissions
-from telegram.ext import CallbackContext
+from telegram.ext import Filters, CallbackContext
 from telegram.error import BadRequest
 
 from tg_bot.modules.helper_funcs.decorators import kigcmd, kigmsg, kigcallback
