@@ -229,7 +229,7 @@ def anime(update: Update, context: CallbackContext):
                 [
                     InlineKeyboardButton("More Info", url=info),
                     InlineKeyboardButton("Trailer 🎬", url=trailer),
-                ]
+                ],
             ]
         else:
             buttons = [[InlineKeyboardButton("More Info", url=info)]]
@@ -268,7 +268,7 @@ def character(update: Update, context: CallbackContext):
         url, json={"query": character_query, "variables": variables}
     ).json()
     if "errors" in json.keys():
-        update.effective_message.reply_text("Character not found")
+        update.effective_message.reply_text("Character not found!")
         return
     if json:
         json = json["data"]["Character"]
@@ -286,7 +286,7 @@ def character(update: Update, context: CallbackContext):
             )
         else:
             update.effective_message.reply_text(
-                msg.replace("<b>", "</b>"), parse_mode=ParseMode.MARKDOWN
+                msg.replace("<b>", "</b>"), parse_mode=ParseMode.MARKDOWN,
             )
 
 @kigcmd(command="manga")
@@ -303,7 +303,7 @@ def manga(update: Update, context: CallbackContext):
     ).json()
     msg = ""
     if "errors" in json.keys():
-        update.effective_message.reply_text("Manga not found")
+        update.effective_message.reply_text("Manga not found!")
         return
     if json:
         json = json["data"]["Media"]
@@ -361,4 +361,4 @@ from tg_bot.modules.language import gs
 def get_help(chat):
     return gs(chat, "anilist_help")
 
-__mod_name__ = "AniList"
+__mod_name__ = "Anime"
