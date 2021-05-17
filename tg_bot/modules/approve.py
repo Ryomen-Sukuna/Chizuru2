@@ -1,14 +1,15 @@
 import html
-from tg_bot.modules.disable import DisableAbleCommandHandler
-from tg_bot import dispatcher, SUDO_USERS
-from tg_bot.modules.helper_funcs.extraction import extract_user
-from telegram.ext import CallbackContext, CallbackQueryHandler, Filters
-import tg_bot.modules.sql.approve_sql as sql
-from tg_bot.modules.helper_funcs.chat_status import user_admin
-from tg_bot.modules.log_channel import loggable
-from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton, Update
-from telegram.utils.helpers import mention_html
+
 from telegram.error import BadRequest
+from telegram.utils.helpers import mention_html
+from telegram.ext import CallbackContext, Filters
+from telegram import Update, ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
+
+from tg_bot import SUDO_USERS
+import tg_bot.modules.sql.approve_sql as sql
+from tg_bot.modules.log_channel import loggable
+from tg_bot.modules.helper_funcs.chat_status import user_admin
+from tg_bot.modules.helper_funcs.extraction import extract_user
 from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback
 
 @kigcmd(command='approve', filters=Filters.chat_type.groups)
@@ -158,6 +159,7 @@ def unapproveall(update: Update, context: CallbackContext):
         )
 
 @kigcallback(pattern=r"unapproveall_.*")
+@loggable
 def unapproveall_btn(update: Update, context: CallbackContext):
     query = update.callback_query
     chat = update.effective_chat
@@ -171,12 +173,20 @@ def unapproveall_btn(update: Update, context: CallbackContext):
                 users.append(int(i.user_id))
             for user_id in users:
                 sql.disapprove(chat.id, user_id)
+            log_message = (
+                   f"<b>{html.escape(chat.title)}:</b>\n"
+                   f"#UNAPPROVED_ALL\n"
+                   f"<b>Admin:</b> {mention_html(query.from_user.id, query.from_user.first_name)}\n"
+
+            return log_message
 
         if member.status == "administrator":
             query.answer("Only owner of the chat can do this.")
+            return ""
 
         if member.status == "member":
             query.answer("You need to be admin to do this.")
+            return ""
     elif query.data == "unapproveall_cancel":
         if member.status == "creator" or query.from_user.id in SUDO_USERS:
             message.edit_text(
@@ -184,8 +194,10 @@ def unapproveall_btn(update: Update, context: CallbackContext):
             return ""
         if member.status == "administrator":
             query.answer("Only owner of the chat can do this.")
+            return ""
         if member.status == "member":
             query.answer("You need to be admin to do this.")
+            return ""
 
 from tg_bot.modules.language import gs
 
