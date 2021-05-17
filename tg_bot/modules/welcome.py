@@ -271,8 +271,17 @@ def new_member(update: Update, context: CallbackContext):
                     else:
                         username = mention
 
+                    if "%%%" in cust_welcome:
+                        split = cust_welcome.split("%%%")
+                        if all(split):
+                            cust_wel = random.choice(split)
+                        else:
+                            cust_wel = cust_welcome
+                    else:
+                        cust_wel = cust_welcome
+
                     valid_format = escape_invalid_curly_brackets(
-                        cust_welcome, VALID_WELCOME_FORMATTERS
+                        cust_wel, VALID_WELCOME_FORMATTERS
                     )
                     res = valid_format.format(
                         first=escape_markdown(first_name),
@@ -620,8 +629,17 @@ def left_member(update: Update, context: CallbackContext):
                 else:
                     username = mention
 
+                if "%%%" in cust_goodbye:
+                    split = cust_goodbye.split("%%%")
+                    if all(split):
+                        cust_bye = random.choice(split)
+                    else:
+                        cust_bye = cust_welcome
+                else:
+                    cust_bye = cust_welcome
+
                 valid_format = escape_invalid_curly_brackets(
-                    cust_goodbye, VALID_WELCOME_FORMATTERS
+                    cust_bye, VALID_WELCOME_FORMATTERS
                 )
                 res = valid_format.format(
                     first=escape_markdown(first_name),
