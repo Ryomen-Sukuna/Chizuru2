@@ -177,7 +177,7 @@ def unapproveall_btn(update: Update, context: CallbackContext):
                    f"<b>{html.escape(chat.title)}:</b>\n"
                    f"#UNAPPROVED_ALL\n"
                    f"<b>Admin:</b> {mention_html(query.from_user.id, query.from_user.first_name)}\n"
-
+            )
             return log_message
 
         if member.status == "administrator":
