@@ -1,12 +1,13 @@
-import traceback
-import requests
 import html
 import random
+import requests
+import traceback
 
-from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import Update, ParseMode
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CallbackContext, CommandHandler
 
-from tg_bot import dispatcher, DEV_USERS, OWNER_ID
+from tg_bot import dispatcher, ERROR_DUMP, OWNER_ID, DEV_USERS
 
 
 class ErrorsDict(dict):
@@ -60,19 +61,31 @@ def error_callback(update: Update, context: CallbackContext):
         with open("error.txt", "w+") as f:
             f.write(pretty_message)
         context.bot.send_document(
+            ERROR_DUMP,
+            open("error.txt", "rb"),
+            caption=f"#{context.error.identifier}\n<b>Your sugar mommy got an error for you, you cute guy:</b>\n<code>{e}</code>",
+            parse_mode=ParseMode.HTML,
+        )
+        context.bot.send_document(
             OWNER_ID,
             open("error.txt", "rb"),
             caption=f"#{context.error.identifier}\n<b>Your sugar mommy got an error for you, you cute guy:</b>\n<code>{e}</code>",
-            parse_mode="html",
+            parse_mode=ParseMode.HTML,
         )
         return
     key = key.get("result").get("key")
     url = f"https://nekobin.com/{key}.py"
     context.bot.send_message(
+        ERROR_DUMP,
+        text=f"#{context.error.identifier}\n<b>Your sugar mommy got an error for you, you cute guy:</b>\n<code>{e}</code>",
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Nekobin", url=url)]]),
+        parse_mode=ParseMode.HTML,
+    )
+    context.bot.send_message(
         OWNER_ID,
         text=f"#{context.error.identifier}\n<b>Your sugar mommy got an error for you, you cute guy:</b>\n<code>{e}</code>",
         reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Nekobin", url=url)]]),
-        parse_mode="html",
+        parse_mode=ParseMode.HTML,
     )
 
 
@@ -83,7 +96,7 @@ def list_errors(update: Update, context: CallbackContext):
     msg = "<b>Errors List:</b>\n"
     for x in e:
         msg += f"• <code>{x}:</code> <b>{e[x]}</b> #{x.identifier}\n"
-    update.effective_message.reply_text(msg, parse_mode="html")
+    update.effective_message.reply_text(msg, parse_mode=ParseMode.HTML)
 
 
 dispatcher.add_error_handler(error_callback)
