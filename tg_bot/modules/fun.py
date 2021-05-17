@@ -226,7 +226,7 @@ def rmemes(update, context):
     caps = f"- <b>Title</b>: {title}\n"
     caps += f"- <b>Subreddit:</b> <pre>r/{rpage}</pre>"
 
-    keyb = [[InlineKeyboardButton(text="Subreddit Postlink 🔗", url=plink)]]
+    keyb = [[InlineKeyboardButton(text="Reddit link 🔗", url=plink)]]
     try:
         context.bot.send_photo(
              chat.id,
@@ -238,7 +238,7 @@ def rmemes(update, context):
         )
     except BadRequest as excp:
         message.reply_text(
-            f"Failed To Send Meme! \n\n<code>{excp.message}</code>"
+            f"Failed To Send Meme! \n\n<code>{excp.message}</code>",
             parse_mode=ParseMode.HTML,
             timeout=60,
         )
