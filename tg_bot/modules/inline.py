@@ -328,10 +328,10 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
         res = r.json()
         data = res['data']['Page']['media']
         res = data
-        for json in res:
-            ms_g = f"**{json.get('name').get('full')}**(`{json.get('name').get('native')}`)\n❤️ Favourites : {json['favourites']}\n"
-            description = f"{json['description']}"
-            site_url = json.get('siteUrl')
+        for data in res:
+            ms_g = f"**{data.get('name').get('full')}**(`{data.get('name').get('native')}`)\n❤️ Favourites : {data['favourites']}\n"
+            description = f"{data['description']}"
+            site_url = data.get('siteUrl')
             ms_g += shorten(description, site_url)
 
 
@@ -346,11 +346,10 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
                     ],
                 ])
 
-
             results.append(InlineQueryResultArticle(
                     id=str(uuid4()),
-                    title=f"{json.get('name').get('full')}",
-                    description=f"{json['favourites']}",
+                    title=f"{data.get('name').get('full')}",
+                    description=f"{data['favourites']}",
                     input_message_content=InputTextMessageContent(ms_g, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=False),
                     reply_markup=kb,
                 )
