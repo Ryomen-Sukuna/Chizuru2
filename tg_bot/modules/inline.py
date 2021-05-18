@@ -326,10 +326,24 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
                           data=json.dumps({'query': CHAR_QUERY, 'variables': {'search': query}}),
                           headers={'Content-Type': 'application/json', 'Accept': 'application/json'})
         res = r.json()
-        log.exception(res)
+
+        nekokey = requests.post(
+            "https://nekobin.com/api/documents", json={"content": res}
+        ).json()
+        nekokey = nekokey.get("result").get("key")
+        nekourl = f"https://nekobin.com/{key}.py"
+        log.exception(nekourl)
+
         data = res.get('data').get('Page').get('Character')
         res = data
-        print(res)
+
+        nekokey = requests.post(
+            "https://nekobin.com/api/documents", json={"content": data}
+        ).json()
+        nekokey = nekokey.get("result").get("key")
+        nekourl = f"https://nekobin.com/{key}.py"
+        log.exception(nekourl)
+
         for data in res:
             ms_g = f"**{data.get('name').get('full') or ''}**(`{data.get('name').get('native') or ''}`)\n❤️ Favourites : {data['favourites'] or ''}\n"
             description = f"{data['description'] or ''}"
