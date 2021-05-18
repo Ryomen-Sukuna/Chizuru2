@@ -266,9 +266,9 @@ def app(update: Update, context: CallbackContext):
 
         # Structuring Data
         data = (
-          f"<a href='{app_icon}'>•</a> <b>{app_name}</b>\n"
-          f"\n∘ <b>Developer</b>: <a href='{app_dev_link}'>{app_devs}</a>"
-          f"\n∘ <b>Rating</b>: {app_rating.replace('Rated ', '').replace(' out of ', '/').replace(' stars', '', 1).replace(' stars', '').replace('five', '5')}" 
+          f"<a href='{html.escape(app_icon)}'>•</a> <b>{html.escape(app_name)}</b>\n"
+          f"\n∘ <b>Developer</b>: <a href='{html.escape(app_dev_link)}'>{html.escape(app_devs)}</a>"
+          f"\n∘ <b>Rating</b>: {html.escape(app_rating.replace('Rated ', '').replace(' out of ', '/').replace(' stars', '', 1).replace(' stars', '').replace('five', '5'))}" 
         )
 
         context.bot.send_message(
