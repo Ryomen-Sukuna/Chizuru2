@@ -238,7 +238,15 @@ def app(update: Update, context: CallbackContext):
      }
 
      response = requests.request("GET", url, headers=headers, params=querystring)
-     message.reply_text(response.text)
+     key = requests.post(
+        "https://nekobin.com/api/documents", json={"content": response.text}
+     ).json()
+     key = key.get("result").get("key")
+     url = f"https://nekobin.com/{key}.py"
+     message.reply_text(
+        "Here Is App Info:",
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Nekobin", url=url)]]),
+     )
 
 
 
