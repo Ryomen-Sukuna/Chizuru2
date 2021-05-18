@@ -2,12 +2,13 @@ import html
 import time
 import requests
 import datetime
+from bs4 import BeautifulSoup
 
 from telegram.error import BadRequest
 from telegram.utils.helpers import mention_html
 from telegram import Update, MessageEntity, ParseMode
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.ext import CommandHandler, Filters, CallbackContext
+from telegram.ext import Filters, CommandHandler, CallbackContext
 
 from tg_bot import (
     dispatcher,
@@ -218,31 +219,44 @@ def ping(update: Update, _):
 def app(update: Update, _):
     message = update.effective_message
     try:
-        progress_message = update.effective_message.reply_text(
-            "Searching In Play-Store.... ")
         if message.text == '/app':
-           app_name = 'telegram'
-        else:
-           app_name = message.text[len('/app '):]
+            message.reply_text(
+               "Tell App Name :) (`/app <name>`)",
+               parse_mode=ParseMode.MARKDOWN,
+            )
+            return
+
+        url = "https://play.google.com"
+        search = message.reply_text("Searching In Play-Store.... ")
+        app_name = message.text[len('/app '):]
          
         remove_space = app_name.split(' ')
         final_name = '+'.join(remove_space)
         page = requests.get(
-            f"https://play.google.com/store/search?q={final_name}&c=apps")
-        soup = BeautifulSoup(page.content, 'lxml', from_encoding='utf-8')
+           f"{url}/store/search?q={final_name}&c=apps"
+        )
+        soup = BeautifulSoup(page.content, "lxml", from_encoding="utf-8")
         results = soup.findAll("div", "ZmHEEd")
+
         app_name = results[0].findNext(
-            'div', 'Vpfmgd').findNext(
-            'div', 'WsMG1c nnK0zc').text
+                        'div', 'Vpfmgd').findNext(
+                                   'div', 'WsMG1c nnK0zc').text
+
         app_dev = results[0].findNext(
-            'div', 'Vpfmgd').findNext(
-            'div', 'KoLSrc').text
-        app_dev_link = "https://play.google.com" + results[0].findNext(
-            'div', 'Vpfmgd').findNext('a', 'mnKHRc')['href']
-        app_rating = results[0].findNext('div', 'Vpfmgd').findNext(
-            'div', 'pf5lIe').find('div')['aria-label']
-        app_link = "https://play.google.com" + results[0].findNext(
-            'div', 'Vpfmgd').findNext('div', 'vU6FJ p63iDd').a['href']
+                       'div', 'Vpfmgd').findNext(
+                                  'div', 'KoLSrc').text
+
+        app_dev_link = url + results[0].findNext(
+                                  'div', 'Vpfmgd').findNext(
+                                               'a', 'mnKHRc')['href']
+
+        app_rating = results[0].findNext(
+                          'div', 'Vpfmgd').findNext(
+                                     'div', 'pf5lIe').find('div')['aria-label']
+
+        app_link = url + results[0].findNext(
+                              'div', 'Vpfmgd').findNext(
+                                         'div', 'vU6FJ p63iDd').a['href']
 
         app_details = "<a href='{app_link}'>•</a>"
         app_details += " <b>" + app_link + "</b>"
@@ -258,12 +272,15 @@ def app(update: Update, _):
             disable_web_page_preview=False,
             reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("App Link", url=app_link)]]),
         )
+        message.reply_text(
+            results[0]
+        )
     except IndexError:
         message.reply_text(
             "No Result Found In Search. Are You Entered A Valid App Name?")
     except Exception as err:
         message.reply_text(err)
-    progress_message.delete()
+    search.delete()
 
 
 
