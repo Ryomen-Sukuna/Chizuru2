@@ -348,8 +348,8 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
 
             results.append(InlineQueryResultArticle(
                     id=str(uuid4()),
-                    title=f"{data.get('name').get('full')}",
-                    description=f"{data['favourites']}",
+                    title=f"{data.get('name').get('full') or 'no titl'}",
+                    description=f"{data['favourites'] or 'no desc'}",
                     input_message_content=InputTextMessageContent(ms_g, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=False),
                     reply_markup=kb,
                 )
