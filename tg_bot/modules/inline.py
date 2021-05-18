@@ -327,7 +327,7 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
                           headers={'Content-Type': 'application/json', 'Accept': 'application/json'})
         res = r.json()
         print(res)
-        data = res.get('data').get('Page').get('Character')
+        data = res.get('data').get('Page').get('characters')
         res = data
         print(res)
         for data in res:
