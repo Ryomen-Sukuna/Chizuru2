@@ -238,7 +238,7 @@ def app(update: Update, context: CallbackContext):
      }
 
      response = requests.request("GET", url, headers=headers, params=querystring)
-     message.reply_text(response)
+     message.reply_text(response.text)
 
 
 
