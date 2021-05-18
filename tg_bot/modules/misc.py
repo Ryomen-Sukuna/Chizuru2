@@ -215,38 +215,55 @@ def ping(update: Update, _):
     )
 
 @kigcmd(command='app')
-def app(update: Update, context: CallbackContext):
-     message = update.effective_message
-     args = message.text.split(" ", 1)
+def app(update: Update, _):
+    message = update.effective_message
+    try:
+        progress_message = update.effective_message.reply_text(
+            "Searching In Play-Store.... ")
+        if message.text == '/app':
+           app_name = 'telegram'
+        else:
+           app_name = message.text[len('/app '):]
+         
+        remove_space = app_name.split(' ')
+        final_name = '+'.join(remove_space)
+        page = requests.get(
+            f"https://play.google.com/store/search?q={final_name}&c=apps")
+        soup = BeautifulSoup(page.content, 'lxml', from_encoding='utf-8')
+        results = soup.findAll("div", "ZmHEEd")
+        app_name = results[0].findNext(
+            'div', 'Vpfmgd').findNext(
+            'div', 'WsMG1c nnK0zc').text
+        app_dev = results[0].findNext(
+            'div', 'Vpfmgd').findNext(
+            'div', 'KoLSrc').text
+        app_dev_link = "https://play.google.com" + results[0].findNext(
+            'div', 'Vpfmgd').findNext('a', 'mnKHRc')['href']
+        app_rating = results[0].findNext('div', 'Vpfmgd').findNext(
+            'div', 'pf5lIe').find('div')['aria-label']
+        app_link = "https://play.google.com" + results[0].findNext(
+            'div', 'Vpfmgd').findNext('div', 'vU6FJ p63iDd').a['href']
 
-     if len(args) == 1:
-         message.reply_text(
-            "Tell App Name :) [`/app <name>`]",
-            parse_mode=ParseMode.MARKDOWN,
-         )
-         return
+        app_details = "<a href='{app_link}'>•</a>"
+        app_details += " <b>" + app_link + "</b>"
+        app_details += "\n\n<i>Developer :</i> <a href='" + app_dev_link + "'>"
+        app_details += app_dev + "</a>"
+        app_details += "\n<i>Rating :</i> " + app_rating.replace(
+            "Rated ", "").replace(" out of ", "/").replace(
+                " stars", "", 1).replace(" stars", "").replace("five", "5")
 
-     url = "https://app-stores.p.rapidapi.com/search"
-     querystring = {
-          "term":args,
-          "store":"google",
-          "language":"en"
-     }
-     headers = {
-         "x-rapidapi-key": "3318066bd3msh4c25adf2b7194a9p1cc376jsndb4fb9509658",
-         "x-rapidapi-host": "app-stores.p.rapidapi.com"
-     }
-
-     response = requests.request("GET", url, headers=headers, params=querystring)
-     key = requests.post(
-        "https://nekobin.com/api/documents", json={"content": response.text}
-     ).json()
-     key = key.get("result").get("key")
-     url = f"https://nekobin.com/{key}.py"
-     message.reply_text(
-        "Here Is App Info:",
-        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Nekobin", url=url)]]),
-     )
+        message.reply_text(
+            app_details,
+            parse_mode=ParseMode.HTML,
+            disable_web_page_preview=False,
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("App Link", url=app_link)]]),
+        )
+    except IndexError:
+        message.reply_text(
+            "No Result Found In Search. Are You Entered A Valid App Name?")
+    except Exception as err:
+        message.reply_text(err)
+    progress_message.delete()
 
 
 
