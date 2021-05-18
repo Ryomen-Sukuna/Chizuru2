@@ -258,8 +258,8 @@ def app(update: Update, _):
                               'div', 'Vpfmgd').findNext(
                                          'div', 'vU6FJ p63iDd').a['href']
 
-        app_details = "<a href='{app_link}'>•</a>"
-        app_details += " <b>" + app_link + "</b>"
+        app_details = f"<a href='{app_link}'>•</a>"
+        app_details += f" <b>{app_name}</b>"
         app_details += "\n\n<i>Developer :</i> <a href='" + app_dev_link + "'>"
         app_details += app_dev + "</a>"
         app_details += "\n<i>Rating :</i> " + app_rating.replace(
@@ -273,7 +273,8 @@ def app(update: Update, _):
             reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("App Link", url=app_link)]]),
         )
         message.reply_text(
-            results[0]
+            results[0].findNext(
+                        'div', 'Vpfmgd').text
         )
     except IndexError:
         message.reply_text(
