@@ -326,7 +326,7 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
                           data=json.dumps({'query': CHAR_QUERY, 'variables': {'search': query}}),
                           headers={'Content-Type': 'application/json', 'Accept': 'application/json'})
         res = r.json()
-        data = res['data']['Page']['Character']
+        data = res.get.('data').get('Page').get('Character')
         res = data
         for data in res:
             ms_g = f"**{data.get('name').get('full') or ''}**(`{data.get('name').get('native') or ''}`)\n❤️ Favourites : {data['favourites'] or ''}\n"
