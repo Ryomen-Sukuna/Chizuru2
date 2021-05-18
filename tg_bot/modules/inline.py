@@ -326,7 +326,7 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
                           data=json.dumps({'query': CHAR_QUERY, 'variables': {'search': query}}),
                           headers={'Content-Type': 'application/json', 'Accept': 'application/json'})
         res = r.json()
-        print(res)
+        log.exception(res)
         data = res.get('data').get('Page').get('characters')
         res = data
         print(res)
