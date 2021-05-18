@@ -212,24 +212,26 @@ def ping(update: Update, _):
     end_time = time.time()
     ping_time = round((end_time - start_time) * 1000, 3)
     message.edit_text(
-        "*Pong!!!*\n`{}ms`".format(ping_time), parse_mode=ParseMode.MARKDOWN
+        "*Pong!!!*\n`{}ms`".format(ping_time),
+        parse_mode=ParseMode.MARKDOWN,
     )
 
 @kigcmd(command='app')
-def app(update: Update, _):
+def app(update: Update, context: CallbackContext):
     message = update.effective_message
     try:
         if message.text == '/app':
             message.reply_text(
-               "Tell App Name :) (`/app <name>`)",
+               "Tell App Name :) \nFormat: `/app <name>`",
                parse_mode=ParseMode.MARKDOWN,
             )
             return
 
         url = "https://play.google.com"
-        search = message.reply_text("Searching In Play-Store.... ")
+        search = message.reply_text("Searching In Play-Store....")
         app_name = message.text[len('/app '):]
-         
+
+        # Searching Data
         remove_space = app_name.split(' ')
         final_name = '+'.join(remove_space)
         page = requests.get(
@@ -238,11 +240,12 @@ def app(update: Update, _):
         soup = BeautifulSoup(page.content, "lxml", from_encoding="utf-8")
         results = soup.findAll("div", "ZmHEEd")
 
+        # Preparing Data
         app_name = results[0].findNext(
                         'div', 'Vpfmgd').findNext(
                                    'div', 'WsMG1c nnK0zc').text
 
-        app_dev = results[0].findNext(
+        app_devs = results[0].findNext(
                        'div', 'Vpfmgd').findNext(
                                   'div', 'KoLSrc').text
 
@@ -257,30 +260,28 @@ def app(update: Update, _):
         app_link = url + results[0].findNext(
                               'div', 'Vpfmgd').findNext(
                                          'div', 'vU6FJ p63iDd').a['href']
+        app_icon = results[0].findNext(
+                        'div', 'Vpfmgd').findNext(
+                                   'div', 'uzcko').img['data-src']
 
-        app_details = f"<a href='{app_link}'>•</a>"
-        app_details += f" <b>{app_name}</b>"
-        app_details += "\n\n<i>Developer :</i> <a href='" + app_dev_link + "'>"
-        app_details += app_dev + "</a>"
-        app_details += "\n<i>Rating :</i> " + app_rating.replace(
-            "Rated ", "").replace(" out of ", "/").replace(
-                " stars", "", 1).replace(" stars", "").replace("five", "5")
+        # Structuring Data
+        data = (
+          f"<a href='{app_icon}'>•</a> <b>{app_name}</b>\n"
+          f"\n∘ <b>Developer</b>: <a href='{app_dev_link}'>{app_devs}</a>"
+          f"\n∘ <b>Rating</b>: {app_rating.replace('Rated ', '').replace(' out of ', '/').replace(' stars', '', 1).replace(' stars', '').replace('five', '5')}" 
+        )
 
-        message.reply_text(
-            app_details,
+        context.bot.send_message(
+            update.effective_chat.id,
+            text=data,
             parse_mode=ParseMode.HTML,
             disable_web_page_preview=False,
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("App Link", url=app_link)]]),
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Link", url=app_link)]]),
         )
-        key = requests.post(
-                  "https://nekobin.com/api/documents", json={"content": results[0]}
-              ).json()
-        key = key.get("result").get("key")
-        url = f"https://nekobin.com/{key}.py"
-        message.reply_text(url)
     except IndexError:
         message.reply_text(
-            "No Result Found In Search. Are You Entered A Valid App Name?")
+            "No Result Found In Search. Are You Entered A Valid App Name?"
+        )
     except Exception as err:
         message.reply_text(err)
     search.delete()
