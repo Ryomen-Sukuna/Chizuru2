@@ -41,6 +41,13 @@ def inlinequery(update: Update, _) -> None:
             "keyboard": ".anime ",
         },
         {
+            "title": "Character",
+            "description": "Search Character on AniList.co",
+            "message_text": "Click the button below to search character on AniList.co",
+            "thumb_urL": "https://telegra.ph/file/c85e07b58f5b3158b529a.jpg",
+            "keyboard": ".char ",
+        },
+        {
             "title": "Account info",
             "description": "Look up a Telegram account in Kigyo database",
             "message_text": "Click the button below to look up a person in Kigyo database using their Telegram ID",
@@ -51,6 +58,7 @@ def inlinequery(update: Update, _) -> None:
 
     inline_funcs = {
         ".anime": media_query,
+        ".char": character_query,
         ".info": inlineinfo,
     }
 
@@ -286,3 +294,93 @@ def media_query(query: str, update: Update, context: CallbackContext) -> None:
         )
 
     update.inline_query.answer(results, cache_time=5)
+
+
+CHAR_QUERY = '''query ($query: String) {
+  Page (perPage: 10) {
+        Character (search: $query) {
+               id
+               name {
+                     first
+                     last
+                     full
+               }
+               siteUrl
+               favourites
+               image {
+                        large
+               }
+               description
+        }
+    }
+}'''
+
+def character_query(query: str, update: Update, context: CallbackContext) -> None:
+    """
+    Handle character inline query.
+    """
+    results: List = []
+
+    try:
+        r = requests.post('https://graphql.anilist.co',
+                          data=json.dumps({'query': CHAR_QUERY, 'variables': {'search': query}}),
+                          headers={'Content-Type': 'application/json', 'Accept': 'application/json'})
+        res = r.json()
+        data = res['data']['Page']['media']
+        res = data
+        for json in res:
+            ms_g = f"**{json.get('name').get('full')}**(`{json.get('name').get('native')}`)\n❤️ Favourites : {json['favourites']}\n"
+            description = f"{json['description']}"
+            site_url = json.get('siteUrl')
+            ms_g += shorten(description, site_url)
+            answers.
+
+
+            kb = InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="Search again",
+                            switch_inline_query_current_chat=".char ",
+                        ),
+
+                    ],
+                ])
+
+
+            results.append(InlineQueryResultArticle(
+                    id=str(uuid4()),
+                    title=f"{json.get('name').get('full')}",
+                    description=f"{json['favourites']}",
+                    input_message_content=InputTextMessageContent(ms_g, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=False),
+                    reply_markup=kb,
+                )
+            )
+    except Exception as e:
+
+        kb = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        text="Search Again",
+                        switch_inline_query_current_chat=".char ",
+                    ),
+
+                ],
+            ])
+
+        results.append(
+
+            InlineQueryResultArticle
+                (
+                id=str(uuid4()),
+                title=f"Media {query} not found",
+                input_message_content=InputTextMessageContent(f"Media {query} not found due to {e}", parse_mode=ParseMode.MARKDOWN,
+                                                              disable_web_page_preview=True),
+                reply_markup=kb
+            )
+
+        )
+
+    update.inline_query.answer(results, cache_time=5)
+
