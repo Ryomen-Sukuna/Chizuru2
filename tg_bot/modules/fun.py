@@ -20,10 +20,9 @@ import tg_bot.modules.fun_strings as fun
 
 # truth / dare
 @kigcmd(command="truth")
-def dare(update, context):
-     xyz = requests.get("https://elianaapi.herokuapp.com/games/truth").json()
-     truth = xyz.get("truth")
-     update.effective_message.reply_text(truth)
+def truth(update, context):
+     xyz = requests.get("https://elianaapi.herokuapp.com/games/truth")
+     update.effective_message.reply_text(xyz)
 
 @kigcmd(command="dare")
 def dare(update, context):
