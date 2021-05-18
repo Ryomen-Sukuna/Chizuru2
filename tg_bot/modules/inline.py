@@ -298,7 +298,7 @@ def media_query(query: str, update: Update, context: CallbackContext) -> None:
 
 CHAR_QUERY = '''query ($query: String) {
   Page (perPage: 10) {
-        Character (search: $query) {
+        characters (search: $query) {
                id
                name {
                      first
@@ -327,13 +327,13 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
                           headers={'Content-Type': 'application/json', 'Accept': 'application/json'})
         res = r.json()
         log.exception(res)
-        data = res.get('data').get('Page').get('characters')
+        data = res.get('data').get('Page').get('Character')
         res = data
         print(res)
         for data in res:
             ms_g = f"**{data.get('name').get('full') or ''}**(`{data.get('name').get('native') or ''}`)\n❤️ Favourites : {data['favourites'] or ''}\n"
             description = f"{data['description'] or ''}"
-            site_url = data.get('siteUrl' or '')
+            site_url = data.get('siteUrl') or ''
             ms_g += shorten(description, site_url)
 
 
