@@ -274,7 +274,7 @@ def app(update: Update, _):
         )
         message.reply_text(
             results[0].findNext(
-                        'div', 'Vpfmgd').text
+                        'div', 'Vpfmgd')
         )
     except IndexError:
         message.reply_text(
