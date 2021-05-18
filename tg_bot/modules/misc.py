@@ -1,111 +1,41 @@
 import html
-import re, os
 import time
-from typing import List
-import git
 import requests
-from io import BytesIO
-from telegram import Update, MessageEntity, ParseMode
+import datetime
+
 from telegram.error import BadRequest
+from telegram.utils.helpers import mention_html
+from telegram import Update, MessageEntity, ParseMode
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CommandHandler, Filters, CallbackContext
-from telegram.utils.helpers import mention_html, escape_markdown
-from subprocess import Popen, PIPE
 
 from tg_bot import (
     dispatcher,
     OWNER_ID,
+    DEV_USERS,
     SUDO_USERS,
     SUPPORT_USERS,
-    DEV_USERS,
-    SARDEGNA_USERS,
     WHITELIST_USERS,
-    INFOPIC,
-    sw,
     StartTime
 )
 from tg_bot.__main__ import STATS, USER_INFO, TOKEN
-from tg_bot.modules.sql import SESSION
 from tg_bot.modules.disable import DisableAbleCommandHandler
 from tg_bot.modules.helper_funcs.chat_status import user_admin, sudo_plus
 from tg_bot.modules.helper_funcs.extraction import extract_user
 import tg_bot.modules.sql.users_sql as sql
 from tg_bot.modules.language import gs
-from telegram import __version__ as ptbver, InlineKeyboardMarkup, InlineKeyboardButton
-from pyrogram import __version__ as pyrover
-from psutil import cpu_percent, virtual_memory, disk_usage, boot_time
-import datetime
-import platform
-from platform import python_version
-from spamprotection.sync import SPBClient
-from spamprotection.errors import HostDownError
 from tg_bot.modules.helper_funcs.decorators import kigcmd
-client = SPBClient()
+import tg_bot.modules.helper_funcs.health as hp
+from tg_bot.modules.helper_funcs.get_time import get_time
 
-MARKDOWN_HELP = f"""
-Markdown is a very powerful formatting tool supported by telegram. {dispatcher.bot.first_name} has some enhancements, to make sure that \
-saved messages are correctly parsed, and to allow you to create buttons.
+@kigcmd(command='stat', filters=Filters.chat_type.group)
+def stat(update: Update, _):
+    update.effective_message.reply_text(
+       f"<b>Total Message:</b> <code>{update.effective_message.message_id}</code>",
+       parse_mode=ParseMode.HTML,
+       timeout=60,
+    )
 
-- <code>_italic_</code>: wrapping text with '_' will produce italic text
-- <code>*bold*</code>: wrapping text with '*' will produce bold text
-- <code>`code`</code>: wrapping text with '`' will produce monospaced text, also known as 'code'
-- <code>[sometext](someURL)</code>: this will create a link - the message will just show <code>sometext</code>, \
-and tapping on it will open the page at <code>someURL</code>.
-EG: <code>[test](example.com)</code>
-
-- <code>[buttontext](buttonurl:someURL)</code>: this is a special enhancement to allow users to have telegram \
-buttons in their markdown. <code>buttontext</code> will be what is displayed on the button, and <code>someurl</code> \
-will be the url which is opened.
-EG: <code>[This is a button](buttonurl:example.com)</code>
-
-If you want multiple buttons on the same line, use :same, as such:
-<code>[one](buttonurl://example.com)
-[two](buttonurl://google.com:same)</code>
-This will create two buttons on a single line, instead of one button per line.
-
-Keep in mind that your message <b>MUST</b> contain some text other than just a button!
-"""
-
-@kigcmd(command='id', pass_args=True)
-def get_id(update: Update, context: CallbackContext):
-    bot, args = context.bot, context.args
-    message = update.effective_message
-    chat = update.effective_chat
-    msg = update.effective_message
-    user_id = extract_user(msg, args)
-
-    if user_id:
-
-        if msg.reply_to_message and msg.reply_to_message.forward_from:
-
-            user1 = message.reply_to_message.from_user
-            user2 = message.reply_to_message.forward_from
-
-            msg.reply_text(
-                f"<b>Telegram ID:</b>,"
-                f"• {html.escape(user2.first_name)} - <code>{user2.id}</code>.\n"
-                f"• {html.escape(user1.first_name)} - <code>{user1.id}</code>.",
-                parse_mode=ParseMode.HTML,
-            )
-
-        else:
-
-            user = bot.get_chat(user_id)
-            msg.reply_text(
-                f"{html.escape(user.first_name)}'s id is <code>{user.id}</code>.",
-                parse_mode=ParseMode.HTML,
-            )
-
-    else:
-
-        if chat.type == "private":
-            msg.reply_text(
-                f"Your id is <code>{chat.id}</code>.", parse_mode=ParseMode.HTML
-            )
-
-        else:
-            msg.reply_text(
-                f"This group's id is <code>{chat.id}</code>.", parse_mode=ParseMode.HTML
-            )
 
 @kigcmd(command='gifid')
 def gifid(update: Update, _):
@@ -147,75 +77,43 @@ def info(update: Update, context: CallbackContext):
     else:
         return
 
+    try:
+        MsG = message.reply_text("Just A Second...")
+    except:
+        return
+
     text = (
-        f"<b>General:</b>\n"
-        f"ID: <code>{user.id}</code>\n"
-        f"First Name: {html.escape(user.first_name)}"
+        f"<b>• User Information:</b>\n"
+        f"\n∘ ID: <code>{user.id}</code>"
+        f"\n∘ First Name: {html.escape(user.first_name)}"
     )
 
     if user.last_name:
-        text += f"\nLast Name: {html.escape(user.last_name)}"
+        text += f"\n∘ Last Name: {html.escape(user.last_name)}"
 
     if user.username:
-        text += f"\nUsername: @{html.escape(user.username)}"
+        text += f"\n∘ Username: @{html.escape(user.username)}"
 
-    text += f"\nPermanent user link: {mention_html(user.id, 'link')}"
+    text += f"\n∘ Profile Link: <a href='tg://openmessage?user_id={user.id}'>Here</a>\n"
 
-    try:
-        spamwtc = sw.get_ban(int(user.id))
-        if spamwtc:
-            text += "<b>\n\nSpamWatch:\n</b>"
-            text += "<b>This person is banned in Spamwatch!</b>"
-            text += f"\nReason: <pre>{spamwtc.reason}</pre>"
-            text += "\nAppeal at @SpamWatchSupport"
-        else:
-            text += "<b>\n\nSpamWatch:</b>\n Not banned"
-    except:
-        pass  # don't crash if api is down somehow...
-
-    apst = requests.get(f'https://api.intellivoid.net/spamprotection/v1/lookup?query={context.bot.username}')
-    api_status = apst.status_code
-    if (api_status == 200):
-        try:
-            status = client.raw_output(int(user.id))
-            ptid = status["results"]["private_telegram_id"]
-            op = status["results"]["attributes"]["is_operator"]
-            ag = status["results"]["attributes"]["is_agent"]
-            wl = status["results"]["attributes"]["is_whitelisted"]
-            ps = status["results"]["attributes"]["is_potential_spammer"]
-            sp = status["results"]["spam_prediction"]["spam_prediction"]
-            hamp = status["results"]["spam_prediction"]["ham_prediction"]
-            blc = status["results"]["attributes"]["is_blacklisted"]
-            if blc:
-                blres = status["results"]["attributes"]["blacklist_reason"]
-            else:
-                blres = None
-            text += "\n\n<b>SpamProtection:</b>"
-            text += f"<b>\nPrivate Telegram ID:</b> <code>{ptid}</code>\n"
-            if op:
-                text += f"<b>Operator:</b> <code>{op}</code>\n"
-            if ag:
-                text += f"<b>Agent:</b> <code>{ag}</code>\n"
-            if wl:
-                text += f"<b>Whitelisted:</b> <code>{wl}</code>\n"
-            text += f"<b>Spam Prediction:</b> <code>{sp}</code>\n"
-            text += f"<b>Ham Prediction:</b> <code>{hamp}</code>\n"
-            if ps:
-                text += f"<b>Potential Spammer:</b> <code>{ps}</code>\n"
-            if blc:
-                text += f"<b>Blacklisted:</b> <code>{blc}</code>\n"
-                text += f"<b>Blacklist Reason:</b> <code>{blres}</code>\n"
-        except HostDownError:
-            text += "\n\n<b>SpamProtection:</b>"
-            text += "\nCan't connect to Intellivoid SpamProtection API\n"
-    else:
-        text += "\n\n<b>SpamProtection:</b>"
-        text += f"\n<code>API RETURNED: {api_status}</code>\n"
-
-    Nation_level_present = False
 
     num_chats = sql.get_user_num_chats(user.id)
-    text += f"\nChat count: <code>{num_chats}</code>"
+    text += f"\n∘ Mutual Chats: <code>{num_chats}</code>"
+
+    try:
+        if chat.type != 'private':
+           status = status = bot.get_chat_member(chat.id, user.id).status
+           if status:
+               if status in "left":
+                   text += "\n∘ Chat Status: Not Here!"
+               elif status == "member":
+                   text += "\n∘ Chat Status: Member!"
+               elif status in "administrator":
+                   text += "\n∘ Chat Status: Admin!"
+               elif status in "creator": 
+                   text += "\n∘ Chat Status: Creator!"
+    except BadRequest:
+        pass
 
     try:
         user_member = chat.get_member(user.id)
@@ -226,32 +124,34 @@ def info(update: Update, context: CallbackContext):
             result = result.json()["result"]
             if "custom_title" in result.keys():
                 custom_title = result["custom_title"]
-                text += f"\nThis user holds the title <b>{custom_title}</b> here."
+                text += f"\n∘ Admin Title: <code>{custom_title}</code> \n"
     except BadRequest:
         pass
 
+    if user_id not in [bot.id, 777000, 1087968824]:                                                                                         
+       if user.first_name != "":
+          userhp = hp.hpmanager(user)
+          text += f"\n∘ Health: <code>{userhp['earnedhp']}/{userhp['totalhp']}</code> ∙ <code>{userhp['percentage']}% </code> \n  {hp.make_bar(int(userhp['percentage']))}\n "                                                                                         
+    else:
+       text += "\n"
 
+   
     if user.id == OWNER_ID:
-        text += f"\nThis person is my owner"
-        Nation_level_present = True
-    elif user.id in DEV_USERS:
-        text += f"\nThis Person is a part of Eagle Union"
-        Nation_level_present = True
-    elif user.id in SUDO_USERS:
-        text += f"\nThe Nation level of this person is Royal"
-        Nation_level_present = True
-    elif user.id in SUPPORT_USERS:
-        text += f"\nThe Nation level of this person is Sakura"
-        Nation_level_present = True
-    elif user.id in SARDEGNA_USERS:
-        text += f"\nThe Nation level of this person is Sardegna"
-        Nation_level_present = True
-    elif user.id in WHITELIST_USERS:
-        text += f"\nThe Nation level of this person is Neptunia"
-        Nation_level_present = True
+      # text += "\n<b>This Person Is My Master!</b>"
+        text += ""
 
-    if Nation_level_present:
-        text += ' [<a href="https://t.me/{}?start=nations">?</a>]'.format(bot.username)
+    elif user.id in DEV_USERS:
+        text += "\n∘ <b>DEV USER: </b>Yes!"
+        
+    elif user.id in SUDO_USERS:
+        text += "\n∘ <b>SUDO USER: </b>Yes!"
+        
+    elif user.id in SUPPORT_USERS:
+        text += "\n∘ <b>SUPPORT USER: </b>Yes!"
+       
+    elif user.id in WHITELIST_USERS:
+        text += "\n∘ <b>WHITELIST USER: </b>Yes!"
+
 
     text += "\n"
     for mod in USER_INFO:
@@ -265,30 +165,16 @@ def info(update: Update, context: CallbackContext):
         if mod_info:
             text += "\n" + mod_info
 
-    if INFOPIC:
-        try:
-            profile = bot.get_user_profile_photos(user.id).photos[0][-1]
-            _file = bot.get_file(profile["file_id"])
-
-            _file = _file.download(out=BytesIO())
-            _file.seek(0)
-
-            message.reply_document(
-                document=_file,
-                caption=(text),
-                parse_mode=ParseMode.HTML,
-            )
-
-        # Incase user don't have profile pic, send normal text
-        except IndexError:
-            message.reply_text(
-                text, parse_mode=ParseMode.HTML, disable_web_page_preview=True
-            )
-
-    else:
-        message.reply_text(
-            text, parse_mode=ParseMode.HTML, disable_web_page_preview=True
+    try:
+        MsG.edit_text(
+            text,
+            timeout=60,
+            parse_mode=ParseMode.HTML,
+            disable_web_page_preview=True,
         )
+    except:
+        pass
+
 
 @kigcmd(command='echo', pass_args=True, filters=Filters.chat_type.groups)
 @user_admin
@@ -303,12 +189,6 @@ def echo(update: Update, _):
 
     message.delete()
 
-
-def shell(command):
-    process = Popen(command, stdout=PIPE, shell=True, stderr=PIPE)
-    stdout, stderr = process.communicate()
-    return (stdout, stderr)
-
 @kigcmd(command='markdownhelp', filters=Filters.chat_type.private)
 def markdown_help(update: Update, _):
     chat = update.effective_chat
@@ -322,85 +202,8 @@ def markdown_help(update: Update, _):
         "[button2](buttonurl://google.com:same)"
     )
 
-def get_readable_time(seconds: int) -> str:
-    count = 0
-    ping_time = ""
-    time_list = []
-    time_suffix_list = ["s", "m", "h", "days"]
-
-    while count < 4:
-        count += 1
-        if count < 3:
-            remainder, result = divmod(seconds, 60)
-        else:
-            remainder, result = divmod(seconds, 24)
-        if seconds == 0 and remainder == 0:
-            break
-        time_list.append(int(result))
-        seconds = int(remainder)
-
-    for x in range(len(time_list)):
-        time_list[x] = str(time_list[x]) + time_suffix_list[x]
-    if len(time_list) == 4:
-        ping_time += time_list.pop() + ", "
-
-    time_list.reverse()
-    ping_time += ":".join(time_list)
-
-    return ping_time
-
-stats_str = '''
-'''
-@kigcmd(command='stats', can_disable=False)
-@sudo_plus
-def stats(update, context):
-    db_size = SESSION.execute("SELECT pg_size_pretty(pg_database_size(current_database()))").scalar_one_or_none()
-    uptime = datetime.datetime.fromtimestamp(boot_time()).strftime("%Y-%m-%d %H:%M:%S")
-    botuptime = get_readable_time((time.time() - StartTime))
-    status = "*╒═══「 System statistics: 」*\n\n"
-    status += "*• System Start time:* " + str(uptime) + "\n"
-    uname = platform.uname()
-    status += "*• System:* " + str(uname.system) + "\n"
-    status += "*• Node name:* " + escape_markdown(str(uname.node)) + "\n"
-    status += "*• Release:* " + escape_markdown(str(uname.release)) + "\n"
-    status += "*• Machine:* " + escape_markdown(str(uname.machine)) + "\n"
-
-    mem = virtual_memory()
-    cpu = cpu_percent()
-    disk = disk_usage("/")
-    status += "*• CPU:* " + str(cpu) + " %\n"
-    status += "*• RAM:* " + str(mem[2]) + " %\n"
-    status += "*• Storage:* " + str(disk[3]) + " %\n\n"
-    status += "*• Python version:* " + python_version() + "\n"
-    status += "*• python-telegram-bot:* " + str(ptbver) + "\n"
-    status += "*• Pyrogram:* " + str(pyrover) + "\n"
-    status += "*• Uptime:* " + str(botuptime) + "\n"
-    status += "*• Database size:* " + str(db_size) + "\n"
-    kb = [
-          [
-           InlineKeyboardButton('Channel', url='t.me/KigyoUpdates'),
-           InlineKeyboardButton('Support', url='t.me/YorktownEagleUnion')
-          ]
-    ]
-    repo = git.Repo(search_parent_directories=True)
-    sha = repo.head.object.hexsha
-    status += f"*• Commit*: `{sha[0:9]}`\n"
-    try:
-        update.effective_message.reply_text(status +
-            "\n*Bot statistics*:\n"
-            + "\n".join([mod.__stats__() for mod in STATS]) +
-            "\n\n[⍙ GitHub](https://github.com/Dank-del/EnterpriseALRobot) | [⍚ GitLab](https://gitlab.com/Dank-del/EnterpriseALRobot)\n\n" +
-            "╘══「 by [Dank-del](github.com/Dank-del)」\n",
-        parse_mode=ParseMode.MARKDOWN, reply_markup=InlineKeyboardMarkup(kb), disable_web_page_preview=True)
-    except BaseException:
-        update.effective_message.reply_text(
-        "\n*Bot statistics*:\n"
-        + "\n".join([mod.__stats__() for mod in STATS]) +
-        "\n\n⍙ [GitHub](https://github.com/Dank-del/EnterpriseALRobot) | ⍚ [GitLab](https://gitlab.com/Dank-del/EnterpriseALRobot)\n\n" +
-        "╘══「 by [Dank-del](github.com/Dank-del)」\n",
-        parse_mode=ParseMode.MARKDOWN, reply_markup=InlineKeyboardMarkup(kb), disable_web_page_preview=True)
-
 @kigcmd(command='ping')
+@sudo_plus
 def ping(update: Update, _):
     msg = update.effective_message
     start_time = time.time()
@@ -410,6 +213,33 @@ def ping(update: Update, _):
     message.edit_text(
         "*Pong!!!*\n`{}ms`".format(ping_time), parse_mode=ParseMode.MARKDOWN
     )
+
+@kigcmd(command='app')
+def app(update: Update, context: CallbackContext):
+     message = update.effective_message
+     args = message.text.split(" ", 1)
+
+     if len(args) == 1:
+         message.reply_text(
+            "Tell App Name :) [`/app <name>`]",
+            parse_mode=ParseMode.MARKDOWN,
+         )
+         return
+
+     url = "https://app-stores.p.rapidapi.com/search"
+     querystring = {
+          "term":args,
+          "store":"google",
+          "language":"en"
+     }
+     headers = {
+         "x-rapidapi-key": "3318066bd3msh4c25adf2b7194a9p1cc376jsndb4fb9509658",
+         "x-rapidapi-host": "app-stores.p.rapidapi.com"
+     }
+
+     response = requests.request("GET", url, headers=headers, params=querystring)
+     message.reply_text(response)
+
 
 
 def get_help(chat):
