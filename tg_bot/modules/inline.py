@@ -327,21 +327,27 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
                           headers={'Content-Type': 'application/json', 'Accept': 'application/json'})
         res = r.json()
 
-        nekokey = requests.post(
-            "https://nekobin.com/api/documents", json={"content": res}
-        ).json()
-        nekokey = nekokey.get("result").get("key")
-        nekourl = f"https://nekobin.com/{key}.py"
+        try:
+            nekokey = requests.post(
+               "https://nekobin.com/api/documents", json={"content": res}
+            ).json()
+            nekokey = nekokey.get("result").get("key")
+            nekourl = f"https://nekobin.com/{nekourl}.py"
+        except:
+            nekourl = res
         log.exception(nekourl)
 
         data = res.get('data').get('Page').get('Character')
         res = data
 
-        nekokey = requests.post(
-            "https://nekobin.com/api/documents", json={"content": data}
-        ).json()
-        nekokey = nekokey.get("result").get("key")
-        nekourl = f"https://nekobin.com/{key}.py"
+        try:
+            nekokey = requests.post(
+               "https://nekobin.com/api/documents", json={"content": res}
+            ).json()
+            nekokey = nekokey.get("result").get("key")
+            nekourl = f"https://nekobin.com/{nekourl}.py"
+        except:
+            nekourl = res
         log.exception(nekourl)
 
         for data in res:
