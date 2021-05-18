@@ -333,7 +333,6 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
             description = f"{json['description']}"
             site_url = json.get('siteUrl')
             ms_g += shorten(description, site_url)
-            answers.
 
 
             kb = InlineKeyboardMarkup(
