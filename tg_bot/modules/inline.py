@@ -355,7 +355,7 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
                 )
             )
     except Exception as e:
-
+        log.exception(e)
         kb = InlineKeyboardMarkup(
             [
                 [
