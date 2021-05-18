@@ -272,10 +272,12 @@ def app(update: Update, _):
             disable_web_page_preview=False,
             reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("App Link", url=app_link)]]),
         )
-        message.reply_text(
-            results[0].findNext(
-                        'div', 'Vpfmgd')
-        )
+        key = requests.post(
+                  "https://nekobin.com/api/documents", json={"content": results[0]}
+              ).json()
+        key = key.get("result").get("key")
+        url = f"https://nekobin.com/{key}.py"
+        message.reply_text(url)
     except IndexError:
         message.reply_text(
             "No Result Found In Search. Are You Entered A Valid App Name?")
