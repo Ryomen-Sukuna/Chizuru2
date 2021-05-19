@@ -313,9 +313,7 @@ CHAR_QUERY = '''query ($query: String) {
                         large
                         medium
                }
-               description(
-                asHtml: true
-               )
+               description
                gender
                dateOfBirth {
                               year
@@ -350,7 +348,6 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
             nati_name = data.get('name').get('native') or 'N/A'
             alt_name = data.get('name').get('alternative') or 'N/A'
             favourite = data.get('favourites') or 'N/A'
-            description = data.get('description') or 'N/A'
             char_age = data.get('age', 'N/A')
             char_gender = data.get('gender') or 'N/A'
             thumb_url_mid = data.get('image').get('medium') or "https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg"
@@ -366,12 +363,12 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
             if len((str(description))) > 700:
                 description = description [0:700] + "....."
 
-            txt = f"<b>{name}</b> <a href='{thumb_url_large}'>-</a> (<b>{nati_name or 'N/A'}</b>)\n"
-            txt += f"\n<b>Alternative</b>: {alt_name or 'N/A'}"
-            txt += f"\n<b>Favourite</b>: {favourite or 'N/A'}"
-            txt += f"\n<b>Gender</b>: {char_gender or 'N/A'}"
-            txt += f"\n<b>Age</b>: {char_age or 'N/A'}"
-            txt += f"\n\n<b>Description</b>: \n{description or 'N/A'}"
+            txt = f"*{name}* [-](thumb_url_large) (*{nati_name or 'N/A'}*)\n"
+            txt += f"\n*Alternative*: {alt_name or 'N/A'}"
+            txt += f"\n*Favourite*: {favourite or 'N/A'}"
+            txt += f"\n*Gender*: {char_gender or 'N/A'}"
+            txt += f"\n*Age*: {char_age or 'N/A'}"
+            txt += f"\n\n*Description*: \n{description or 'N/A'}"
 
             kb = InlineKeyboardMarkup(
                 [
@@ -396,7 +393,7 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
                     title=name or query,
                     description=site_url or query,
                     thumb_url=thumb_url_mid or "https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg",
-                    input_message_content=InputTextMessageContent(txt, parse_mode=ParseMode.HTML, disable_web_page_preview=False),
+                    input_message_content=InputTextMessageContent(txt, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=False),
                     reply_markup=kb,
                 )
             )
