@@ -313,7 +313,9 @@ CHAR_QUERY = '''query ($query: String) {
                         large
                         medium
                }
-               description
+               description(
+                asHtml: True
+               )
                gender
                dateOfBirth {
                               year
@@ -360,10 +362,6 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
                 description = des.replace("<i>", "").replace("</i>", "") or "N/A"
             except AttributeError:
                 description = data.get("description")
-            try:
-                description = html.escape(description)
-            except AttributeError:
-                description = description or "N/A"
 
             if len((str(description))) > 700:
                 description = description [0:700] + "....."
@@ -373,7 +371,7 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
             txt += f"\n<b>Favourite</b>: {favourite or 'N/A'}"
             txt += f"\n<b>Gender</b>: {char_gender or 'N/A'}"
             txt += f"\n<b>Age</b>: {char_age or 'N/A'}"
-            txt += f"\n\n<b>Description</b>: \n{description}"
+            txt += f"\n\n<b>Description</b>: \n{description or 'N/A'}"
 
             kb = InlineKeyboardMarkup(
                 [
