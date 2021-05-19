@@ -350,9 +350,17 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
             favourite = data.get('favourites') or 'N/A'
             char_age = data.get('age', 'N/A')
             char_gender = data.get('gender') or 'N/A'
-            thumb_url_mid = data.get('image').get('medium') or "https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg"
             thumb_url_large = data.get('image').get('large') or "https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg"
             site_url = data.get('siteUrl') or "https://anilist.co/characters"
+
+            try:
+                alt_name = data.get('name').get('alternative')
+                neme = ""
+                for altname in alt_name:
+                     neme += f"`{altname}` ,"
+                alt_name = f"{neme}"
+            except:
+                alt_name = data.get('name').get('alternative') or "N/A"
 
             try:
                 des = data.get("description").replace("<br>", "").replace("</br>", "")
@@ -363,7 +371,7 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
             if len((str(description))) > 700:
                 description = description [0:700] + "....."
 
-            txt = f"*{name}* [-](thumb_url_large) (*{nati_name or 'N/A'}*)\n"
+            txt = f"*{name}* - (*{nati_name or 'N/A'}*)\n"
             txt += f"\n*Alternative*: {alt_name or 'N/A'}"
             txt += f"\n*Favourite*: {favourite or 'N/A'}"
             txt += f"\n*Gender*: {char_gender or 'N/A'}"
@@ -392,7 +400,7 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
                     id=str(uuid4()),
                     title=name or query,
                     description=site_url or query,
-                    thumb_url=thumb_url_mid or "https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg",
+                    thumb_url=thumb_url_large or "https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg",
                     input_message_content=InputTextMessageContent(txt, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=False),
                     reply_markup=kb,
                 )
@@ -417,7 +425,7 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
                 id=str(uuid4()),
                 title=f"Character {query} not found",
                 thumb_url="https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg",
-                input_message_content=InputTextMessageContent(f"Character {query} not found due to {e}", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True),
+                input_message_content=InputTextMessageContent(f"Character {query} not found due to {e}"),
                 reply_markup=kb
             )
 
