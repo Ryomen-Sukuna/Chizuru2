@@ -106,7 +106,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
             pass
 
     try:
-        search = ste(query.split(" ", 1)[1])
+        search = str(query.split(" ", 1)[1])
     except IndexError:
         search = str(user.id)
 
@@ -170,7 +170,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
               InlineQueryResultArticle(
                     id=str(uuid4()),
                     title=f"{user.first_name or search} {user.last_name or ''}",
-                    description=f"Bio: {user.bio}",
+                    description=user.bio or user.id,
                     thumb_url=f"https://telegra.ph{uploadpic[0]}",
                     input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
                     reply_markup=kb,
@@ -181,7 +181,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
               InlineQueryResultArticle(
                     id=str(uuid4()),
                     title=f"{user.first_name or search} {user.last_name or ''}",
-                    description=f"Bio: {user.bio}",
+                    description=user.bio or user.id,
                     input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
                     reply_markup=kb,
               ),
@@ -191,7 +191,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
            InlineQueryResultArticle(
               id=str(uuid4()),
               title=f"{user.first_name or search} {user.last_name or ''}",
-              description=f"Bio: {user.bio}",
+              description=user.bio or user.id,
               input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
               reply_markup=kb,
            ),
