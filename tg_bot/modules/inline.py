@@ -337,7 +337,7 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
             nekourl = res
         log.exception(nekourl)
 
-        data = res.get('data').get('Page').get('Character')
+        data = res.get('data').get('Page').get('characters')
         res = data
 
         try:
@@ -351,8 +351,8 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
         log.exception(nekourl)
 
         for data in res:
-            ms_g = f"**{data.get('name').get('full') or ''}**(`{data.get('name').get('native') or ''}`)\n❤️ Favourites : {data['favourites'] or ''}\n"
-            description = f"{data['description'] or ''}"
+            ms_g = f"**{data.get('name').get('full') or query}** \n❤️ Favourites: {data.get('favourites') or ''}\n"
+            description = f"{data.get('description') or ''}"
             site_url = data.get('siteUrl') or ''
             ms_g += shorten(description, site_url)
 
@@ -370,8 +370,9 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
 
             results.append(InlineQueryResultArticle(
                     id=str(uuid4()),
-                    title=f"{data.get('name').get('full') or 'no titl'}",
-                    description=f"{data['favourites'] or 'no desc'}",
+                    title=f"{data.get('name').get('full') or query}",
+                    description=f"{data.get('siteUrl') or query}",
+                    thumb_url=data.get(image).get('large'),
                     input_message_content=InputTextMessageContent(ms_g, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=False),
                     reply_markup=kb,
                 )
