@@ -167,7 +167,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
            InlineQueryResultArticle(
               id=str(uuid4()),
               title=f"User info of {html.escape(user.first_name)}",
-              thumb_url=f"https://telegra.ph{uploadpic[0]}"
+              thumb_url=f"https://telegra.ph{uploadpic[0]}",
               input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
               reply_markup=kb,
            ),
