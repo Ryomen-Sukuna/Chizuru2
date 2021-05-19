@@ -156,7 +156,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
 
 
 MEDIA_QUERY = '''query ($search: String) {
-  Page (perPage: 10) {
+  Page (perPage: 20) {
     media (search: $search) {
       id
       title {
@@ -297,7 +297,7 @@ def media_query(query: str, update: Update, context: CallbackContext) -> None:
 
 
 CHAR_QUERY = '''query ($query: String) {
-  Page (perPage: 10) {
+  Page (perPage: 20) {
         characters (search: $query) {
                id
                name {
@@ -355,15 +355,25 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
             thumb_url_large = data.get('image').get('large') or "https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg"
             site_url = data.get('siteUrl') or "https://anilist.co/characters"
 
+            try:
+                des = data.get("description").replace("<br>", "").replace("</br>", "")
+                description = des.replace("<i>", "").replace("</i>", "") or "N/A"
+            except AttributeError:
+                description = data.get("description")
+            try:
+                description = html.escape(description)
+            except AttributeError:
+                description = description or "N/A"
+
             if len((str(description))) > 700:
                 description = description [0:700] + "....."
 
-            txt = f"*{name}* [-]({thumb_url_large}) (*{nati_name}*)\n"
-            txt += f"\n*Alternative:* {alt_name}" or ""
-            txt += f"\n*Favourite*: {favourite}"
-            txt += f"\n*Gender:* {char_gender}" or ""
-            txt += f"\n*Age:* {char_age}" or ""
-            txt += f"\n\n*Description*: \n{description}"
+            txt = f"<b>{name}</b> <a href='{thumb_url_large}'>-</a> (<b>{nati_name or 'N/A'}</b>)\n"
+            txt += f"\n<b>Alternative</b>: {alt_name or 'N/A'}"
+            txt += f"\n<b>Favourite</b>: {favourite or 'N/A'}"
+            txt += f"\n<b>Gender</b>: {char_gender or 'N/A'}"
+            txt += f"\n<b>Age</b>: {char_age or 'N/A'}"
+            txt += f"\n\n<b>Description</b>: \n{description}"
 
             kb = InlineKeyboardMarkup(
                 [
@@ -388,7 +398,7 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
                     title=name or query,
                     description=site_url or query,
                     thumb_url=thumb_url_mid or "https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg",
-                    input_message_content=InputTextMessageContent(txt, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=False),
+                    input_message_content=InputTextMessageContent(txt, parse_mode=ParseMode.HTML, disable_web_page_preview=False),
                     reply_markup=kb,
                 )
             )
