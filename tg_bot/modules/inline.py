@@ -98,9 +98,9 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
     log.info(query)
     user = update.effective_user
 
-    if os.path.isfile(f"{user.id}.png"):
+    if os.path.isfile(f"inlineinfo{user.id}.png"):
         try:
-            os.remove(f"{user.id}.png")
+            os.remove(f"inlineinfo{user.id}.png")
         except:
             pass
 
@@ -137,8 +137,8 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
     ispic = False
     try:
         profilepic = bot.get_user_profile_photos(user.id).photos[0][-1]
-        _file = bot.get_file(profile["file_id"])
-        _file.download(f"{user.id}.png")
+        _file = bot.get_file(profilepic["file_id"])
+        _file.download(f"inlineinfo{user.id}.png")
         ispic = True
     # Incase user don't have profile pic
     except IndexError:
@@ -178,9 +178,9 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
         ]
 
     update.inline_query.answer(results, cache_time=5)
-    if os.path.isfile(f"{user.id}.png"):
+    if os.path.isfile(f"inlineinfo{user.id}.png"):
         try:
-            os.remove(f"{user.id}.png")
+            os.remove(f"inlineinfo{user.id}.png")
         except:
             pass
 
