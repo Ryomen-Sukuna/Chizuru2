@@ -239,7 +239,7 @@ def media_query(query: str, update: Update, context: CallbackContext) -> None:
                             url=aurl,
                         ),
                         InlineKeyboardButton(
-                            text="Search again",
+                            text="Search Again",
                             switch_inline_query_current_chat=".anilist ",
                         ),
 
@@ -302,15 +302,28 @@ CHAR_QUERY = '''query ($query: String) {
                id
                name {
                      first
+                     middle
                      last
                      full
+                     native
+                     alternative
+                     alternativeSpoiler
                }
-               siteUrl
-               favourites
                image {
                         large
+                        medium
                }
                description
+               gender
+               dateOfBirth(
+                 year
+                 mouth
+                 day
+               )
+               age
+               siteUrl
+               favourites
+               modNotes
         }
     }
 }'''
@@ -331,18 +344,29 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
         data = res.get('data').get('Page').get('characters')
         res = data
         for data in res:
-            name = data.get('name').get('full') or query
             char_id = data.get('id', None)
-            favourite = data.get('favourites', None)
-            description = data.get('description', None)
-            thumb_uri = data.get('image').get('large', None)
+            name = data.get('name').get('full') or query
+            nati_name = data.get('name').get('native', 'N/A')
+            alt_name = data.get('name').get('alternative', 'N/A')
+            favourite = data.get('favourites', 'N/A')
+            description = data.get('description', 'N/A')
+            char_age = data.get('age', 'N/A')
+            char_gender = data.get('gender', 'N/A')
+            modnotes = data.get('modNotes', 'N/A')
+            dob = f"{data.get('dateOfBirth').get('day')}/{data.get('dateOfBirth').get('month')}/{data.get('dateOfBirth').get('year')}" or "N/A"
+            thumb_uri = data.get('image').get('medium') or data.get('image').get('large', None)
             site_url = data.get('siteUrl', None)
 
             if len((str(description))) > 700:
                 description = description [0:700] + "....."
 
-            txt = f"*{name}* [-]({thumb_uri}) (`{char_id}`)"
+            txt = f"*{name}* [-]({thumb_uri}) (*{nati_name}*)\n"
+            txt += f"\n*Alternative:* {alt_name}" or ""
             txt += f"\n*Favourite*: {favourite}"
+            txt += f"\n*Gender:* {char_gender}" or ""
+            txt += f"\n*D-O-B:* {dob}" or ""
+            txt += f"\n*Age:* {char_age}" or ""
+            txt += f"\n*Notes:* {modnotes}" or ""
             txt += f"\n\n*Description*: \n{description}"
 
             kb = InlineKeyboardMarkup(
@@ -356,7 +380,7 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
                     ],
                     [
                         InlineKeyboardButton(
-                            text="Search again",
+                            text="Search Again",
                             switch_inline_query_current_chat=".char ",
                         ),
 
@@ -365,8 +389,8 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
 
             results.append(InlineQueryResultArticle(
                     id=str(uuid4()),
-                    title=f"{data.get('name').get('full') or query}",
-                    description=f"{data.get('siteUrl') or query}",
+                    title=name or query,
+                    description=site_url or query,
                     thumb_url=thumb_uri or "https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg",
                     input_message_content=InputTextMessageContent(txt, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=False),
                     reply_markup=kb,
