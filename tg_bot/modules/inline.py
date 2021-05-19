@@ -315,11 +315,11 @@ CHAR_QUERY = '''query ($query: String) {
                }
                description
                gender
-               dateOfBirth(
-                 year
-                 mouth
-                 day
-               )
+               dateOfBirth {
+                              year
+                              month
+                              day
+               }
                age
                siteUrl
                favourites
