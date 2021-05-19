@@ -298,7 +298,7 @@ def media_query(query: str, update: Update, context: CallbackContext) -> None:
 
 CHAR_QUERY = '''query ($query: String) {
   Page (perPage: 10) {
-        characters (search: $query) {
+        Character (search: $query) {
                id
                name {
                      first
