@@ -62,7 +62,7 @@ def inlinequery(update: Update, _) -> None:
         ".info": inlineinfo,
     }
 
-    if (f := query.split(" ", 1)[0]) in inline_funcs:
+    if (f := query.split(None, 1)[0]) in inline_funcs:
         inline_funcs[f](remove_prefix(query, f).strip(), update, user)
     else:
         for ihelp in inline_help_dicts:
@@ -95,17 +95,23 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
     bot = context.bot
     query = update.inline_query.query
     log.info(query)
-    user_id = update.effective_user.id
+    user = update.effective_user
+
+    if os.path.isfile(f"{user.id}.png"):
+        try:
+            os.remove(f"{user.id}.png")
+        except:
+            pass
 
     try:
-        search = query.split(" ", 1)[1]
+        search = query.split(None, 1)[1]
     except IndexError:
-        search = user_id
+        search = user.id
 
     try:
-        user = bot.get_chat(int(search))
+        user = bot.get_chat(int(search) if search.isdigit() else str(search))
     except (BadRequest, ValueError):
-        user = bot.get_chat(user_id)
+        user = bot.get_chat(user.id)
     chat = update.effective_chat
 
     text = (
@@ -127,6 +133,15 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
     if int(same_chats) >= 1:
          text += f"\n∘ Mutual Chats: <code>{same_chats}</code>"
 
+    ispic = False
+    try:
+        profilepic = bot.get_user_profile_photos(user.id).photos[0][-1]
+        _file = bot.get_file(profile["file_id"])
+        _file.download(f"{user.id}.png")
+        ispic = True
+    # Incase user don't have profile pic
+    except IndexError:
+        ispic = False
 
 
 
@@ -141,17 +156,33 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
                ]
          )
 
-    results = [
-        InlineQueryResultArticle(
-            id=str(uuid4()),
-            title=f"User info of {html.escape(user.first_name)}",
-            input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML,
-                                                          disable_web_page_preview=True),
-            reply_markup=kb
-        ),
-    ]
+    if ispic:
+        results = [
+           InlineQueryResultArticle(
+              id=str(uuid4()),
+              title=f"User info of {html.escape(user.first_name)}",
+              thumb_url=open(f"{user.id}.png", "rb"),
+              input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
+              reply_markup=kb,
+           ),
+        ]
+    else:
+        results = [
+           InlineQueryResultArticle(
+              id=str(uuid4()),
+              title=f"User info of {html.escape(user.first_name)}",
+              input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
+              reply_markup=kb,
+           ),
+        ]
 
     update.inline_query.answer(results, cache_time=5)
+    if os.path.isfile(f"{user.id}.png"):
+        try:
+            os.remove(f"{user.id}.png")
+        except:
+            pass
+
 
 
 
