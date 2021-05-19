@@ -298,7 +298,7 @@ def media_query(query: str, update: Update, context: CallbackContext) -> None:
 
 CHAR_QUERY = '''query ($query: String) {
   Page (perPage: 10) {
-        Character (search: $query) {
+        characters (search: $query) {
                id
                name {
                      first
@@ -324,9 +324,10 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
     try:
         res = requests.post(
                     'https://graphql.anilist.co',
-                    data=json.dumps({'query': CHAR_QUERY, 'variables': {'search': update.inline_query.query.split(None, 1)[1]}}),
+                    data=json.dumps({'query': CHAR_QUERY, 'variables': {'search': query}}),
                     headers={'Content-Type': 'application/json', 'Accept': 'application/json'}
               ).json()
+
         data = res.get('data').get('Page').get('characters')
         res = data
         for data in res:
@@ -342,7 +343,7 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
 
             txt = f"*{name}* [-]({thumb_uri}) (`{char_id}`)"
             txt += f"\n*Favourite*: {favourite}"
-            txt += f"\n\n*Description*: {description}"
+            txt += f"\n\n*Description*: \n{description}"
 
             kb = InlineKeyboardMarkup(
                 [
@@ -366,7 +367,7 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
                     id=str(uuid4()),
                     title=f"{data.get('name').get('full') or query}",
                     description=f"{data.get('siteUrl') or query}",
-                    thumb_url=thumb_uri,
+                    thumb_url=thumb_uri or "https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg",
                     input_message_content=InputTextMessageContent(txt, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=False),
                     reply_markup=kb,
                 )
@@ -389,9 +390,9 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
             InlineQueryResultArticle
                 (
                 id=str(uuid4()),
-                title=f"Media {query} not found",
-                input_message_content=InputTextMessageContent(f"Media {query} not found due to {e}", parse_mode=ParseMode.MARKDOWN,
-                                                              disable_web_page_preview=True),
+                title=f"Character {query} not found",
+                thumb_url="https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg",
+                input_message_content=InputTextMessageContent(f"Character {query} not found due to {e}", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True),
                 reply_markup=kb
             )
 
