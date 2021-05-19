@@ -110,7 +110,10 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
         search = user.id
 
     try:
-        user = bot.get_chat(int(search) if search.isdigit() else str(search))
+        if search.isdigit():
+            user = bot.get_chat(int(search))
+        else:
+            user = bot.get_chat(str(search))
     except (BadRequest, ValueError):
         user = bot.get_chat(user.id)
     chat = update.effective_chat
@@ -162,7 +165,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
            InlineQueryResultArticle(
               id=str(uuid4()),
               title=f"User info of {html.escape(user.first_name)}",
-              thumb_url=open(f"{user.id}.png", "rb"),
+              thumb_url=open(f"inlineinfo{user.id}.png", "rb"),
               input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
               reply_markup=kb,
            ),
