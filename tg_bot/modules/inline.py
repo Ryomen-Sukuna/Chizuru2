@@ -322,43 +322,37 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
     results: List = []
 
     try:
-        r = requests.post('https://graphql.anilist.co',
-                          data=json.dumps({'query': CHAR_QUERY, 'variables': {'search': query}}),
-                          headers={'Content-Type': 'application/json', 'Accept': 'application/json'})
-        res = r.json()
-
-        try:
-            nekokey = requests.post(
-               "https://nekobin.com/api/documents", json={"content": res}
-            ).json()
-            nekokey = nekokey.get("result").get("key")
-            nekourl = f"https://nekobin.com/{nekourl}.py"
-        except:
-            nekourl = res
-        log.exception(nekourl)
-
+        res = requests.post(
+                    'https://graphql.anilist.co',
+                    data=json.dumps({'query': CHAR_QUERY, 'variables': {'search': query}}),
+                    headers={'Content-Type': 'application/json', 'Accept': 'application/json'}
+              ).json()
         data = res.get('data').get('Page').get('characters')
         res = data
-
-        try:
-            nekokey = requests.post(
-               "https://nekobin.com/api/documents", json={"content": res}
-            ).json()
-            nekokey = nekokey.get("result").get("key")
-            nekourl = f"https://nekobin.com/{nekourl}.py"
-        except:
-            nekourl = res
-        log.exception(nekourl)
-
         for data in res:
-            ms_g = f"**{data.get('name').get('full') or query}** \n❤️ Favourites: {data.get('favourites') or ''}\n"
-            description = f"{data.get('description') or ''}"
-            site_url = data.get('siteUrl') or ''
-            ms_g += shorten(description, site_url)
+            name = data.get('name').get('full') or query
+            char_id = data.get('id', None)
+            favourite = data.get('favourites', None)
+            description = data.get('description', None)
+            thumb_uri = data.get('image').get('large', None)
+            site_url = data.get('siteUrl', None)
 
+            if len((str(description))) > 700:
+                description = description [0:700] + "....."
+
+            txt = f"*{name}* [-]({thumb_uri}) (`{char_id}`)"
+            txt += f"\n*Favourite*: {favourite}"
+            txt += f"\n\n*Description*: {description}"
 
             kb = InlineKeyboardMarkup(
                 [
+                    [
+                        InlineKeyboardButton(
+                            text="More Information",
+                            url=site_url,
+                        ),
+
+                    ],
                     [
                         InlineKeyboardButton(
                             text="Search again",
@@ -372,8 +366,8 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
                     id=str(uuid4()),
                     title=f"{data.get('name').get('full') or query}",
                     description=f"{data.get('siteUrl') or query}",
-                    thumb_url=data.get(image).get('large'),
-                    input_message_content=InputTextMessageContent(ms_g, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=False),
+                    thumb_url=thumb_uri,
+                    input_message_content=InputTextMessageContent(txt, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=False),
                     reply_markup=kb,
                 )
             )
