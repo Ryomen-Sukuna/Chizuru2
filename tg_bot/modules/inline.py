@@ -64,7 +64,7 @@ def inlinequery(update: Update, _) -> None:
         ".info": inlineinfo,
     }
 
-    if (f := query.split(None, 1)[0]) in inline_funcs:
+    if (f := query.split(" ", 1)[0]) in inline_funcs:
         inline_funcs[f](remove_prefix(query, f).strip(), update, user)
     else:
         for ihelp in inline_help_dicts:
@@ -106,7 +106,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
             pass
 
     try:
-        search = query.split(None, 1)[1]
+        search = query.split(" ", 1)[1]
     except IndexError:
         search = user.id
 
@@ -163,20 +163,33 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
          )
 
     if ispic:
-        results = [
-           InlineQueryResultArticle(
-              id=str(uuid4()),
-              title=f"User info of {html.escape(user.first_name)}",
-              thumb_url=f"https://telegra.ph{uploadpic[0]}",
-              input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
-              reply_markup=kb,
-           ),
-        ]
+        try:
+            results = [
+              InlineQueryResultArticle(
+                    id=str(uuid4()),
+                    title=f"{user.first_name or search} {user.last_name or ''}",
+                    description=f"Mutual Chats: {same_chats}",
+                    thumb_url=f"https://telegra.ph{uploadpic[0]}",
+                    input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
+                    reply_markup=kb,
+              ),
+            ]
+        except:
+            results = [
+              InlineQueryResultArticle(
+                    id=str(uuid4()),
+                    title=f"{user.first_name or search} {user.last_name or ''}",
+                    description=f"Mutual Chats: {same_chats}",
+                    input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
+                    reply_markup=kb,
+              ),
+            ]
     else:
         results = [
            InlineQueryResultArticle(
               id=str(uuid4()),
-              title=f"User info of {html.escape(user.first_name)}",
+              title=f"{user.first_name or search} {user.last_name or ''}",
+              description=f"Mutual Chats: {same_chats}",
               input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
               reply_markup=kb,
            ),
