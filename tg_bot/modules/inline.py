@@ -324,7 +324,7 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
     try:
         res = requests.post(
                     'https://graphql.anilist.co',
-                    data=json.dumps({'query': CHAR_QUERY, 'variables': {'search': query}}),
+                    data=json.dumps({'query': CHAR_QUERY, 'variables': {'search': update.inline_query.query.split(None, 1)[1]}}),
                     headers={'Content-Type': 'application/json', 'Accept': 'application/json'}
               ).json()
         data = res.get('data').get('Page').get('characters')
