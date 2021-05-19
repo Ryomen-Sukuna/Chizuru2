@@ -144,7 +144,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
         userpic = bot.get_file(profilepic["file_id"])
         downloadpic = userpic.download(f"inlineinfo{user.id}.jpg")
         uploadpic = upload_file(downloadpic)
-        ispic = False
+        ispic = True
     # Incase user don't have profile pic
     except IndexError:
         ispic = False
