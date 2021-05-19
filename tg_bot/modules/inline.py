@@ -111,10 +111,12 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
         search = user.id
 
     try:
-        if search.isdigit():
+        if search.isdigit() or search.isnumeric():
             user = bot.get_chat(int(search))
-        else:
+        elif search.startswith('@'):
             user = bot.get_chat(str(search))
+        else:
+            user = bot.get_chat(search)
     except (BadRequest, ValueError):
         user = bot.get_chat(user.id)
     chat = update.effective_chat
@@ -168,7 +170,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
               InlineQueryResultArticle(
                     id=str(uuid4()),
                     title=f"{user.first_name or search} {user.last_name or ''}",
-                    description=f"Mutual Chats: {same_chats}",
+                    description=f"Bio: {user.bio}",
                     thumb_url=f"https://telegra.ph{uploadpic[0]}",
                     input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
                     reply_markup=kb,
@@ -179,7 +181,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
               InlineQueryResultArticle(
                     id=str(uuid4()),
                     title=f"{user.first_name or search} {user.last_name or ''}",
-                    description=f"Mutual Chats: {same_chats}",
+                    description=f"Bio: {user.bio}",
                     input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
                     reply_markup=kb,
               ),
@@ -189,7 +191,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
            InlineQueryResultArticle(
               id=str(uuid4()),
               title=f"{user.first_name or search} {user.last_name or ''}",
-              description=f"Mutual Chats: {same_chats}",
+              description=f"Bio: {user.bio}",
               input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
               reply_markup=kb,
            ),
