@@ -156,7 +156,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
 
 
 MEDIA_QUERY = '''query ($search: String) {
-  Page (perPage: 20) {
+  Page (perPage: 15) {
     media (search: $search) {
       id
       title {
@@ -297,7 +297,7 @@ def media_query(query: str, update: Update, context: CallbackContext) -> None:
 
 
 CHAR_QUERY = '''query ($query: String) {
-  Page (perPage: 20) {
+  Page (perPage: 25) {
         characters (search: $query) {
                id
                name {
@@ -314,7 +314,7 @@ CHAR_QUERY = '''query ($query: String) {
                         medium
                }
                description(
-                asHtml: True
+                asHtml: true
                )
                gender
                dateOfBirth {
