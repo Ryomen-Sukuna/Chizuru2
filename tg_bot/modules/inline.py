@@ -5,6 +5,7 @@ import requests
 from uuid import uuid4
 from typing import List
 
+from telegraph import upload_file
 from telegram.error import BadRequest
 from telegram.ext import CallbackContext
 from telegram.utils.helpers import mention_html
@@ -140,9 +141,10 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
     ispic = False
     try:
         profilepic = bot.get_user_profile_photos(user.id).photos[0][-1]
-        _file = bot.get_file(profilepic["file_id"])
-        _file.download(f"inlineinfo{user.id}.jpg")
-        ispic = True
+        userpic = bot.get_file(profilepic["file_id"])
+        downloadpic = userpic.download(f"inlineinfo{user.id}.jpg")
+        uploadpic = upload_image(downloadpic)
+        ispic = False
     # Incase user don't have profile pic
     except IndexError:
         ispic = False
@@ -165,7 +167,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
            InlineQueryResultArticle(
               id=str(uuid4()),
               title=f"User info of {html.escape(user.first_name)}",
-              thumb_url=open(f"inlineinfo{user.id}.jpg", "rb"),
+              thumb_url=f"https://telegra.ph{uploadpic[0]}"
               input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
               reply_markup=kb,
            ),
