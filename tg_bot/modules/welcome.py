@@ -6,15 +6,12 @@ from functools import partial
 from io import BytesIO
 import tg_bot.modules.sql.welcome_sql as sql
 from tg_bot import (
-    DEV_USERS,
+    sw,
     log,
     OWNER_ID,
-    SUDO_USERS,
-    SUPPORT_USERS,
-    SARDEGNA_USERS,
-    WHITELIST_USERS,
-    sw,
+    DEV_USERS,
     dispatcher,
+    JOIN_LOGGER,
 )
 from tg_bot.modules.helper_funcs.chat_status import (
     is_user_ban_protected,
@@ -168,6 +165,9 @@ def new_member(update: Update, context: CallbackContext):
         welcome_bool = True
         media_wel = False
 
+        if is_user_gbanned(new_mem.id):
+            return
+
         if sw != None:
             sw_ban = sw.get_ban(new_mem.id)
             if sw_ban:
@@ -205,41 +205,34 @@ def new_member(update: Update, context: CallbackContext):
                 )
                 continue
 
-            # Welcome Sudos
-            elif new_mem.id in SUDO_USERS:
-                update.effective_message.reply_text(
-                    "Huh! A Royal Nation just joined! Stay Alert!",
-                    reply_to_message_id=reply,
-                )
-                continue
-
-            # Welcome Support
-            elif new_mem.id in SUPPORT_USERS:
-                update.effective_message.reply_text(
-                    "Huh! Someone with a Sakura Nation level just joined!",
-                    reply_to_message_id=reply,
-                )
-                continue
-
-            # Welcome Whitelisted
-            elif new_mem.id in SARDEGNA_USERS:
-                update.effective_message.reply_text(
-                    "Oof! A Sadegna Nation just joined!", reply_to_message_id=reply
-                )
-                continue
-
-            # Welcome SARDEGNA_USERS
-            elif new_mem.id in WHITELIST_USERS:
-                update.effective_message.reply_text(
-                    "Oof! A Neptuia Nation just joined!", reply_to_message_id=reply
-                )
-                continue
-
             # Welcome yourself
             elif new_mem.id == bot.id:
+                try: 
+                    CHAT_NAMe = f"<a href='t.me/{chat.username}'>{html.escape(chat.title)}</a>" if chat.username else f"{html.escape(chat.title)}"
+                    creator = None
+
+                    for x in bot.get_chat_administrators(chat.id):
+                        if x.status == "creator":
+                            creator = x.user
+                            break
+
+                    bot.send_message(
+                              JOIN_LOGGER,
+                              "#NEW_GROUP\n\n"
+                              "<b>Chat Name:</b> {} \n\n<b>Chat ID:</b> <code>{}</code> {} \n\n<b>Count:</b> {}\n<b>Adder ID:</b> <code>{}</code> \n<b>Adder Name:</b> {}".
+                              format(CHAT_NAMe, chat.id, "\n\n<b>Creator:</b> <code>" + creator + "</code>" if creator is not None else "", chat.get_members_count(), user.id, mention_html(user.id, html.escape(user.first_name))),
+                              parse_mode=ParseMode.HTML, 
+                              disable_web_page_preview=True,
+                    )
+                except:
+                    pass
                 update.effective_message.reply_text(
-                    "Thanks for adding me! Join @YorkTownEagleUnion for support.",
-                    reply_to_message_id=reply,
+                    "You Have Rented Chizuru For Your Chat. *That's Awesome!*" 
+                    "\nSend [/help](t.me/ElitesOfRobot?start=help) Command In PM To Know About Me More." 
+                    "\nJoin Our Chats For [Discussion](https://t.me/ElitesOfAnime) & [Support](https://t.me/ElitesOfSupport). \n[Click Here](t.me/ElitesOfRobot?start=-1001175341127) To Redirect In PM.", 
+                     parse_mode=ParseMode.MARKDOWN, 
+                     disable_web_page_preview=True,
+                     reply_to_message_id=reply,
                 )
                 continue
 
@@ -594,14 +587,6 @@ def left_member(update: Update, context: CallbackContext):
             if left_mem.id == OWNER_ID:
                 update.effective_message.reply_text(
                     "Sorry to see you leave :(", reply_to_message_id=reply
-                )
-                return
-
-            # Give the devs a special goodbye
-            elif left_mem.id in DEV_USERS:
-                update.effective_message.reply_text(
-                    "See you later at the Eagle Union!",
-                    reply_to_message_id=reply,
                 )
                 return
 
