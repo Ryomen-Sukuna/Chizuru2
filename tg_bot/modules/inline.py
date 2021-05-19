@@ -344,29 +344,25 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
         data = res.get('data').get('Page').get('characters')
         res = data
         for data in res:
-            char_id = data.get('id', None)
             name = data.get('name').get('full') or query
-            nati_name = data.get('name').get('native', 'N/A')
-            alt_name = data.get('name').get('alternative', 'N/A')
-            favourite = data.get('favourites', 'N/A')
-            description = data.get('description', 'N/A')
+            nati_name = data.get('name').get('native') or 'N/A'
+            alt_name = data.get('name').get('alternative') or 'N/A'
+            favourite = data.get('favourites') or 'N/A'
+            description = data.get('description') or 'N/A'
             char_age = data.get('age', 'N/A')
-            char_gender = data.get('gender', 'N/A')
-            modnotes = data.get('modNotes', 'N/A')
-            dob = f"{data.get('dateOfBirth').get('day')}/{data.get('dateOfBirth').get('month')}/{data.get('dateOfBirth').get('year')}" or "N/A"
-            thumb_uri = data.get('image').get('medium') or data.get('image').get('large', None)
-            site_url = data.get('siteUrl', None)
+            char_gender = data.get('gender') or 'N/A'
+            thumb_url_mid = data.get('image').get('medium') or "https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg"
+            thumb_url_large = data.get('image').get('large') or "https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg"
+            site_url = data.get('siteUrl') or "https://anilist.co/characters"
 
             if len((str(description))) > 700:
                 description = description [0:700] + "....."
 
-            txt = f"*{name}* [-]({thumb_uri}) (*{nati_name}*)\n"
+            txt = f"*{name}* [-]({thumb_url_large}) (*{nati_name}*)\n"
             txt += f"\n*Alternative:* {alt_name}" or ""
             txt += f"\n*Favourite*: {favourite}"
             txt += f"\n*Gender:* {char_gender}" or ""
-            txt += f"\n*D-O-B:* {dob}" or ""
             txt += f"\n*Age:* {char_age}" or ""
-            txt += f"\n*Notes:* {modnotes}" or ""
             txt += f"\n\n*Description*: \n{description}"
 
             kb = InlineKeyboardMarkup(
@@ -391,7 +387,7 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
                     id=str(uuid4()),
                     title=name or query,
                     description=site_url or query,
-                    thumb_url=thumb_uri or "https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg",
+                    thumb_url=thumb_url_mid or "https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg",
                     input_message_content=InputTextMessageContent(txt, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=False),
                     reply_markup=kb,
                 )
