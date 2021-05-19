@@ -7,7 +7,7 @@ from telegram.utils.helpers import mention_html, mention_markdown
 from telegram import User, Chat, Update, Message, ParseMode, ChatPermissions
 
 from tg_bot.modules.warns import warn
-import tg_bot.modules.sql.blsticker_sql as sql
+import tg_bot.modules.sql.blacklist_s_sql as sql
 from tg_bot.modules.connection import connected
 from tg_bot.modules.log_channel import loggable
 from tg_bot.modules.sql.approve_sql import is_approved
