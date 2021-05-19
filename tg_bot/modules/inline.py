@@ -106,9 +106,9 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
             pass
 
     try:
-        search = query.split(" ", 1)[1]
+        search = ste(query.split(" ", 1)[1])
     except IndexError:
-        search = user.id
+        search = str(user.id)
 
     try:
         if search.isdigit() or search.isnumeric():
