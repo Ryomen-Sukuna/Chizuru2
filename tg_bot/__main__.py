@@ -161,10 +161,10 @@ def start(update: Update, context: CallbackContext):
         if len(args) >= 1:
             if args[0].lower() == "help":
                 send_help(update.effective_chat.id, (gs(chat.id, "pm_help_text")))
-            elif args[0].lower() in ["markdownhelp", "markdown"]:
-                IMPORTED["misc"].markdown_help(update)
-            elif args[0].lower() == "nations":
-                IMPORTED["nations"].send_nations(update)
+
+            elif args[0].lower() in ["formatting", "formattings"]:
+                IMPORTED["misc"].send_formatting(update, context)
+
             elif args[0].lower().startswith("stngs_"):
                 match = re.match("stngs_(.*)", args[0].lower())
                 chat = dispatcher.bot.getChat(match.group(1))
@@ -176,6 +176,7 @@ def start(update: Update, context: CallbackContext):
 
             elif args[0][1:].isdigit() and "rules" in IMPORTED:
                 IMPORTED["rules"].send_rules(update, args[0], from_pm=True)
+
 
         else:
             first_name = update.effective_user.first_name
@@ -445,7 +446,7 @@ def get_help(update: Update, context: CallbackContext):
     if chat.type != chat.PRIVATE:
 
         update.effective_message.reply_text(
-            "Contact me in PM to get the list of possible commands.",
+            "Contact me in PM for help!",
             reply_markup=InlineKeyboardMarkup(
                 [
                     [
@@ -474,6 +475,9 @@ def get_help(update: Update, context: CallbackContext):
                 [[InlineKeyboardButton(text="Back", callback_data="help_back")]]
             ),
         )
+
+    elif len(args) >= 2 and args[1].lower() in ["formatting", "formattings"]:
+          IMPORTED["misc"].formatting(update, context)
 
     else:
         send_help(chat.id, (gs(chat.id, "pm_help_text")))
