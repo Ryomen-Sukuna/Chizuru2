@@ -177,11 +177,35 @@ def info(update: Update, context: CallbackContext):
         pass
 
 
+@kigcmd(command="ud")
+def ud(update: Update, _):
+    message = update.effective_message
+    text =  message.text.split(" ", 1)
+
+    if len(text) == 1:
+        message.reply_text(
+           "_Format:_ `/ud <anything>`",
+           parse_mode=ParseMode.MARKDOWN,
+        )
+        return
+
+    results = requests.get(
+        "https://api.urbandictionary.com/v0/define?term=" + text
+    ).json()
+
+    try:
+        results = f"*{text}*:\n\nResult*:* {results['list'][0]['definition']}\n\nExample*:* _{results['list'][0]['example']}_"
+    except:
+        results = "No results found!"
+
+    message.reply_text(results, parse_mode=ParseMode.MARKDOWN)
+
+
 @kigcmd(command='echo', pass_args=True, filters=Filters.chat_type.groups)
 @user_admin
 def echo(update: Update, _):
-    args = update.effective_message.text.split(None, 1)
     message = update.effective_message
+    args = message.text.split(" ", 1)
 
     if message.reply_to_message:
         message.reply_to_message.reply_text(args[1])
@@ -190,18 +214,32 @@ def echo(update: Update, _):
 
     message.delete()
 
-@kigcmd(command='markdownhelp', filters=Filters.chat_type.private)
-def markdown_help(update: Update, _):
+
+def send_formatting(update: Update, context: CallbackContext):
+    update.effective_message.reply_text(
+        gs(update.effective_chat, "greetings_format_help").format(context.bot.first_name),
+        parse_mode=ParseMode.MARKDOWN,
+        disable_web_page_preview=True,
+        reply_markup=InlineKeyboardMarkup([
+               [InlineKeyboardButton(text="Markdown", callback_data="subhelp_wel_markdown"),
+               InlineKeyboardButton(text="Fillings", callback_data="subhelp_wel_fillings")],
+               [InlineKeyboardButton(text="Random Content", callback_data="subhelp_wel_random")],
+        ]),
+    )
+
+
+@kigcmd(command='formatting')
+def formatting(update: Update, _):
     chat = update.effective_chat
-    update.effective_message.reply_text((gs(chat.id, "markdown_help_text")), parse_mode=ParseMode.HTML)
-    update.effective_message.reply_text(
-        "Try forwarding the following message to me, and you'll see!"
-    )
-    update.effective_message.reply_text(
-        "/save test This is a markdown test. _italics_, *bold*, `code`, "
-        "[URL](example.com) [button](buttonurl:github.com) "
-        "[button2](buttonurl://google.com:same)"
-    )
+
+    if chat.type == "private":
+        send_formatting(update)
+    else:
+        update.effective_message.reply_text(
+            "Contact me in PM for help!",
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Formatting Help", url=f"t.me/{dispatcher.bot.username}?start=formatting")]]),
+        )
+
 
 @kigcmd(command='ping')
 @sudo_plus
@@ -215,6 +253,7 @@ def ping(update: Update, _):
         "*Pong!!!*\n`{}ms`".format(ping_time),
         parse_mode=ParseMode.MARKDOWN,
     )
+
 
 @kigcmd(command='app')
 def app(update: Update, context: CallbackContext):
@@ -239,6 +278,7 @@ def app(update: Update, context: CallbackContext):
         )
         soup = BeautifulSoup(page.content, "lxml", from_encoding="utf-8")
         results = soup.findAll("div", "ZmHEEd")
+        print(results[0])
 
         # Preparing Data
         app_name = results[0].findNext(
