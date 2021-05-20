@@ -577,17 +577,11 @@ def __user_info__(user_id):
     return text
 
 
+__mod_name__ = "AntiSpam"
+
 def __migrate__(old_chat_id, new_chat_id):
     sql.migrate_chat(old_chat_id, new_chat_id)
 
 
 def __chat_settings__(chat_id, user_id):
     return f"This chat is enforcing *gbans*: `{sql.does_chat_gban(chat_id)}`."
-
-
-from tg_bot.modules.language import gs
-
-def get_help(chat):
-    return gs(chat, "antispam_help")
-
-__mod_name__ = 'AntiSpam'
