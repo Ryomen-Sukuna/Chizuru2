@@ -99,9 +99,6 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
     query = update.inline_query.query
     user = update.effective_user
 
-    if os.path.isfile(f"inlineinfo{user.id}.jpg"):
-        os.remove(f"inlineinfo{user.id}.jpg")
-
     try:
         search = str(query.split(" ", 1)[1])
     except IndexError:
@@ -110,7 +107,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
     try:
         if search.isdigit() or search.isnumeric():
             user = bot.get_chat(int(search))
-        elif search.startswith('@'):
+        elif search.startswith("@"):
             getuser = get_user_id(str(search))
             if getuser:
                user = bot.get_chat(int(getuser))
@@ -121,6 +118,9 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
     except (BadRequest, ValueError):
         user = bot.get_chat(user.id)
     chat = update.effective_chat
+
+    if os.path.isfile(f"inlineinfo{user.id}.jpg"):
+        os.remove(f"inlineinfo{user.id}.jpg")
 
     text = (
         f"<b>• User Information:</b>\n"
