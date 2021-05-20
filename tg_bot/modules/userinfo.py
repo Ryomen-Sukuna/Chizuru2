@@ -194,10 +194,5 @@ def __user_info__(user_id):
         return "\n"
 
 
-from tg_bot.modules.language import gs
-
-def get_help(chat):
-    return gs(chat, "userinfo_help")
-
 
 __mod_name__ = "Bios/Abouts"
