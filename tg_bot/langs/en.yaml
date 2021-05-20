@@ -391,11 +391,28 @@ tagger_help: |
    • `/tagall`*:* mention all subscribed members.
    • `/untagall`*:* clears all subscribed members.
 
+chatbot_help: |
+    Chatbot utilizes the [Branshop](brainshop.ai)'s API and provides a more interactive group chatting experience.
+    *Admins only*:
+    • /chatbot <on-yes / off-no>: Enables/Disables Chatbot mode in the group.
+
 userinfo_help: |
-      • /setbio <text>: while replying, will save another user's bio
-      • /bio: will get your or another user's bio. This cannot be set by yourself.
+      *Self addded information*:
       • /setme <text>: will set your info
       • /me: will get your or another user's info
+      _Examples:_
+      ```/setme I am a wolf.
+      /me @username``` (defaults to yours if no user specified)
+
+      *Information others add on you*:
+      • /setbio <text>: while replying, will save another user's bio
+      • /bio: will get your or another user's bio. This cannot be set by yourself.
+      _Examples:_
+      ```/bio @username(defaults to yours if not specified).
+      /setbio This user is a good.``` (reply to the user)
+
+      *Overall Information about any user*:
+      • /info: get information about a user.
 
 warns_help: |
       • `/warns <userhandle>`*:* get a user's number, and reason, of warns.
