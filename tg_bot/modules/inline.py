@@ -97,14 +97,10 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
     """Handle the inline query."""
     bot = context.bot
     query = update.inline_query.query
-    log.info(query)
     user = update.effective_user
 
     if os.path.isfile(f"inlineinfo{user.id}.jpg"):
-        try:
-            os.remove(f"inlineinfo{user.id}.jpg")
-        except:
-            pass
+        os.remove(f"inlineinfo{user.id}.jpg")
 
     try:
         search = str(query.split(" ", 1)[1])
