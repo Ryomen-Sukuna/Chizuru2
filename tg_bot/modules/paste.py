@@ -47,8 +47,12 @@ def get_paste_content(update: Update, context: CallbackContext):
     message = update.effective_message
     chat = update.effective_chat  # type: Optional[Chat]
 
-    if len(args) >= 1:
-        key = args[0]
+    if message.reply_to_message:
+        key = message.reply_to_message.text
+
+    elif len(args) >= 1:
+        key = message.text.split(" ", 1)[1]
+
     else:
         message.reply_text("Please supply a nekobin url!")
         return
