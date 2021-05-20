@@ -229,15 +229,15 @@ def send_formatting(update: Update, context: CallbackContext):
 
 
 @kigcmd(command='formatting')
-def formatting(update: Update, _):
+def formatting(update: Update, context: CallbackContext):
     chat = update.effective_chat
 
     if chat.type == "private":
-        send_formatting(update)
+        send_formatting(update, context)
     else:
         update.effective_message.reply_text(
             "Contact me in PM for help!",
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Formatting Help", url=f"t.me/{dispatcher.bot.username}?start=formatting")]]),
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Help", url=f"t.me/{dispatcher.bot.username}?start=formatting")]]),
         )
 
 
