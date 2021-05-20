@@ -452,7 +452,7 @@ def __stats__():
 
 __mod_name__ = "Blacklists"
 
-from tg_bot.modules.language import gs
 
 def get_help(chat):
-    return gs(chat, "blacklist_help")
+    from tg_bot.modules.language import gs
+    return gs(chat, "bl_help")
