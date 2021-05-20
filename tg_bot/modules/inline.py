@@ -15,6 +15,7 @@ from telegram import ParseMode, InlineQueryResultArticle, InputTextMessageConten
 
 from tg_bot import log
 import tg_bot.modules.sql.users_sql as sql
+from tg_bot.modules.users import get_user_id
 from tg_bot.modules.helper_funcs.misc import article
 from tg_bot.modules.helper_funcs.decorators import kiginline
 
@@ -37,23 +38,23 @@ def inlinequery(update: Update, _) -> None:
     inline_help_dicts = [
         {
             "title": "Anime",
-            "description": "Search anime and manga on AniList.co",
-            "message_text": "Click the button below to search anime and manga on AniList.co",
-            "thumb_urL": "https://telegra.ph/file/c85e07b58f5b3158b529a.jpg",
+            "description": "Search Anime & Manga On AniList.co",
+            "message_text": "Click Here to search anime and manga on AniList.co",
+            "thumb_urL": "https://telegra.ph/file/a546976e6f3ebf21a131a.jpg",
             "keyboard": ".anime ",
         },
         {
             "title": "Character",
-            "description": "Search Character on AniList.co",
-            "message_text": "Click the button below to search character on AniList.co",
-            "thumb_urL": "https://telegra.ph/file/c85e07b58f5b3158b529a.jpg",
+            "description": "Search Characters on AniList.co",
+            "message_text": "Click Here to search character on AniList.co",
+            "thumb_urL": "https://telegra.ph/file/a546976e6f3ebf21a131a.jpg",
             "keyboard": ".char ",
         },
         {
             "title": "Account info",
-            "description": "Look up a Telegram account in Kigyo database",
-            "message_text": "Click the button below to look up a person in Kigyo database using their Telegram ID",
-            "thumb_urL": "https://telegra.ph/file/c85e07b58f5b3158b529a.jpg",
+            "description": "Look up a Telegram account in my database",
+            "message_text": "Click Here to look up a person in my database using their Telegram ID",
+            "thumb_urL": "https://telegra.ph/file/57d5522a9d8fa56e3be27.jpg",
             "keyboard": ".info ",
         },
     ]
@@ -114,7 +115,11 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
         if search.isdigit() or search.isnumeric():
             user = bot.get_chat(int(search))
         elif search.startswith('@'):
-            user = bot.get_chat(str(search))
+            getuser = get_user_id(str(search))
+            if getuser:
+               user = bot.get_chat(int(getuser))
+            else:
+               user = bot.get_chat(str(search))
         else:
             user = bot.get_chat(search)
     except (BadRequest, ValueError):
@@ -146,6 +151,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
         userpic = bot.get_file(profilepic["file_id"])
         downloadpic = userpic.download(f"inlineinfo{user.id}.jpg")
         uploadpic = upload_file(downloadpic)
+        os.remove(f"inlineinfo{user.id}.jpg")
         ispic = True
     # Incase user don't have profile pic
     except IndexError:
@@ -170,7 +176,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
               InlineQueryResultArticle(
                     id=str(uuid4()),
                     title=f"{user.first_name or search} {user.last_name or ''}",
-                    description=user.bio or user.id,
+                    description=user.bio or "N/A",
                     thumb_url=f"https://telegra.ph{uploadpic[0]}",
                     input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
                     reply_markup=kb,
@@ -181,7 +187,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
               InlineQueryResultArticle(
                     id=str(uuid4()),
                     title=f"{user.first_name or search} {user.last_name or ''}",
-                    description=user.bio or user.id,
+                    description=user.bio or "N/A",
                     input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
                     reply_markup=kb,
               ),
@@ -191,24 +197,18 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
            InlineQueryResultArticle(
               id=str(uuid4()),
               title=f"{user.first_name or search} {user.last_name or ''}",
-              description=user.bio or user.id,
+              description=user.bio or "N/A",
               input_message_content=InputTextMessageContent(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
               reply_markup=kb,
            ),
         ]
 
     update.inline_query.answer(results, cache_time=5)
-    if os.path.isfile(f"inlineinfo{user.id}.jpg"):
-        try:
-            os.remove(f"inlineinfo{user.id}.jpg")
-        except:
-            pass
-
 
 
 
 MEDIA_QUERY = '''query ($search: String) {
-  Page (perPage: 15) {
+  Page (perPage: 10) {
     media (search: $search) {
       id
       title {
@@ -349,7 +349,7 @@ def media_query(query: str, update: Update, context: CallbackContext) -> None:
 
 
 CHAR_QUERY = '''query ($query: String) {
-  Page (perPage: 25) {
+  Page (perPage: 15) {
         characters (search: $query) {
                id
                name {
