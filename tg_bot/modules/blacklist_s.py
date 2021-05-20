@@ -20,7 +20,7 @@ from tg_bot.modules.helper_funcs.chat_status import user_admin, user_not_admin
 
 BLACKLIST_GROUP = -3
 
-@kigcmd(command="blacklist", pass_args=True, admin_ok=True)
+@kigcmd(command="sblacklist", pass_args=True, admin_ok=True)
 @user_admin
 @typing_action
 def sblacklist(update, context):
