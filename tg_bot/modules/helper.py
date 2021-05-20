@@ -17,14 +17,23 @@ def get_help_btns(name):
             buttuns = [
                 [InlineKeyboardButton(text="AFK", callback_data="subhelp_afk"),
                 InlineKeyboardButton(text="Sticker", callback_data="subhelp_stick"),
-                InlineKeyboardButton(text="Translation", callback_data="subhelp_tr"),],
-                [InlineKeyboardButton(text="Back", callback_data="help_back"),],
+                InlineKeyboardButton(text="Translation", callback_data="subhelp_tr")],
+                [InlineKeyboardButton(text="Back", callback_data="help_back")],
             ]
+
      if str(name) == "Greetings":
             buttuns = [
-                [InlineKeyboardButton(text="Formatting", callback_data="subhelp_wel_format"),],
-                [InlineKeyboardButton(text="Back", callback_data="help_back"),],
+                [InlineKeyboardButton(text="Formatting", callback_data="subhelp_wel_format")],
+                [InlineKeyboardButton(text="Back", callback_data="help_back")],
             ]
+
+     if str(name) == "Blacklists":
+            buttuns = [
+                [InlineKeyboardButton(text="Trigger", callback_data="subhelp_blt"),
+                InlineKeyboardButton(text="Sticker", callback_data="subhelp_bls")],
+                [InlineKeyboardButton(text="Back", callback_data="help_back")],
+            ]
+
      return buttuns
 
 
@@ -126,6 +135,40 @@ def subhelp_button(update: Update, context: CallbackContext):
                 text=gs(chat, "greetings_random_help"),
                 reply_markup=InlineKeyboardMarkup(
                         [[InlineKeyboardButton(text="Back", callback_data="subhelp_wel_format"),]]
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True,
+                timeout=60, 
+            )
+
+
+    # Sub - Buttons For BLACKLIST Help
+    elif query.data == "subhelp_back3":
+        query.message.edit_text(
+                text="Here is the help for the *Blacklist* module:\n" + gs(chat, "bl_help"),
+                reply_markup=InlineKeyboardMarkup(
+                        get_help_btns("Blacklists")
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True,
+                timeout=60, 
+            )
+    elif query.data == "subhelp_blt":
+        query.message.edit_text(
+                text=gs(chat, "blacklist_help"),
+                reply_markup=InlineKeyboardMarkup(
+                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back3"),]]
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True,
+                timeout=60, 
+            )
+
+    elif query.data == "subhelp_bls":
+        query.message.edit_text(
+                text=gs(chat, "sblacklist_help"),
+                reply_markup=InlineKeyboardMarkup(
+                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back3"),]]
                 ),
                 parse_mode=ParseMode.MARKDOWN,
                 disable_web_page_preview=True,
