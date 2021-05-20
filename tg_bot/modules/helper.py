@@ -25,7 +25,7 @@ def get_help_btns(name):
                 [InlineKeyboardButton(text="Formatting", callback_data="subhelp_wel_format"),],
                 [InlineKeyboardButton(text="Back", callback_data="help_back"),],
             ]
-     return buttuns
+     return buttuns 
 
 
 @kigcallback(pattern=r'subhelp_.*')
