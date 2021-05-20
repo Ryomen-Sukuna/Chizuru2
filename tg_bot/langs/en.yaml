@@ -22,28 +22,27 @@ pm_help_text: |
         already used this.
    ✧ /help: Sends this message; I'll tell
         you more about myself!
-   ✧ /language: Change bot language.
    ✧ /settings: 
       ∘ in PM: will send you your settings
         for all supported modules.
       ∘ in a GROUP: will redirect you to pm,
         with all that chat's settings.
 
-add_bot_to_group_btn: "Add Kigyo"
+add_bot_to_group_btn: "Add Me"
 support_chat_link_btn: "Support"
 updates_channel_link_btn: "Updates"
 src_btn: "Source code"
 
 admin_help: |
-   • `/admins`*:* list of admins in the chat
+   • /admins*:* list of admins in the chat
 
    *Admins only:*
-   • `/pin`*:* silently pins the message replied to - add `'loud'` or `'notify'` to give notifs to users.
-   • `/unpin`*:* unpins the currently pinned message
-   • `/invitelink`*:* gets invitelink
-   • `/promote`*:* promotes the user replied to
-   • `/demote`*:* demotes the user replied to
-   • `/title <title here>`*:* sets a custom title for an admin that the bot promoted
+   • /pin*:* silently pins the message replied to - add `'loud'` or `'notify'` to give notifs to users.
+   • /unpin*:* unpins the currently pinned message
+   • /invitelink*:* gets invitelink
+   • /promote*:* promotes the user replied to
+   • /demote*:* demotes the user replied to
+   • /title <title here>*:* sets a custom title for an admin that the bot promoted
 
 afk_help: |
    • /afk <reason>: mark yourself as AFK(away from keyboard).
@@ -62,29 +61,29 @@ antiflood_help: |
     Antiflood allows you to take action on users that send more than x messages in a row. Exceeding the set flood
     will result in restricting that user.
      This will mute users if they send more than 10 messages in a row, bots are ignored.
-     • `/flood`*:* Get the current flood control setting
+     • /flood*:* Get the current flood control setting
     • *Admins only:*
-     • `/setflood <int/'no'/'off'>`*:* enables or disables flood control
-     *Example:* `/setflood 10`
-     • `/setfloodmode <ban/kick/mute/tban/tmute> <value>`*:* Action to perform when user have exceeded flood limit. ban/kick/mute/tmute/tban
+     • /setflood <int/'no'/'off'>*:* enables or disables flood control
+     _Example:_ `/setflood 10`
+     • /setfloodmode <ban/kick/mute/tban/tmute> <value>*:* Action to perform when user have exceeded flood limit. ban/kick/mute/tmute/tban
     • *Note:*
-     • Value must be filled for tban and tmute!!
-     It can be:
-     `5m` = 5 minutes
-     `6h` = 6 hours
-     `3d` = 3 days
-     `1w` = 1 week
+     ∘ _Value must be filled for tban and tmute!!_
+       It can be:
+          `5m` = 5 minutes
+          `6h` = 6 hours
+          `3d` = 3 days
+          `1w` = 1 week
 
 approve_help: |
      Sometimes, you might trust a user not to send unwanted content.
      Maybe not enough to make them admin, but you might be ok with locks, blacklists, and antiflood not applying to them.
      That's what approvals are for - approve of trustworthy users to allow them to send
-     *Admin commands:*
-     • `/approval`*:* Check a user's approval status in current chat.
-     • `/approve`*:* Approve of a user. Locks, blacklists, and antiflood won't apply to them anymore.
-     • `/unapprove`*:* Unapprove of a user. They will now be subject to locks, blacklists, and antiflood again.
-     • `/approved`*:* List all approved users.
-     • `/unapproveall`*:* Unapprove *ALL* users in a chat. This cannot be undone.
+     *Admin commands*:
+     • /approval*:* Check a user's approval status in current chat.
+     • /approve*:* Approve of a user. Locks, blacklists, and antiflood won't apply to them anymore.
+     • /unapprove*:* Unapprove of a user. They will now be subject to locks, blacklists, and antiflood again.
+     • /approved*:* List all approved users.
+     • /unapproveall*:* Unapprove *ALL* users in a chat. This cannot be undone.
 
 backup_help: |
     *Admin only:*
@@ -102,18 +101,19 @@ bans_help: |
     • /kick <userhandle>: kick a user out of the group, (via handle, or reply)
 
 bl_help: |
+
    *Trigger*: this blacklists are used to stop certain triggers from being said in a group. Any time the trigger is mentioned, the message will immediately be deleted. A good combo is sometimes to pair this up with warn filters!
 
    *Sticker*: this blacklists is used to stop certain stickers. Whenever a sticker is sent, the message will be deleted immediately.
 
 blacklist_help: |
     *CMD*:
-     • `/blacklist`*:* View the current blacklisted words.
+     • /blacklist*:* View the current blacklisted words.
 
     *Admin only*:
-     • `/addblacklist <triggers>`*:* Add a trigger to the blacklist. Each line is considered one trigger, so using different lines will allow you to add multiple triggers.
-     • `/unblacklist <triggers>`*:* Remove triggers from the blacklist. Same newline logic applies here, so you can remove multiple triggers at once.
-     • `/blacklistmode <off/del/warn/ban/kick/mute/tban/tmute>`*:* Action to perform when someone sends blacklisted words.
+     • /addblacklist <triggers>*:* Add a trigger to the blacklist. Each line is considered one trigger, so using different lines will allow you to add multiple triggers.
+     • /unblacklist <triggers>*:* Remove triggers from the blacklist. Same newline logic applies here, so you can remove multiple triggers at once.
+     • /blacklistmode <off/del/warn/ban/kick/mute/tban/tmute>*:* Action to perform when someone sends blacklisted words.
 
 sblacklist_help: |
     *CMD*:
@@ -143,20 +143,21 @@ connections_help: |
     • /allowconnect <yes/no>: allow a user to connect to a chat
 
 cust_filters_help: |
-    • `/filters`*:* List all active filters saved in the chat.
+    • /filters*:* List all active filters saved in the chat.
 
-     *Admin only:*
-    • `/filter <keyword> <reply message>`*:* Add a filter to this chat. The bot will now reply that message whenever 'keyword'
+    *Admin only:*
+    • /filter <keyword> <reply message>*:* Add a filter to this chat. The bot will now reply that message whenever 'keyword'
       is mentioned. If you reply to a sticker with a keyword, the bot will reply with that sticker. NOTE: all filter
       keywords are in lowercase. If you want your keyword to be a sentence, use quotes. eg: /filter "hey there" How you
       doin?
-    • `/stop <filter keyword>`*:* Stop that filter.
+    • /stop <filter keyword>*:* Stop that filter.
 
-     *Chat creator only:*
-    • `/removeallfilters`*:* Remove all chat filters at once.
+    *Chat creator only:*
+    • /removeallfilters*:* Remove all chat filters at once.
 
-      *Note*: Filters also support markdown formatters like: {first}, {last} etc.. and buttons.
-        Check `/markdownhelp` to know more!
+    *Tip*: 
+    Filters also support markdown formatters like: {first}, {last} etc.. and buttons.
+    Check /formatting to know more!
 
 disable_help: |
     Not everyone wants every feature that the bot offers. Some commands are best
@@ -171,6 +172,10 @@ disable_help: |
      • /enable <cmd name>: Enable that command
      • /disable <cmd name>: Disable that command
      • /listcmds: List all possible disablable commands
+
+     • /enablemodule <module name>: Enable that module
+     • /disablemodule <module name>: Disable that module
+     • /listmodules: List all possible disablable module
 
 feds_help: |
     Ah, group management. Everything is fun, until the spammer starts entering your group, and you have to block it. Then you need to start banning more, and more, and it hurts.
@@ -228,13 +233,13 @@ sticker_help: |
 
 antispam_help: |
      *Admins only:*
-      • `/antispam <on/off/yes/no>`*:* Will toggle our antispam tech or return your current settings.
+      • /antispam <on/off/yes/no>*:* Will toggle our antispam tech or return your current settings.
 
      Anti-Spam, used by bot devs to ban spammers across all groups. This helps protect
      you and your groups by removing spam flooders as quickly as possible.
-     *Note:* Users can appeal gbans or report spammers at @YorkTownEagleUnion
+     *Note:* Users can appeal gbans or report spammers at @ElitesOfSupport
 
-     Kigyo also integrates @Spamwatch and @Intellivoid's SpamProtectionBot API to remove Spammers as much as possible from your chatroom!
+     Chizuru also integrates @Spamwatch and @Intellivoid's SpamProtectionBot API to remove Spammers as much as possible from your chatroom!
      *What is SpamWatch?*
      SpamWatch maintains a large constantly updated ban-list of spambots, trolls, bitcoin spammers and unsavoury characters.
      Constantly help banning spammers off from your group automatically So, you wont have to worry about spammers storming your group.
@@ -260,12 +265,12 @@ locks_help: |
      The locks module allows you to lock away some common items in the
      telegram world; the bot will automatically delete them!
 
-      • `/locktypes`*:* Lists all possible locktypes
+      • /locktypes*:* Lists all possible locktypes
 
      *Admins only:*
-      • `/lock <type>`*:* Lock items of a certain type (not available in private)
-      • `/unlock <type>`*:* Unlock items of a certain type (not available in private)
-      • `/locks`*:* The current list of locks in this chat.
+      • /lock <type>*:* Lock items of a certain type (not available in private)
+      • /unlock <type>*:* Unlock items of a certain type (not available in private)
+      • /locks*:* The current list of locks in this chat.
 
      Locks can be used to restrict a group's users.
      eg:
@@ -279,14 +284,14 @@ locks_help: |
 
 log_help: |
       *Admins only:*
-      • `/logchannel`*:* get log channel info
-      • `/setlog`*:* set the log channel.
-      • `/unsetlog`*:* unset the log channel.
+      • /logchannel*:* get log channel info
+      • /setlog*:* set the log channel.
+      • /unsetlog*:* unset the log channel.
 
       Setting the log channel is done by:
       • adding the bot to the desired channel (as an admin!)
-      • sending `/setlog` in the channel
-      • forwarding the `/setlog` to the group
+      • sending /setlog in the channel
+      • forwarding the /setlog to the group
 
 markdown_help_text: |
       Markdown is a very powerful formatting tool supported by telegram. Kigyo has some enhancements, to make sure that
@@ -328,13 +333,7 @@ misc_help: |
       • /cinfo : get info about a user or a chat (uses @Pyrogram methods)
       • /getid : get IDs of chat, user and chat message.
       • /spbinfo : get info about a user from @Intellivoid's SpamProtection API
-      ───────────────────────────────
-      *Last.FM*
-      Share what you're what listening to with the help of this module!
-      *Available commands:*
-      • /setuser <username>: sets your last.fm username.
-      • /clearuser: removes your last.fm username from the bot's database.
-      • /lastfm: returns what you're scrobbling on last.fm.
+      ────────────────────────
 
 muting_help: |
       *Admins only:*
@@ -401,8 +400,10 @@ userinfo_help: |
       • /setme <text>: will set your info
       • /me: will get your or another user's info
       _Examples:_
-      ```/setme I am a wolf.
-      /me @username``` (defaults to yours if no user specified)
+      ```/setme I am a chizuru.```
+      ```/me @username``` (defaults to yours if no user specified)
+
+      ────────────────────────
 
       *Information others add on you*:
       • /setbio <text>: while replying, will save another user's bio
@@ -410,6 +411,8 @@ userinfo_help: |
       _Examples:_
       ```/bio @username(defaults to yours if not specified).
       /setbio This user is a good.``` (reply to the user)
+
+      ────────────────────────
 
       *Overall Information about any user*:
       • /info: get information about a user.
@@ -476,7 +479,7 @@ greetings_random_help: |
     *How to use random contents:*
     • %%%: This separator can be used to add "random" replies to the bot.
 
-    *For example:*
+    _For example:_
     ```hello
     %%%
     how are you```
