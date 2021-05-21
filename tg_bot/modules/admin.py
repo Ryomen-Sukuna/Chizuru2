@@ -472,7 +472,7 @@ def unpin(update: Update, context: CallbackContext) -> str:
     return log_message
 
 
-@kigcmd(command="invitelink", can_disable=False)
+@kigcmd(command="invitelink")
 @bot_admin
 @user_admin
 @connection_status
@@ -497,7 +497,7 @@ def invite(update: Update, context: CallbackContext):
         )
 
 
-@kigcmd(command="setgtitle", can_disable=False)
+@kigcmd(command="setgtitle")
 @bot_admin
 @user_admin
 def chattitle(update, context):
@@ -526,7 +526,7 @@ def chattitle(update, context):
         return
 
 
-@kigcmd(command="delgpic", can_disable=False)
+@kigcmd(command="delgpic")
 @bot_admin
 @user_admin
 def delchatpic(update, context):
@@ -545,7 +545,7 @@ def delchatpic(update, context):
         return
 
 
-@kigcmd(command="setgpic", can_disable=False)
+@kigcmd(command="setgpic")
 @bot_admin
 @user_admin
 def chatpic(update: Update, context: CallbackContext):
@@ -582,7 +582,7 @@ def chatpic(update: Update, context: CallbackContext):
         message.reply_text("Reply to some photo or file to set new chat pic!")
 
 
-@kigcmd(command="setsticker", can_disable=False)
+@kigcmd(command="setsticker")
 @bot_admin
 @user_admin
 def gstickerset(update, context):
@@ -614,7 +614,7 @@ def gstickerset(update, context):
         message.reply_text("You need to reply to some sticker to set chat sticker set!")
 
 
-@kigcmd(command=["setdescription", "setdesc"], can_disable=False)
+@kigcmd(command=["setdescription", "setdesc"])
 @bot_admin
 @user_admin
 def set_desc(update, context):
@@ -822,3 +822,5 @@ def get_help(chat):
     return gs(chat, "admin_help")
 
 __mod_name__ = "Admin"
+
+__commands__ = ["fullpromote", "invitelink", "setgtitle", "delgpic", "setgpic", "setsticker", "setdescription", "setdesc"]
