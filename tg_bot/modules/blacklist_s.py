@@ -20,7 +20,7 @@ from tg_bot.modules.helper_funcs.chat_status import user_admin, user_not_admin
 
 BLACKLIST_GROUP = -3
 
-@kigcmd(command="sblacklist", pass_args=True, admin_ok=True)
+@kigcmd(command="sblacklist", pass_args=True, can_disable=False, admin_ok=True)
 @user_admin
 @typing_action
 def sblacklist(update, context):
@@ -65,7 +65,7 @@ def sblacklist(update, context):
 
 
 
-@kigcmd(command="addsblacklist", pass_args=True)
+@kigcmd(command="addsblacklist", pass_args=True, can_disable=False)
 @user_admin
 @typing_action
 def add_sblacklist(update, context):
@@ -149,7 +149,7 @@ def add_sblacklist(update, context):
 
 
 
-@kigcmd(command="unsblacklist", pass_args=True)
+@kigcmd(command="unsblacklist", pass_args=True, can_disable=False)
 @user_admin
 @typing_action
 def unsblacklist(update, context):
@@ -238,7 +238,7 @@ def unsblacklist(update, context):
 
 
 
-@kigcmd(command="sblacklistmode", pass_args=True)
+@kigcmd(command="sblacklistmode", pass_args=True, can_disable=False)
 @loggable
 @user_admin
 @typing_action
