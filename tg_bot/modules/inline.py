@@ -24,28 +24,6 @@ from tg_bot.modules.helper_funcs.decorators import kiginline
 
 
 
-async def get_user_info(user):
-    user = await app.get_users(user)
-    if not user.first_name:
-        return ["Deleted account", None]
-    user_id = user.id
-    username = user.username
-    first_name = user.first_name
-    last_name = user.last_name
-    mention = user.mention("Here")
-    status = user.status
-    dc_id = user.dc_id
-    photo_id = user.photo.big_file_id if user.photo else None
-    caption = f"""
-**ID:** `{user_id}`
-**DC:** {dc_id}
-**Name:** {first_name, last_name or ''}
-**Username:** {("@" + username) if username else "N/A"}
-**Permalink:** {mention}
-**Status:** {status}
-"""
-    return [caption, photo_id]
-
 @app.on_inline_query()
 async def inline_query_handler(client, query):
     try:
@@ -62,14 +40,53 @@ async def inline_query_handler(client, query):
                 return
 
             txt = text.split()[1].strip()
-            caption, photo_id = await get_user_info(txt)
-            answers.append(IQRA(
-                                 title="Found User.",
+            user = await app.get_users(txt)
+            user_id = user.id
+            bio = await app.get_chat(int(user_id)).bio or "N/A"
+            first_name = user.first_name or "Deleted account"
+            last_name = user.last_name or "N/A"
+            username = user.username or "N/A"
+            mention = user.mention("Here")
+            status = user.status
+            dc_id = user.dc_id
+            photo_id = user.photo.big_file_id if user.photo else None
+
+            sql.update_user(user.id, user.username)
+            same_chats = sql.get_user_num_chats(user.id)
+
+            caption = "*User Info*:\n"
+            caption += f"\nID: `{user_id}`"
+            caption += f"\nDC: {dc_id}"
+            caption += f"\nNAME: {first_name} {last_name or ''}"
+            caption += f"\nUsername: {username}"
+            caption += f"\nPermalink: {mention}"
+            caption += f"\nStatus: {status}"
+
+            if int(same_chats) >= 1:
+                caption += f"\nMutual Chats: {same_chats}"
+
+            if not photo_id:
+                profilepic = await app.download_media(photo_id)
+                uploadpic = upload_file(profilepic)
+                os.remove(profilepic)
+                answers.append(IQRA(
+                                 title=f"{first_name or 'Deleted account'} {last_name or 'N/A'}",
+                                 description=boi or "N/A"
+                                 thumb_url=f"https://telegra.ph{uploadpic[0]}" or "https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg",
                                  input_message_content=ITMC(
-                                                                caption, disable_web_page_preview=True,
+                                                         caption, parse_mode="md", disable_web_page_preview=True,
                                                        ),
                            )
-            )
+                )
+            else:
+                answers.append(IQRA(
+                                 title=f"{first_name or 'Deleted account'} {last_name or 'N/A'}",
+                                 description=boi or "N/A"
+                                 input_message_content=ITMC(
+                                                         caption, parse_mode="md", disable_web_page_preview=True,
+                                                       ),
+                           )
+                )
 
             await client.answer_inline_query(
                 query.id, results=answers, cache_time=5,
