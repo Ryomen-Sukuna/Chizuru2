@@ -2,7 +2,6 @@ import os
 import html
 import json
 import requests
-import traceback
 from uuid import uuid4
 from typing import List
 
@@ -13,111 +12,11 @@ from telegram.utils.helpers import mention_html
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram import ParseMode, InlineQueryResultArticle, InputTextMessageContent
 
-
-from pykeyboard import InlineKeyboard as PyIKB
-from pyrogram.types import InlineQueryResultArticle as IQRA, InputTextMessageContent as ITMC, InlineKeyboardButton as IKBB
-from pyrogram.errors import BadRequest as BDR
-
-from tg_bot import log, kp as app
+from tg_bot import log
 import tg_bot.modules.sql.users_sql as sql
 from tg_bot.modules.users import get_user_id
 from tg_bot.modules.helper_funcs.misc import article
 from tg_bot.modules.helper_funcs.decorators import kiginline
-
-
-
-@app.on_inline_query()
-async def inline_query_handler(client, query):
-    try:
-        text = query.query.strip().lower()
-        answers = []
-        if text.split()[0] == ".info":
-            if len(text.split()) < 2:
-                await client.answer_inline_query(
-                    query.id,
-                    results=answers,
-                    switch_pm_text="User Info | info [USERNAME|ID]",
-                    switch_pm_parameter="inline",
-                )
-                return
-
-            try:
-                search = str(text.split(" ", 1)[1])
-            except IndexError:
-                search = str(query.from_user.id)
-
-            try:
-                if (search.isdigit() or search.isnumeric()):
-                    user = await app.get_users(int(search))
-                elif search.startswith("@"):
-                      user = await app.get_users(str(search))
-                else:
-                    user = await app.get_users(search)
-            except (BDR, ValueError):
-                user = await app.get_users(int(query.from_user.id))
-
-            user_id = user.id
-            first_name = user.first_name or "Deleted account"
-            last_name = user.last_name or "N/A"
-            username = user.username or "N/A"
-            mention = user.mention("Here")
-            status = user.status
-            dc_id = user.dc_id
-            photo_id = user.photo.big_file_id if user.photo else None
-
-            x = await app.get_chat(int(user_id))
-            boi = x.bio or "N/A"
-
-            sql.update_user(user.id, user.username)
-            same_chats = sql.get_user_num_chats(user.id)
-
-            caption = "<b>User Info</b>:\n"
-            caption += f"\nID: <code>{user_id}</code>"
-            caption += f"\nDC: {dc_id}"
-            caption += f"\nNAME: {first_name}{last_name or ''}"
-            caption += f"\nUsername: @{username}"
-            caption += f"\nPermalink: {mention}"
-            caption += f"\nStatus: {status}"
-
-            if int(same_chats) >= 1:
-                caption += f"\nMutual Chats: {same_chats}"
-
-            kb = PyIKB(row_width=1)
-            pykb = kb.add(IKBB(text="Search Again", switch_inline_query_current_chat=".info "))
-
-            if photo_id is not None:
-                profilepic = await app.download_media(photo_id)
-                uploadpic = upload_file(profilepic)
-                os.remove(profilepic)
-                answers.append(IQRA(
-                                 title=f"{first_name or 'Deleted account'}{last_name or ''}",
-                                 description=boi or "N/A",
-                                 reply_markup=pykb,
-                                 thumb_url=f"https://telegra.ph{uploadpic[0]}" or "https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg",
-                                 input_message_content=ITMC(
-                                                         caption, parse_mode="md", disable_web_page_preview=True,
-                                                       ),
-                           )
-                )
-            else:
-                answers.append(IQRA(
-                                 title=f"{first_name or 'Deleted account'}{last_name or ''}",
-                                 description=boi or "N/A",
-                                 reply_markup=pykb,
-                                 input_message_content=ITMC(
-                                                         caption, parse_mode="md", disable_web_page_preview=True,
-                                                       ),
-                           )
-                )
-
-            await client.answer_inline_query(
-                query.id, results=answers, cache_time=5,
-            )
-
-    except Exception as e:
-        e = traceback.format_exc()
-        log.exception(e)
-        return
 
 
 
@@ -151,26 +50,23 @@ def inlinequery(update: Update, _) -> None:
             "thumb_urL": "https://telegra.ph/file/a546976e6f3ebf21a131a.jpg",
             "keyboard": ".char ",
         },
-       # {
-       #     "title": "Account info",
-       #     "description": "Look up a Telegram account in my database",
-       #     "message_text": "Click Here to look up a person in my database using their Telegram ID",
-       #     "thumb_urL": "https://telegra.ph/file/57d5522a9d8fa56e3be27.jpg",
-       #     "keyboard": ".info ",
-       # },
+        {
+            "title": "Account info",
+            "description": "Look up a Telegram account in my database",
+            "message_text": "Click Here to look up a person in my database using their Telegram ID",
+            "thumb_urL": "https://telegra.ph/file/57d5522a9d8fa56e3be27.jpg",
+            "keyboard": ".info ",
+        },
     ]
 
     inline_funcs = {
         ".anime": media_query,
         ".char": character_query,
-      # ".info": inlineinfo,
+        ".info": inlineinfo,
     }
 
     if (f := query.split(" ", 1)[0]) in inline_funcs:
         inline_funcs[f](remove_prefix(query, f).strip(), update, user)
-
-    elif (f := query.split(" ", 1)[0]) in (".info"):
-          return
 
     else:
         for ihelp in inline_help_dicts:
@@ -219,7 +115,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
             else:
                user = bot.get_chat(str(search))
         else:
-            user = bot.get_chat(search)
+            user = bot.get_chat("@" + str(search))
     except (BadRequest, ValueError):
         user = bot.get_chat(user.id)
     chat = update.effective_chat
