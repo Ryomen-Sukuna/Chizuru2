@@ -66,8 +66,9 @@ class RentalBot:
         self.WALL_API = self.rent.WALL_API
         self.CF_API_KEY =  self.rent.CF_API_KEY
         self.bot_id = 1736276154 #placeholder
-        self.bot_name = "Chizuru V2" #placeholder
+        self.bot_name = "Chizuru" #placeholder
         self.bot_username = "ElitesOfBot" #placeholder
+        self.ALLOW_CHATS = False #placeholder
 
 
     def init_sw(self):
@@ -103,6 +104,7 @@ BAN_STICKER = Rent.BAN_STICKER
 TOKEN = Rent.TOKEN
 DB_URI = Rent.DB_URI
 LOAD = Rent.LOAD
+ALLOW_CHATS = Rent.ALLOW_CHATS
 MESSAGE_DUMP = Rent.MESSAGE_DUMP
 JOIN_LOGGER = Rent.JOIN_LOGGER
 ERROR_DUMP = Rent.ERROR_DUMP
