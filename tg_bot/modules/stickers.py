@@ -1,4 +1,5 @@
 import math
+import requests
 from io import BytesIO
 from html import escape
 import urllib.request as urllib
