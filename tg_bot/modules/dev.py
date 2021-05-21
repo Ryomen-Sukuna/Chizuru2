@@ -1,7 +1,7 @@
 from telegram import TelegramError, Update
 from telegram.ext import CallbackContext, CommandHandler, run_async
 
-from tg_bot import dispatcher, telethn, OWNER_ID, RentalBot
+from tg_bot import RentalBot, dispatcher
 from tg_bot.modules.helper_funcs.chat_status import dev_plus
 
 
