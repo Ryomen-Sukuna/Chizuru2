@@ -167,7 +167,7 @@ def new_member(update: Update, context: CallbackContext):
         welcome_bool = True
         media_wel = False
 
-        if new_mem.id == bot.id and not ALLOW_CHATS:
+        if new_mem.id == bot.id and not ALLOW_CHATS and user.id not in DEV_USERS:
             with suppress(BadRequest):
                 bot.send_message(chat.id, f"You Can't Rent {bot.first_name}, Groups are disabled for me!")
             bot.leave_chat(update.effective_chat.id)
