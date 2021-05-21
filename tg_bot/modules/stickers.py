@@ -1,15 +1,44 @@
 import math
-import urllib.request as urllib
-from html import escape
 from io import BytesIO
+from html import escape
+import urllib.request as urllib
 from urllib.error import HTTPError
+from bs4 import BeautifulSoup
 
 from PIL import Image
-from telegram import (InlineKeyboardButton, InlineKeyboardMarkup, ParseMode,
-                      TelegramError, Update)
+from telegram import TelegramError
+from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 from telegram.utils.helpers import mention_html
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from tg_bot.modules.helper_funcs.decorators import kigcmd
+
+
+
+@kigcmd(command='stickers')
+def cb_sticker(update: Update, context: CallbackContext):
+    msg = update.effective_message
+    split = msg.text.split(' ', 1)
+    if len(split) == 1:
+        msg.reply_text('Provide Some Name To Search For Packs.')
+        return
+    url = "https://combot.org/telegram/stickers?q="
+    text = requests.get(url + split[1]).text
+    print(text)
+    print("----------------------------------------")
+    soup = BeautifulSoup(text, "lxml", from_encoding="utf-8")
+    print(soup)
+    results = soup.find_all("a", {'class': "sticker-pack__btn"})
+    titles = soup.find_all("div", "sticker-pack__title")
+    if not results:
+        msg.reply_text("No Results Found! :(")
+        return
+    reply = f"Stickers for *{split[1]}*:"
+    for result, title in zip(results, titles):
+        link = result['href']
+        reply += f"\n• [{title.get_text()}]({link})"
+    msg.reply_text(reply, parse_mode=ParseMode.MARKDOWN)
+
 
 
 @kigcmd(command='stickerid')
