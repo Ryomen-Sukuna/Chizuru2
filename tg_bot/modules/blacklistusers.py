@@ -24,7 +24,7 @@ BLACKLISTWHITELIST = (
 )
 BLABLEUSERS = [OWNER_ID] + DEV_USERS
 
-@kigcmd(command='ignore', pass_args=True)
+@kigcmd(command='ignore', pass_args=True, can_disable=False)
 @dev_plus
 @gloggable
 def bl_user(update: Update, context: CallbackContext) -> str:
@@ -66,7 +66,7 @@ def bl_user(update: Update, context: CallbackContext) -> str:
 
     return log_message
 
-@kigcmd(command='notice', pass_args=True)
+@kigcmd(command='notice', pass_args=True, can_disable=False)
 @dev_plus
 @gloggable
 def unbl_user(update: Update, context: CallbackContext) -> str:
@@ -108,7 +108,7 @@ def unbl_user(update: Update, context: CallbackContext) -> str:
         message.reply_text("I am not ignoring them at all though!")
         return ""
 
-@kigcmd(command='ignoredlist', pass_args=True)
+@kigcmd(command='ignoredlist', pass_args=True, can_disable=False)
 @dev_plus
 def bl_users(update: Update, context: CallbackContext):
     users = []
