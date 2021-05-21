@@ -71,7 +71,7 @@ async def inline_query_handler(client, query):
                 os.remove(profilepic)
                 answers.append(IQRA(
                                  title=f"{first_name or 'Deleted account'} {last_name or 'N/A'}",
-                                 description=boi or "N/A"
+                                 description=boi or "N/A",
                                  thumb_url=f"https://telegra.ph{uploadpic[0]}" or "https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg",
                                  input_message_content=ITMC(
                                                          caption, parse_mode="md", disable_web_page_preview=True,
@@ -81,7 +81,7 @@ async def inline_query_handler(client, query):
             else:
                 answers.append(IQRA(
                                  title=f"{first_name or 'Deleted account'} {last_name or 'N/A'}",
-                                 description=boi or "N/A"
+                                 description=boi or "N/A",
                                  input_message_content=ITMC(
                                                          caption, parse_mode="md", disable_web_page_preview=True,
                                                        ),
