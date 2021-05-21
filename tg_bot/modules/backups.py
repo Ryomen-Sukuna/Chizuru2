@@ -25,7 +25,7 @@ def get_help(chat):
 
 __mod_name__ = "Backup"
 
-@kigcmd(command='import')
+@kigcmd(command="import", can_disable=False)
 @user_admin
 @typing_action
 def import_data(update, context):
@@ -118,7 +118,7 @@ def import_data(update, context):
             text = "Backup fully restored"
         msg.reply_text(text, parse_mode="markdown")
 
-@kigcmd(command='export')
+@kigcmd(command="export", can_disable=False)
 @user_admin
 def export_data(update, context):
     chat_data = context.chat_data
