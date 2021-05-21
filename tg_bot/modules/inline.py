@@ -15,6 +15,7 @@ from telegram import ParseMode, InlineQueryResultArticle, InputTextMessageConten
 
 
 from pyrogram.types import InlineQueryResultArticle as IQRA, InputTextMessageContent as ITMC
+from pyrogram.errors import BadRequest as BDR
 
 from tg_bot import log, kp as app
 import tg_bot.modules.sql.users_sql as sql
@@ -39,8 +40,21 @@ async def inline_query_handler(client, query):
                 )
                 return
 
-            txt = text.split()[1].strip()
-            user = await app.get_users(txt)
+            try:
+                search = str(text.split(" ", 1)[1])
+            except IndexError:
+                search = str(query.from_user.id)
+
+            try:
+                if (search.isdigit() or search.isnumeric()):
+                    user = await app.get_users(int(search))
+                elif search.startswith("@"):
+                      user = await app.get_users(str(search))
+                else:
+                    user = await app.get_users(search)
+            except (BDR, ValueError):
+                user = await app.get_users(int(query.from_user.id))
+
             user_id = user.id
             first_name = user.first_name or "Deleted account"
             last_name = user.last_name or "N/A"
