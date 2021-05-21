@@ -356,9 +356,10 @@ def manga(update: Update, context: CallbackContext):
             )
 
 
-from tg_bot.modules.language import gs
 
 def get_help(chat):
+    from tg_bot.modules.language import gs
     return gs(chat, "anilist_help")
 
 __mod_name__ = "Anime"
+__commands__ = ["anime", "manga", "airing", "character"]
