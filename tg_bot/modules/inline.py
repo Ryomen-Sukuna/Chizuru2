@@ -14,7 +14,8 @@ from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram import ParseMode, InlineQueryResultArticle, InputTextMessageContent
 
 
-from pyrogram.types import InlineQueryResultArticle as IQRA, InputTextMessageContent as ITMC
+from pykeyboard import InlineKeyboard as PyIKB
+from pyrogram.types import InlineQueryResultArticle as IQRA, InputTextMessageContent as ITMC, InlineKeyboardButton as IKBB
 from pyrogram.errors import BadRequest as BDR
 
 from tg_bot import log, kp as app
@@ -70,24 +71,28 @@ async def inline_query_handler(client, query):
             sql.update_user(user.id, user.username)
             same_chats = sql.get_user_num_chats(user.id)
 
-            caption = "*User Info*:\n"
-            caption += f"\nID: `{user_id}`"
+            caption = "<b>User Info</b>:\n"
+            caption += f"\nID: <code>{user_id}</code>"
             caption += f"\nDC: {dc_id}"
-            caption += f"\nNAME: {first_name} {last_name or ''}"
-            caption += f"\nUsername: {username}"
+            caption += f"\nNAME: {first_name}{last_name or ''}"
+            caption += f"\nUsername: @{username}"
             caption += f"\nPermalink: {mention}"
             caption += f"\nStatus: {status}"
 
             if int(same_chats) >= 1:
                 caption += f"\nMutual Chats: {same_chats}"
 
-            if not photo_id:
+            kb = PyIKB(row_width=1)
+            pykb = kb.add(IKBB(text="Search Again", switch_inline_query_current_chat=".info "))
+
+            if photo_id is not None:
                 profilepic = await app.download_media(photo_id)
                 uploadpic = upload_file(profilepic)
                 os.remove(profilepic)
                 answers.append(IQRA(
-                                 title=f"{first_name or 'Deleted account'} {last_name or 'N/A'}",
+                                 title=f"{first_name or 'Deleted account'}{last_name or ''}",
                                  description=boi or "N/A",
+                                 reply_markup=pykb,
                                  thumb_url=f"https://telegra.ph{uploadpic[0]}" or "https://telegra.ph/file/cc83a0b7102ad1d7b1cb3.jpg",
                                  input_message_content=ITMC(
                                                          caption, parse_mode="md", disable_web_page_preview=True,
@@ -96,8 +101,9 @@ async def inline_query_handler(client, query):
                 )
             else:
                 answers.append(IQRA(
-                                 title=f"{first_name or 'Deleted account'} {last_name or 'N/A'}",
+                                 title=f"{first_name or 'Deleted account'}{last_name or ''}",
                                  description=boi or "N/A",
+                                 reply_markup=pykb,
                                  input_message_content=ITMC(
                                                          caption, parse_mode="md", disable_web_page_preview=True,
                                                        ),
