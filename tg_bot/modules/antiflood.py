@@ -162,7 +162,7 @@ def flood_button(update: Update, context: CallbackContext):
         except:
             pass
 
-@kigcmd(command='setflood', pass_args=True, filters=Filters.chat_type.groups)
+@kigcmd(command='setflood', pass_args=True, can_disable=False, filters=Filters.chat_type.groups)
 @connection_status
 @user_admin
 @can_restrict
@@ -260,7 +260,7 @@ def set_flood(update, context) -> str:
 
 
 @connection_status
-@kigcmd(command="flood", filters=Filters.chat_type.groups)
+@kigcmd(command="flood", can_disable=False, filters=Filters.chat_type.groups)
 def flood(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -302,7 +302,7 @@ def flood(update, context):
                 )
             )
 
-@kigcmd(command="setfloodmode", pass_args=True, filters=Filters.chat_type.groups)
+@kigcmd(command="setfloodmode", pass_args=True, can_disable=False, filters=Filters.chat_type.groups)
 @user_admin
 def set_flood_mode(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
