@@ -2,6 +2,7 @@ import os
 import html
 import json
 import requests
+import traceback
 from uuid import uuid4
 from typing import List
 
@@ -13,11 +14,69 @@ from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram import ParseMode, InlineQueryResultArticle, InputTextMessageContent
 
 
-from tg_bot import log
+from tg_bot import log, kp as app
 import tg_bot.modules.sql.users_sql as sql
 from tg_bot.modules.users import get_user_id
 from tg_bot.modules.helper_funcs.misc import article
 from tg_bot.modules.helper_funcs.decorators import kiginline
+
+
+
+async def get_user_info(user):
+    user = await app.get_users(user)
+    if not user.first_name:
+        return ["Deleted account", None]
+    user_id = user.id
+    username = user.username
+    first_name = user.first_name
+    last_name = user.last_name
+    mention = user.mention("Here")
+    status = user.status
+    dc_id = user.dc_id
+    photo_id = user.photo.big_file_id if user.photo else None
+    caption = f"""
+**ID:** `{user_id}`
+**DC:** {dc_id}
+**Name:** {first_name, last_name or ''}
+**Username:** {("@" + username) if username else "N/A"}
+**Permalink:** {mention}
+**Status:** {status}
+"""
+    return [caption, photo_id]
+
+@app.on_inline_query()
+async def inline_query_handler(client, query):
+    try:
+        text = query.query.strip().lower()
+        answers = []
+        if text.split()[0] == ".info":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text="User Info | info [USERNAME|ID]",
+                    switch_pm_parameter="inline",
+                )
+                return
+
+            txt = text.split()[1].strip()
+            caption, photo_id = await get_user_info(txt)
+            answers.append(InlineQueryResultArticle(
+                                 title="Found User.",
+                                 input_message_content=InputTextMessageContent(
+                                                                caption, disable_web_page_preview=True,
+                                                       ),
+                           )
+            )
+
+            await client.answer_inline_query(
+                query.id, results=answers, cache_time=5,
+            )
+
+    except Exception as e:
+        e = traceback.format_exc()
+        log.exception(e)
+        return
 
 
 
@@ -31,6 +90,7 @@ def inlinequery(update: Update, _) -> None:
     """
     Main InlineQueryHandler callback.
     """
+
     query = update.inline_query.query
     user = update.effective_user
 
@@ -50,23 +110,27 @@ def inlinequery(update: Update, _) -> None:
             "thumb_urL": "https://telegra.ph/file/a546976e6f3ebf21a131a.jpg",
             "keyboard": ".char ",
         },
-        {
-            "title": "Account info",
-            "description": "Look up a Telegram account in my database",
-            "message_text": "Click Here to look up a person in my database using their Telegram ID",
-            "thumb_urL": "https://telegra.ph/file/57d5522a9d8fa56e3be27.jpg",
-            "keyboard": ".info ",
-        },
+       # {
+       #     "title": "Account info",
+       #     "description": "Look up a Telegram account in my database",
+       #     "message_text": "Click Here to look up a person in my database using their Telegram ID",
+       #     "thumb_urL": "https://telegra.ph/file/57d5522a9d8fa56e3be27.jpg",
+       #     "keyboard": ".info ",
+       # },
     ]
 
     inline_funcs = {
         ".anime": media_query,
         ".char": character_query,
-        ".info": inlineinfo,
+      # ".info": inlineinfo,
     }
 
     if (f := query.split(" ", 1)[0]) in inline_funcs:
         inline_funcs[f](remove_prefix(query, f).strip(), update, user)
+
+    elif (f := query.split(" ", 1)[0]) in (".info"):
+          return
+
     else:
         for ihelp in inline_help_dicts:
             results.append(
