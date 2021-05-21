@@ -42,7 +42,6 @@ async def inline_query_handler(client, query):
             txt = text.split()[1].strip()
             user = await app.get_users(txt)
             user_id = user.id
-            bio = await app.get_chat(int(user_id)).bio or "N/A"
             first_name = user.first_name or "Deleted account"
             last_name = user.last_name or "N/A"
             username = user.username or "N/A"
@@ -50,6 +49,9 @@ async def inline_query_handler(client, query):
             status = user.status
             dc_id = user.dc_id
             photo_id = user.photo.big_file_id if user.photo else None
+
+            x = await app.get_chat(int(user_id))
+            boi = x.bio or "N/A"
 
             sql.update_user(user.id, user.username)
             same_chats = sql.get_user_num_chats(user.id)
