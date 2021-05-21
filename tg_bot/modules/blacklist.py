@@ -20,7 +20,7 @@ from tg_bot.modules.helper_funcs.alternate import send_message, typing_action
 
 BLACKLIST_GROUP = -3
 
-@kigcmd(command="blacklist", pass_args=True, admin_ok=True)
+@kigcmd(command="blacklist", pass_args=True, can_disable=False, admin_ok=True)
 @user_admin
 @typing_action
 def blacklist(update, context):
@@ -65,7 +65,7 @@ def blacklist(update, context):
             return
         send_message(update.effective_message, text, parse_mode=ParseMode.HTML)
 
-@kigcmd(command="addblacklist", pass_args=True)
+@kigcmd(command="addblacklist", pass_args=True, can_disable=False)
 @user_admin
 @typing_action
 def add_blacklist(update, context):
@@ -118,7 +118,7 @@ def add_blacklist(update, context):
             "Tell me which words you would like to add in blacklist.",
         )
 
-@kigcmd(command="unblacklist", pass_args=True)
+@kigcmd(command="unblacklist", pass_args=True, can_disable=False)
 @user_admin
 @typing_action
 def unblacklist(update, context):
@@ -197,7 +197,7 @@ def unblacklist(update, context):
             "Tell me which words you would like to remove from blacklist!",
         )
 
-@kigcmd(command="blacklistmode", pass_args=True)
+@kigcmd(command="blacklistmode", pass_args=True, can_disable=False)
 @loggable
 @user_admin
 @typing_action
