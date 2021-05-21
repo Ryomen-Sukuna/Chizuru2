@@ -1,11 +1,10 @@
 from telegram import TelegramError, Update
-from telegram.ext import CallbackContext, CommandHandler, run_async
+from telegram.ext import CallbackContext, CommandHandler
 
 from tg_bot import RentalBot, dispatcher
 from tg_bot.modules.helper_funcs.chat_status import dev_plus
 
 
-@run_async
 @dev_plus
 def allow_groups(update: Update, context: CallbackContext):
     args = context.args
@@ -40,7 +39,7 @@ def leave(update: Update, context: CallbackContext):
 
 
 LEAVE_HANDLER = CommandHandler("leave", leave, run_async=True)
-ALLOWGROUPS_HANDLER = CommandHandler("lockdown", allow_groups)
+ALLOWGROUPS_HANDLER = CommandHandler("lockdown", allow_groups, run_async=True)
 
 dispatcher.add_handler(LEAVE_HANDLER)
 dispatcher.add_handler(ALLOWGROUPS_HANDLER)
