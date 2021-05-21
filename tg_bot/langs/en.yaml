@@ -42,7 +42,20 @@ admin_help: |
    • /invitelink*:* gets invitelink
    • /promote*:* promotes the user replied to
    • /demote*:* demotes the user replied to
-   • /title <title here>*:* sets a custom title for an admin that the bot promoted
+   • /settitle <title here>*:* sets a custom title for an admin that the bot promoted
+   • /setgpic*:* As a reply to file or photo to set group profile pic!
+   • /delgpic*:* Same as above but to remove group profile pic.
+   • /setgtitle <newtitle>*:* Sets new chat title in your group.
+   • /setsticker*:* As a reply to some sticker to set it as group sticker set!
+   • /setdescription or /setdes <description>*:* Sets new chat description in group.
+   • /demons*:* list all the demons (Deleted Accounts) in a chat.
+   • /admincache or /reload*:* Refresh chat admins.
+
+   *Note*: To set group sticker set chat must needs to have min 100 members.
+
+   _Example:_
+   -> `/setdescription Hello, Welcome To My Chat.` (this set group description.)
+
 
 afk_help: |
    • /afk <reason>: mark yourself as AFK(away from keyboard).
