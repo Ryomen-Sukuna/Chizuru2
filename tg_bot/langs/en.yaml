@@ -40,6 +40,7 @@ admin_help: |
    • /pin*:* silently pins the message replied to - add `'loud'` or `'notify'` to give notifs to users.
    • /unpin*:* unpins the currently pinned message
    • /invitelink*:* gets invitelink
+   • /fullpromote*:* promotes the user with all administration rights.
    • /promote*:* promotes the user replied to
    • /demote*:* demotes the user replied to
    • /settitle <title here>*:* sets a custom title for an admin that the bot promoted
@@ -436,23 +437,25 @@ warns_help: |
 
 greetings_help: |
 
-      *Admins only:*
+      *Welcome*:
        • /welcome <on/off>*:* enable/disable welcome messages.
        • /welcome*:* shows current welcome settings.
        • /welcome noformat*:* shows current welcome settings, without the formatting - useful to recycle your welcome messages!
-       • /goodbye*:* same usage and args as `/welcome`.
        • /setwelcome <sometext>*:* set a custom welcome message. If used replying to media, uses that media.
-       • /setgoodbye <sometext>*:* set a custom goodbye message. If used replying to media, uses that media.
        • /resetwelcome*:* reset to the default welcome message.
-       • /resetgoodbye*:* reset to the default goodbye message.
-       • /cleanwelcome <on/off>*:* On new member, try to delete the previous welcome message to avoid spamming the chat.
-       • /welcomemutehelp*:* gives information about welcome mutes.
-       • /cleanservice <on/off*:* deletes telegrams welcome/left service messages.
-       *Example:*
-      user joined chat, user left chat.
 
-      *Welcome markdown:*
-       • /welcomehelp*:* view more formatting information for custom welcome/goodbye messages.
+       *Goodbye*:
+       • /goodbye <on/off>*:* enable/disable goodbye messages.
+       • /goodbye*:* shows current goodbye settings.
+       • /setgoodbye <sometext>*:* set a custom goodbye message. If used replying to media, uses that media.
+       • /resetgoodbye*:* reset to the default goodbye message.
+
+       *Other*:
+       • /welcomemutehelp*:* gives information about welcome mutes.
+       • /cleanwelcome <on/off>*:* On new member, try to delete the previous welcome message to avoid spamming the chat.
+       • /cleanservice <on/off*:* deletes telegrams welcome/left service messages.
+       _Example:_
+       user joined chat, user left chat.
 
 greetings_format_help: |
     *Formatting:*
