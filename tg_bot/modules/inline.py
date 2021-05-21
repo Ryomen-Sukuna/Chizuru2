@@ -14,7 +14,7 @@ from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram import ParseMode, InlineQueryResultArticle, InputTextMessageContent
 
 
-from pyrogram.types import InlineQueryResultArticle as IQRA
+from pyrogram.types import InlineQueryResultArticle as IQRA, InputTextMessageContent as ITMC
 
 from tg_bot import log, kp as app
 import tg_bot.modules.sql.users_sql as sql
@@ -65,7 +65,7 @@ async def inline_query_handler(client, query):
             caption, photo_id = await get_user_info(txt)
             answers.append(IQRA(
                                  title="Found User.",
-                                 input_message_content=InputTextMessageContent(
+                                 input_message_content=ITMC(
                                                                 caption, disable_web_page_preview=True,
                                                        ),
                            )
