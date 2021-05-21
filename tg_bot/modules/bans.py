@@ -34,7 +34,7 @@ from tg_bot.modules.helper_funcs.decorators import kigcmd
 
 @connection_status
 @bot_admin
-@kigcmd(command='ban', pass_args=True)
+@kigcmd(command='ban', pass_args=True, can_disable=False)
 @can_restrict
 @user_admin
 @loggable
@@ -127,7 +127,7 @@ def ban(update, context):
 
 
 @connection_status
-@kigcmd(command='tban', pass_args=True)
+@kigcmd(command='tban', pass_args=True, can_disable=False)
 @bot_admin
 @can_restrict
 @user_admin
@@ -221,7 +221,7 @@ def temp_ban(update: Update, context: CallbackContext) -> str:
 
 
 @connection_status
-@kigcmd(command='kick', pass_args=True)
+@kigcmd(command='kick', pass_args=True, can_disable=False)
 @bot_admin
 @can_restrict
 @user_admin
@@ -295,9 +295,23 @@ def kickme(update: Update, context: CallbackContext):
     else:
         update.effective_message.reply_text("Huh? I can't :/")
 
+@bot_admin
+@can_restrict
+@kigcmd(command='banme', pass_args=True, filters=Filters.chat_type.groups)
+def kickme(update: Update, context: CallbackContext):
+    user_id = update.effective_message.from_user.id
+    if is_user_admin(update.effective_chat, user_id):
+        update.effective_message.reply_text("I wish I could... but you're an admin.")
+        return
+
+    res = update.effective_chat.kick_member(user_id)
+    if res:
+        update.effective_message.reply_text("*banned you out of the group*")
+    else:
+        update.effective_message.reply_text("Huh? I can't :/")
 
 @connection_status
-@kigcmd(command='unban', pass_args=True)
+@kigcmd(command='unban', pass_args=True, can_disable=False)
 @bot_admin
 @can_restrict
 @user_admin
@@ -347,7 +361,7 @@ def unban(update: Update, context: CallbackContext) -> str:
 
 
 @connection_status
-@kigcmd(command='selfunban', pass_args=True)
+@kigcmd(command='unbanme', pass_args=True, can_disable=False)
 @bot_admin
 @can_restrict
 @gloggable
@@ -390,11 +404,13 @@ def selfunban(context: CallbackContext, update: Update) -> str:
 
     return log
 
-from tg_bot.modules.language import gs
 
 def get_help(chat):
+    from tg_bot.modules.language import gs
     return gs(chat, "bans_help")
 
 
 
 __mod_name__ = "Bans"
+
+__commands__ = ["kickme", "banme"]
