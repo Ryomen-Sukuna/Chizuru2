@@ -3,6 +3,7 @@ import random
 import re
 import time
 from functools import partial
+from contextlib import suppress
 from io import BytesIO
 import tg_bot.modules.sql.welcome_sql as sql
 from tg_bot import (
@@ -12,6 +13,7 @@ from tg_bot import (
     DEV_USERS,
     dispatcher,
     JOIN_LOGGER,
+    ALLOW_CHATS,
 )
 from tg_bot.modules.helper_funcs.chat_status import (
     is_user_ban_protected,
@@ -165,6 +167,12 @@ def new_member(update: Update, context: CallbackContext):
         welcome_bool = True
         media_wel = False
 
+        if new_mem.id == bot.id and not ALLOW_CHATS:
+            with suppress(BadRequest):
+                bot.send_message(chat.id, f"You Can't Rent {bot.first_name}, Groups are disabled for me!")
+            bot.leave_chat(update.effective_chat.id)
+            return
+
         if is_user_gbanned(new_mem.id):
             return
 
@@ -220,7 +228,7 @@ def new_member(update: Update, context: CallbackContext):
                               JOIN_LOGGER,
                               "#NEW_GROUP\n\n"
                               "<b>Chat Name:</b> {} \n\n<b>Chat ID:</b> <code>{}</code> {} \n\n<b>Count:</b> {}\n<b>Adder ID:</b> <code>{}</code> \n<b>Adder Name:</b> {}".
-                              format(CHAT_NAMe, chat.id, "\n\n<b>Creator:</b> <code>" + creator + "</code>" if creator is not None else "", chat.get_members_count(), user.id, mention_html(user.id, html.escape(user.first_name))),
+                              format(CHAT_NAMe, chat.id, '\n\n<b>Creator:</b> <code>' + creator + '</code>' if creator is not None else '', chat.get_members_count(), user.id, mention_html(user.id, html.escape(user.first_name))),
                               parse_mode=ParseMode.HTML, 
                               disable_web_page_preview=True,
                     )
