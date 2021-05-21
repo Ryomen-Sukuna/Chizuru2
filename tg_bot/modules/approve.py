@@ -159,7 +159,6 @@ def unapproveall(update: Update, context: CallbackContext):
         )
 
 @kigcallback(pattern=r"unapproveall_.*")
-@loggable
 def unapproveall_btn(update: Update, context: CallbackContext):
     query = update.callback_query
     chat = update.effective_chat
@@ -173,35 +172,31 @@ def unapproveall_btn(update: Update, context: CallbackContext):
                 users.append(int(i.user_id))
             for user_id in users:
                 sql.disapprove(chat.id, user_id)
-            log_message = (
-                   f"<b>{html.escape(chat.title)}:</b>\n"
-                   f"#UNAPPROVED_ALL\n"
-                   f"<b>Admin:</b> {mention_html(query.from_user.id, query.from_user.first_name)}\n"
-            )
-            return log_message
 
         if member.status == "administrator":
             query.answer("Only owner of the chat can do this.")
-            return ""
+            return
 
         if member.status == "member":
             query.answer("You need to be admin to do this.")
-            return ""
+            return
     elif query.data == "unapproveall_cancel":
         if member.status == "creator" or query.from_user.id in SUDO_USERS:
             message.edit_text(
                 "Removing of all approved users has been cancelled.")
-            return ""
+            return
         if member.status == "administrator":
             query.answer("Only owner of the chat can do this.")
-            return ""
+            return
         if member.status == "member":
             query.answer("You need to be admin to do this.")
-            return ""
+            return
 
-from tg_bot.modules.language import gs
 
 def get_help(chat):
+    from tg_bot.modules.language import gs
     return gs(chat, "approve_help")
 
 __mod_name__ = "Approvals"
+
+__commands__ = ["approved", "unapproveall", "approval", "approve", "unapprove"]
