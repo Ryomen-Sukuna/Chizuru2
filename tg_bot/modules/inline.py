@@ -229,7 +229,7 @@ def stickers(query: str, update: Update, context: CallbackContext) -> None:
         except IndexError:
             split = None
 
-        comboturl = "https://combot.org/telegram/stickers" + f"?q={split}" if split is not None else "trending"
+        comboturl = f"https://combot.org/telegram/stickers{'?q=' + split if split is not None else 'trending'}"
         headers = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0"}
         text = requests.get(comboturl, headers=headers).text
 
