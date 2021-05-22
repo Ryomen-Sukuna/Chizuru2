@@ -57,12 +57,20 @@ def inlinequery(update: Update, _) -> None:
             "thumb_urL": "https://telegra.ph/file/57d5522a9d8fa56e3be27.jpg",
             "keyboard": ".info ",
         },
+        {
+            "title": "Stickers",
+            "description": "Search Any Sticker Pack",
+            "message_text": "Click Here to search stickers for given term on combot sticker catalogue",
+            "thumb_urL": "https://telegra.ph/file/8917d882b623b0c2a1012.jpg",
+            "keyboard": ".stickers ",
+        },
     ]
 
     inline_funcs = {
         ".anime": media_query,
         ".char": character_query,
         ".info": inlineinfo,
+        ".stickers": stickers,
     }
 
     if (f := query.split(" ", 1)[0]) in inline_funcs:
@@ -201,6 +209,57 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
         ]
 
     update.inline_query.answer(results, cache_time=5)
+
+
+
+
+
+def stickers(query: str, update: Update, context: CallbackContext) -> None:
+    """Handle the inline sticker query."""
+
+    query = update.inline_query.query
+    user = update.effective_user
+
+    stickers: List = []
+    try:
+        try:
+            split = str(query.split(" ", 1)[1])
+        except IndexError:
+            return
+
+        comboturl = f"https://combot.org/telegram/stickers?q={split}"
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0'}
+        text = requests.get(comboturl, headers=headers).text
+
+        soup = BeautifulSoup(text, "lxml", from_encoding="utf-8")
+        results = soup.findAll("a", {'class': "sticker-pack__btn"})
+        titles = soup.findAll("div", "sticker-pack__title")
+
+        if results:
+            for result, title in zip(results, titles):
+                 kb = InlineKeyboardMarkup([[InlineKeyboardButton(text="Add Pack", url=stickerlink)], [InlineKeyboardButton(text="Search Again", switch_inline_query_current_chat=".stickers ")]])
+                 stickers.append(
+                     InlineQueryResultArticle(
+                            id=str(uuid4()),
+                            title=title.get_text() or split,
+                            input_message_content=InputTextMessageContent(f"Result Of <b>{split}</b>:", parse_mode=ParseMode.HTML, disable_web_page_preview=True),
+                            reply_markup=kb,
+                     )
+                 )
+
+    except Exception as e:
+        kb = InlineKeyboardMarkup([[InlineKeyboardButton(text="Search Again", switch_inline_query_current_chat=".stickers ")]])
+        stickers.append(
+            InlineQueryResultArticle(
+                id=str(uuid4()),
+                title=f"Media {query} not found",
+                input_message_content=InputTextMessageContent(f"Sticker {split} not found due to {e}", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True),
+                reply_markup=kb,
+            )
+        )
+
+    update.inline_query.answer(stickers, cache_time=5)
+
 
 
 
