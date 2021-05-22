@@ -313,7 +313,7 @@ def app_query(query: str, update: Update, context: CallbackContext) -> None:
 
         # Structuring Data
         data = (
-          f"<a href='{html.escape(app_icon)}'>•</a> <b>{html.escape(app_name)}</b>\n"
+          f"• <b>{html.escape(app_name)}</b>\n"
           f"\n∘ <b>Developer</b>: <a href='{html.escape(app_dev_link)}'>{html.escape(app_devs)}</a>"
           f"\n∘ <b>Rating</b>: {html.escape(app_rating.replace('Rated ', '').replace(' out of ', '/').replace(' stars', '', 1).replace(' stars', '').replace('five', '5'))}" 
         )
