@@ -25,10 +25,10 @@ def cb_sticker(update: Update, context: CallbackContext):
         return
 
     url = "https://combot.org/telegram/stickers?q="
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0'}
+    headers = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0"}
     text = requests.get(url + split[1], headers=headers).text
 
-    soup = BeautifulSoup(text, "lxml", from_encoding="utf-8")
+    soup = BeautifulSoup(text, "lxml")
     results = soup.findAll("a", {'class': "sticker-pack__btn"})
     titles = soup.findAll("div", "sticker-pack__title")
 
