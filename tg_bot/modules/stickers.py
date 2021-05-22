@@ -19,22 +19,23 @@ from tg_bot.modules.helper_funcs.decorators import kigcmd
 @kigcmd(command='stickers')
 def cb_sticker(update: Update, context: CallbackContext):
     msg = update.effective_message
-    split = msg.text.split(' ', 1)
+    split = msg.text.split(" ", 1)
     if len(split) == 1:
-        msg.reply_text('Provide Some Name To Search For Packs.')
+        msg.reply_text("Provide Some Name To Search For Packs"')
         return
+
     url = "https://combot.org/telegram/stickers?q="
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0'}
     text = requests.get(url + split[1], headers=headers).text
-    print(text)
-    print("----------------------------------------")
+
     soup = BeautifulSoup(text, "lxml", from_encoding="utf-8")
-    print(soup)
     results = soup.findAll("a", {'class': "sticker-pack__btn"})
     titles = soup.findAll("div", "sticker-pack__title")
+
     if not results:
         msg.reply_text("No Results Found! :(")
         return
+
     reply = f"Stickers for *{split[1]}*:"
     for result, title in zip(results, titles):
         link = result['href']
