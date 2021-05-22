@@ -288,15 +288,22 @@ def app_query(query: str, update: Update, context: CallbackContext) -> None:
         results = soup.findAll("div", "ZmHEEd")
 
         if results:
-            all_apps = results[0].findAll('div', 'Vpfmgd')
+            apps = results[0].findAll('div', 'Vpfmgd')
+
+            app_name = apps.findAll('div', 'WsMG1c nnK0zc').text
+            app_devs = apps.findAll('div', 'KoLSrc').text
+            app_dev_link = apps.findAll('a', 'mnKHRc')['href']
+            app_rating = apps.findAll('div', 'pf5lIe').find('div')['aria-label']
+            app_link = apps.findAll('div', 'vU6FJ p63iDd').a['href']
+            app_icon = apps.findAll('div', 'uzcko').img['data-src']
             # Preparing Data
-            for app in zip(all_apps):
-                 app_name = app.findNext('div', 'WsMG1c nnK0zc').text
-                 app_devs = app.findNext('div', 'KoLSrc').text
-                 app_dev_link = url + app.findNext('a', 'mnKHRc')['href']
-                 app_rating = app.findNext('div', 'pf5lIe').find('div')['aria-label']
-                 app_link = url + app.findNext('div', 'vU6FJ p63iDd').a['href']
-                 app_icon = app.findNext('div', 'uzcko').img['data-src']
+            for appname, appdevs, appdevlink, apprating, applink, appicon in zip(app_name, app_devs, app_dev_link, app_rating, app_link, app_icon):
+                 app_name = appname
+                 app_devs = appdevs
+                 app_dev_link = url + appdevlink
+                 app_rating = apprating
+                 app_link = url + applink
+                 app_icon = appicon
 
                  # Structuring Data
                  data = (
