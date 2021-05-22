@@ -30,8 +30,8 @@ def cb_sticker(update: Update, context: CallbackContext):
     print("----------------------------------------")
     soup = BeautifulSoup(text, "lxml", from_encoding="utf-8")
     print(soup)
-    results = soup.find_all("a", {'class': "sticker-pack__btn"})
-    titles = soup.find_all("div", "sticker-pack__title")
+    results = soup.findAll("a", {'class': "sticker-pack__btn"})
+    titles = soup.findAll("div", "sticker-pack__title")
     if not results:
         msg.reply_text("No Results Found! :(")
         return
