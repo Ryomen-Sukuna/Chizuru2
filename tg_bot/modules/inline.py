@@ -241,8 +241,6 @@ def stickers_query(query: str, update: Update, context: CallbackContext) -> None
         soup = BeautifulSoup(text, "lxml")
         results = soup.findAll("a", {'class': "sticker-pack__btn"})
         titles = soup.findAll("div", "sticker-pack__title")
-        thumbnail = soup.findAll("a", {'class': "sticker-pack__btn"}).findNext("div", 'sticker-pack__sticker-img')
-        print(thumbnail.get_text())
 
         Packs = {}
         if results:
