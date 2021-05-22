@@ -5,7 +5,6 @@ from html import escape
 from bs4 import BeautifulSoup
 import urllib.request as urllib
 from urllib.error import HTTPError
-from collections import OrderedDict
 
 from PIL import Image
 from telegram import TelegramError
@@ -25,9 +24,9 @@ def cb_sticker(update: Update, context: CallbackContext):
         message.reply_text("Provide Some Name To Search For Packs")
         return
 
-    url = "https://combot.org/telegram/stickers?q="
+    comboturl = f"https://combot.org/telegram/stickers?q={split}"
     headers = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0"}
-    text = requests.get(url + split[1], headers=headers).text
+    text = requests.get(comboturl, headers=headers).text
     print(text)
 
     soup = BeautifulSoup(text, "lxml")
@@ -35,19 +34,27 @@ def cb_sticker(update: Update, context: CallbackContext):
     titles = soup.findAll("div", "sticker-pack__title")
 
     if not results:
-        message.reply_text("No Results Found! :(")
+        message.reply_text("No Results Found!")
         return
 
-    reply = f"Stickers for *{split[1]}*:"
-    Packs = OrderedDict()
+    Packs = {}
+    Stickers = f"Stickers for <b>{split[1]}</b>:\n"
+
     for result, title in zip(results, titles):
-        link = result["href"]
-        Packs[f"{link}"] = title
+         link = result["href"]
+         Packs[f"{link}"] = title
 
     for link, title in Packs.items():
-        reply += f"\n• [{title.get_text()}]({link})"
+         Stickers += f"\n• <a href='{link}'>{title.get_text()}</a>"
 
-    message.reply_text(reply, parse_mode=ParseMode.MARKDOWN)
+    if not Stickers.endswith("</b>:\n"):
+        message.reply_text(
+            Stickers,
+            parse_mode=ParseMode.HTML,
+            disable_web_page_preview=True,
+        )
+    else:
+        message.reply_text("No Results Found!")
 
 
 
