@@ -288,14 +288,13 @@ def app_query(query: str, update: Update, context: CallbackContext) -> None:
         results = soup.findAll("div", "ZmHEEd")
 
         if results:
-            apps = results[0].findAll('div', 'Vpfmgd')
+            app_name = results[0].findAll('div', 'Vpfmgd').findAll('div', 'WsMG1c nnK0zc').text
+            app_devs = results[0].findAll('div', 'Vpfmgd').findAll('div', 'KoLSrc').text
+            app_dev_link = results[0].findAll('div', 'Vpfmgd').findAll('a', 'mnKHRc')['href']
+            app_rating = results[0].findAll('div', 'Vpfmgd').findAll('div', 'pf5lIe').find('div')['aria-label']
+            app_link = results[0].findAll('div', 'Vpfmgd').findAll('div', 'vU6FJ p63iDd').a['href']
+            app_icon = results[0].findAll('div', 'Vpfmgd').findAll('div', 'uzcko').img['data-src']
 
-            app_name = apps.findAll('div', 'WsMG1c nnK0zc').text
-            app_devs = apps.findAll('div', 'KoLSrc').text
-            app_dev_link = apps.findAll('a', 'mnKHRc')['href']
-            app_rating = apps.findAll('div', 'pf5lIe').find('div')['aria-label']
-            app_link = apps.findAll('div', 'vU6FJ p63iDd').a['href']
-            app_icon = apps.findAll('div', 'uzcko').img['data-src']
             # Preparing Data
             for appname, appdevs, appdevlink, apprating, applink, appicon in zip(app_name, app_devs, app_dev_link, app_rating, app_link, app_icon):
                  app_name = appname
