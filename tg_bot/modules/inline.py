@@ -70,8 +70,8 @@ def inlinequery(update: Update, _) -> None:
     inline_funcs = {
         ".anime": media_query,
         ".char": character_query,
-        ".info": inlineinfo,
-        ".stickers": stickers,
+        ".info": info_query,
+        ".stickers": stickers_query,
     }
 
     if (f := query.split(" ", 1)[0]) in inline_funcs:
@@ -103,7 +103,7 @@ def inlinequery(update: Update, _) -> None:
         update.inline_query.answer(results, cache_time=5)
 
 
-def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
+def info_query(query: str, update: Update, context: CallbackContext) -> None:
     """Handle the inline query."""
     bot = context.bot
     query = update.inline_query.query
@@ -133,9 +133,9 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
         os.remove(f"inlineinfo{user.id}.jpg")
 
     text = (
-        f"<b>• User Information:</b>\n"
-        f"∘ ID: <code>{user.id}</code>\n"
-        f"∘ First Name: {html.escape(user.first_name) if user.first_name is not None else '☠️ <code>Zombie</code> ☠️'}"
+        f"<b>• User Info:</b>\n"
+        f"\n∘ ID: <code>{user.id}</code>"
+        f"\n∘ First Name: {html.escape(user.first_name) or '☠️ <code>Demon</code> ☠️'}"
     )
 
     if user.last_name:
@@ -215,7 +215,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
 
 
 
-def stickers(query: str, update: Update, context: CallbackContext) -> None:
+def stickers_query(query: str, update: Update, context: CallbackContext) -> None:
     """Handle the inline sticker query."""
 
     query = update.inline_query.query
@@ -228,7 +228,7 @@ def stickers(query: str, update: Update, context: CallbackContext) -> None:
         except IndexError:
             return 
 
-        comboturl = f"https://combot.org/telegram/stickers{'/trending' if split.lower() == '<trending>' else '?q=' + split}"
+        comboturl = f"https://combot.org/telegram/stickers?q={split}"
         headers = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0"}
         text = requests.get(comboturl, headers=headers).text
 
