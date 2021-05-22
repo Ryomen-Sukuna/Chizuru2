@@ -232,7 +232,7 @@ def stickers(query: str, update: Update, context: CallbackContext) -> None:
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0'}
         text = requests.get(comboturl, headers=headers).text
 
-        soup = BeautifulSoup(text, "lxml", from_encoding="utf-8")
+        soup = BeautifulSoup(text, "lxml")
         results = soup.findAll("a", {'class': "sticker-pack__btn"})
         titles = soup.findAll("div", "sticker-pack__title")
 
