@@ -69,7 +69,7 @@ def inlinequery(update: Update, _) -> None:
             "title": "Applications",
             "description": "Search Any Application on play.google.com",
             "message_text": "Search Application On Playstore",
-            "thumb_urL": "https://telegra.ph/file/8917d882b623b0c2a1012.jpg",
+            "thumb_urL": "https://telegra.ph/file/6b84acef0f4b6770940b5.jpg",
             "keyboard": ".app ",
         },
     ]
