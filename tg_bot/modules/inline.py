@@ -4,6 +4,7 @@ import json
 import requests
 from uuid import uuid4
 from typing import List
+from bs4 import BeautifulSoup
 
 from telegraph import upload_file
 from telegram.error import BadRequest
