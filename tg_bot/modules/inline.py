@@ -65,6 +65,13 @@ def inlinequery(update: Update, _) -> None:
             "thumb_urL": "https://telegra.ph/file/8917d882b623b0c2a1012.jpg",
             "keyboard": ".stickers ",
         },
+        {
+            "title": "Applications",
+            "description": "Search Any Application on play.google.com",
+            "message_text": "Search Application On Playstore",
+            "thumb_urL": "https://telegra.ph/file/8917d882b623b0c2a1012.jpg",
+            "keyboard": ".app ",
+        },
     ]
 
     inline_funcs = {
@@ -72,6 +79,7 @@ def inlinequery(update: Update, _) -> None:
         ".char": character_query,
         ".info": info_query,
         ".stickers": stickers_query,
+        ".app": app_query,
     }
 
     if (f := query.split(" ", 1)[0]) in inline_funcs:
@@ -213,8 +221,6 @@ def info_query(query: str, update: Update, context: CallbackContext) -> None:
 
 
 
-
-
 def stickers_query(query: str, update: Update, context: CallbackContext) -> None:
     """Handle the inline sticker query."""
 
@@ -261,6 +267,66 @@ def stickers_query(query: str, update: Update, context: CallbackContext) -> None
         )
 
     update.inline_query.answer(stickers, cache_time=5)
+
+
+def app_query(query: str, update: Update, context: CallbackContext) -> None:
+    """Handle the inline sticker query."""
+
+    query = update.inline_query.query
+    user = update.effective_user
+
+    application: List = []
+    try:
+        try:
+            split = str(query.split(" ", 1)[1])
+        except IndexError:
+            return 
+
+        url = "https://play.google.com"
+        page = requests.get(f"{url}/store/search?q={split}&c=apps")
+        soup = BeautifulSoup(page.content, "lxml", from_encoding="utf-8")
+        results = soup.findAll("div", "ZmHEEd")
+
+        if results:
+            all_apps = results[0].findAll('div', 'Vpfmgd')
+            # Preparing Data
+            for app in zip(all_apps):
+                 app_name = app.findNext('div', 'WsMG1c nnK0zc').text
+                 app_devs = app.findNext('div', 'KoLSrc').text
+                 app_dev_link = url + app.findNext('a', 'mnKHRc')['href']
+                 app_rating = app.findNext('div', 'pf5lIe').find('div')['aria-label']
+                 app_link = url + app.findNext('div', 'vU6FJ p63iDd').a['href']
+                 app_icon = app.findNext('div', 'uzcko').img['data-src']
+
+                 # Structuring Data
+                 data = (
+                   f"<a href='{html.escape(app_icon)}'>•</a> <b>{html.escape(app_name)}</b>\n"
+                   f"\n∘ <b>Developer</b>: <a href='{html.escape(app_dev_link)}'>{html.escape(app_devs)}</a>"
+                   f"\n∘ <b>Rating</b>: {html.escape(app_rating.replace('Rated ', '').replace(' out of ', '/').replace(' stars', '', 1).replace(' stars', '').replace('five', '5'))}" 
+                 )
+                 kb = InlineKeyboardMarkup([[InlineKeyboardButton(text="Playstore", url=app_link)], [InlineKeyboardButton(text="Search Again", switch_inline_query_current_chat=".app ")]])
+                 application.append(
+                     InlineQueryResultArticle(
+                            id=str(uuid4()),
+                            thumb_url=app_icon,
+                            title=app_name or split,
+                            input_message_content=InputTextMessageContent(data, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
+                            reply_markup=kb,
+                     )
+                 )
+
+    except Exception as e:
+        kb = InlineKeyboardMarkup([[InlineKeyboardButton(text="Search Again", switch_inline_query_current_chat=".app ")]])
+        application.append(
+            InlineQueryResultArticle(
+                id=str(uuid4()),
+                title=f"App {split} not found",
+                input_message_content=InputTextMessageContent(f"App {split} not found due to {e}", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True),
+                reply_markup=kb,
+            )
+        )
+
+    update.inline_query.answer(application, cache_time=5)
 
 
 
