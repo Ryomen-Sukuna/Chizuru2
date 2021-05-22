@@ -24,7 +24,7 @@ def cb_sticker(update: Update, context: CallbackContext):
         message.reply_text("Provide Some Name To Search For Packs")
         return
 
-    comboturl = f"https://combot.org/telegram/stickers?q={split}"
+    comboturl = f"https://combot.org/telegram/stickers?q={split[1]}"
     headers = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0"}
     text = requests.get(comboturl, headers=headers).text
     print(text)
