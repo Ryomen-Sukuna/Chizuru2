@@ -31,7 +31,7 @@ def cb_sticker(update: Update, context: CallbackContext):
     soup = BeautifulSoup(text, "lxml")
     results = soup.findAll("a", {'class': "sticker-pack__btn"})
     titles = soup.findAll("div", "sticker-pack__title")
-    thumbnail = soup.findAll("a", {'class': "sticker-pack__btn"}).findNext("div", 'sticker-pack__sticker-img')
+    thumbnail = soup.find_all("div", "sticker-pack__title").findNext("div", 'sticker-pack__sticker-img')
     print(thumbnail)
 
 
