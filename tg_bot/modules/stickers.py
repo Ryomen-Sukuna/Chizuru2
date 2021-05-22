@@ -2,9 +2,10 @@ import math
 import requests
 from io import BytesIO
 from html import escape
+from bs4 import BeautifulSoup
 import urllib.request as urllib
 from urllib.error import HTTPError
-from bs4 import BeautifulSoup
+from collections import OrderedDict
 
 from PIL import Image
 from telegram import TelegramError
@@ -38,9 +39,14 @@ def cb_sticker(update: Update, context: CallbackContext):
         return
 
     reply = f"Stickers for *{split[1]}*:"
+    Packs = OrderedDict()
     for result, title in zip(results, titles):
-        link = result['href']
+        link = result["href"]
+        Packs[f"{link}"] = title
+
+    for link, title in Packs.items():
         reply += f"\n• [{title.get_text()}]({link})"
+
     message.reply_text(reply, parse_mode=ParseMode.MARKDOWN)
 
 
