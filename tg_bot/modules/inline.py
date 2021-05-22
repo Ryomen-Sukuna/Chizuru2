@@ -242,9 +242,13 @@ def stickers_query(query: str, update: Update, context: CallbackContext) -> None
         results = soup.findAll("a", {'class': "sticker-pack__btn"})
         titles = soup.findAll("div", "sticker-pack__title")
 
+        Packs = {}
         if results:
             for result, title in zip(results, titles):
-                 packlink = result["href"]
+                 link = result["href"]
+                 Packs[f"{link}"] = title
+
+            for packlink, title in Packs.items():
                  kb = InlineKeyboardMarkup([[InlineKeyboardButton(text="Add Pack", url=packlink)], [InlineKeyboardButton(text="Search Again", switch_inline_query_current_chat=".stickers ")]])
                  stickers.append(
                      InlineQueryResultArticle(
