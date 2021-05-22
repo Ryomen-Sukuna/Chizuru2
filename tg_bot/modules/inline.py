@@ -229,7 +229,7 @@ def stickers(query: str, update: Update, context: CallbackContext) -> None:
             return
 
         comboturl = f"https://combot.org/telegram/stickers?q={split}"
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0'}
+        headers = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0"}
         text = requests.get(comboturl, headers=headers).text
 
         soup = BeautifulSoup(text, "lxml")
@@ -238,7 +238,8 @@ def stickers(query: str, update: Update, context: CallbackContext) -> None:
 
         if results:
             for result, title in zip(results, titles):
-                 kb = InlineKeyboardMarkup([[InlineKeyboardButton(text="Add Pack", url=stickerlink)], [InlineKeyboardButton(text="Search Again", switch_inline_query_current_chat=".stickers ")]])
+                 packlink = result["href"]
+                 kb = InlineKeyboardMarkup([[InlineKeyboardButton(text="Add Pack", url=packlink)], [InlineKeyboardButton(text="Search Again", switch_inline_query_current_chat=".stickers ")]])
                  stickers.append(
                      InlineQueryResultArticle(
                             id=str(uuid4()),
