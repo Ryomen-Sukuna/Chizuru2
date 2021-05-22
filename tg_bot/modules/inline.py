@@ -40,28 +40,28 @@ def inlinequery(update: Update, _) -> None:
         {
             "title": "Anime",
             "description": "Search Anime & Manga On AniList.co",
-            "message_text": "Click Here to search anime and manga on AniList.co",
+            "message_text": "Search anime and manga on AniList.co",
             "thumb_urL": "https://telegra.ph/file/a546976e6f3ebf21a131a.jpg",
             "keyboard": ".anime ",
         },
         {
             "title": "Character",
             "description": "Search Characters on AniList.co",
-            "message_text": "Click Here to search character on AniList.co",
+            "message_text": "Search character on AniList.co",
             "thumb_urL": "https://telegra.ph/file/a546976e6f3ebf21a131a.jpg",
             "keyboard": ".char ",
         },
         {
             "title": "Account info",
             "description": "Look up a Telegram account in my database",
-            "message_text": "Click Here to look up a person in my database using their Telegram ID",
+            "message_text": "Look up a person in my database using their Telegram ID",
             "thumb_urL": "https://telegra.ph/file/57d5522a9d8fa56e3be27.jpg",
             "keyboard": ".info ",
         },
         {
             "title": "Stickers",
-            "description": "Search Any Sticker Pack",
-            "message_text": "Click Here to search stickers for given term on combot sticker catalogue",
+            "description": "Search Any Telegram Sticker Packs on Combot.org",
+            "message_text": "Search stickers for given term on combot sticker catalogue",
             "thumb_urL": "https://telegra.ph/file/8917d882b623b0c2a1012.jpg",
             "keyboard": ".stickers ",
         },
@@ -222,14 +222,13 @@ def stickers(query: str, update: Update, context: CallbackContext) -> None:
     user = update.effective_user
 
     stickers: List = []
-    totalpacks: List = []
     try:
         try:
             split = str(query.split(" ", 1)[1])
         except IndexError:
-            split = None
+            return 
 
-        comboturl = f"https://combot.org/telegram/stickers{'?q=' + split if split is not None else 'trending'}"
+        comboturl = f"https://combot.org/telegram/stickers{'/trending' if split.lower() == '<trending>' else '?q=' + split}"
         headers = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0"}
         text = requests.get(comboturl, headers=headers).text
 
@@ -240,26 +239,23 @@ def stickers(query: str, update: Update, context: CallbackContext) -> None:
         if results:
             for result, title in zip(results, titles):
                  packlink = result["href"]
-                 if packlink not in totalpacks:
-                     totalpacks.append(packlink)
-                 if packlink in totalpacks:
-                     kb = InlineKeyboardMarkup([[InlineKeyboardButton(text="Add Pack", url=packlink)], [InlineKeyboardButton(text="Search Again", switch_inline_query_current_chat=".stickers ")]])
-                     stickers.append(
-                         InlineQueryResultArticle(
+                 kb = InlineKeyboardMarkup([[InlineKeyboardButton(text="Add Pack", url=packlink)], [InlineKeyboardButton(text="Search Again", switch_inline_query_current_chat=".stickers ")]])
+                 stickers.append(
+                     InlineQueryResultArticle(
                             id=str(uuid4()),
                             title=title.get_text() or split,
                             input_message_content=InputTextMessageContent(f"Result Of <b>{split}</b>:", parse_mode=ParseMode.HTML, disable_web_page_preview=True),
                             reply_markup=kb,
-                         )
                      )
+                 )
 
     except Exception as e:
         kb = InlineKeyboardMarkup([[InlineKeyboardButton(text="Search Again", switch_inline_query_current_chat=".stickers ")]])
         stickers.append(
             InlineQueryResultArticle(
                 id=str(uuid4()),
-                title=f"Media {query} not found",
-                input_message_content=InputTextMessageContent(f"Sticker {split} not found due to {e}", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True),
+                title=f"Sticker-Pack {split} not found",
+                input_message_content=InputTextMessageContent(f"Stickers {split} not found due to {e}", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True),
                 reply_markup=kb,
             )
         )
