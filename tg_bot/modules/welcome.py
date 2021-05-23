@@ -831,7 +831,7 @@ def set_goodbye(update: Update, context: CallbackContext) -> str:
         msg.reply_text("You didn't specify what to reply with!")
         return ""
 
-    sql.set_custom_gdbye(chat.id, content or text, data_type, buttons)
+    sql.set_custom_gdbye(chat.id, content, text, data_type, buttons)
     msg.reply_text("Successfully set custom goodbye message!")
     return (
         f"<b>{html.escape(chat.title)}:</b>\n"
