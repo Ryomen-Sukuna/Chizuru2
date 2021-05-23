@@ -25,7 +25,7 @@ import tg_bot.modules.sql.rules_sql as rulessql
 from tg_bot.modules.sql import warns_sql as warnssql
 import tg_bot.modules.sql.welcome_sql as welcsql
 
-
+from tg_bot import SUDO_USERS
 from tg_bot.modules.connection import connected
 from tg_bot.modules.language import gs
 from tg_bot.modules.helper_funcs.msg_types import Types
@@ -51,7 +51,10 @@ def import_data(update, context):
     user = update.effective_user
     # TODO: allow uploading doc with command, not just as reply
     # only work with a doc
-
+    member = chat.get_member(user.id)
+    if member.status != "creator" and user.id not in SUDO_USERS:
+        return update.effective_message.reply_text(
+            "Only the chat owner can import chat settings.")
     conn = connected(context.bot, update, chat, user.id, need_admin=True)
     if conn:
         chat = dispatcher.bot.getChat(conn)
@@ -912,7 +915,10 @@ def export_data(update, context):
     chat = update.effective_chat
     current_chat_id = update.effective_chat.id
     chat_data = context.chat_data
-
+    member = chat.get_member(user.id)
+    if member.status != "creator" and user.id not in SUDO_USERS:
+        return update.effective_message.reply_text(
+            "Only the chat owner can export chat settings.")
     conn = connected(context.bot, update, chat, user.id, need_admin=True)
     if conn:
         chat = dispatcher.bot.getChat(conn)
