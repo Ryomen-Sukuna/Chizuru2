@@ -1095,31 +1095,25 @@ def export_data(update, context):
 
     # Backuping greetings msg and config
     greetings = {}
-    pref, welcome_m, cust_content, welcome_type = welcsql.get_welc_pref(chat_id)
+    pref, welcome_m, welcome_type = welcsql.get_welc_pref(chat_id)
     if not welcome_m:
         welcome_m = ""
-    if not cust_content:
-        cust_content = ""
     buttons = welcsql.get_welc_buttons(chat_id)
     welcome_m += revert_buttons(buttons)
     greetings["welcome"] = {
         "enable": pref,
         "text": welcome_m,
-        "content": cust_content,
         "type": welcome_type,
     }
 
-    pref, goodbye_m, cust_content, goodbye_type = welcsql.get_gdbye_pref(chat_id)
+    pref, goodbye_m, goodbye_type = welcsql.get_gdbye_pref(chat_id)
     if not goodbye_m:
         goodbye_m = ""
-    if not cust_content:
-        cust_content = ""
     buttons = welcsql.get_gdbye_buttons(chat_id)
     goodbye_m += revert_buttons(buttons)
     greetings["goodbye"] = {
         "enable": pref,
         "text": goodbye_m,
-        "content": cust_content,
         "type": goodbye_type,
     }
 
