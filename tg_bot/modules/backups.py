@@ -740,7 +740,6 @@ def import_data(update, context):
                             welcsql.set_clean_service(chat_id, True)
                         else:
                             welcsql.set_clean_service(chat_id, False)
-                            )
                         imp_greet_pref = True
                         # TODO parsing unix time and import that
                     # TODO Locks
