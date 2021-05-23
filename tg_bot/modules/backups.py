@@ -569,7 +569,7 @@ def import_data(update, context):
         except Exception as err:
             send_message(
                 update.effective_message,
-                "There has been an error importing Kigyo's backup!",
+                f"There has been an error importing Kigyo's backup! {err}",
                 parse_mode="markdown",
             )
             LOGGER.exception("An error when importing from Kigyo base!")
