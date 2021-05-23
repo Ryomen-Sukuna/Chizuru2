@@ -627,9 +627,9 @@ def left_member(update: Update, context: CallbackContext):
                     if all(split):
                         cust_bye = random.choice(split)
                     else:
-                        cust_bye = cust_welcome
+                        cust_bye = cust_goodbye
                 else:
-                    cust_bye = cust_welcome
+                    cust_bye = cust_goodbye
 
                 valid_format = escape_invalid_curly_brackets(
                     cust_bye, VALID_WELCOME_FORMATTERS
