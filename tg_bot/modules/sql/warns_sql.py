@@ -122,6 +122,19 @@ def reset_warns(user_id, chat_id):
         SESSION.close()
 
 
+def import_warns(user_id, chat_id, warns, reasons):
+    with WARN_INSERTION_LOCK:
+        warned_user = SESSION.query(Warns).get((user_id, str(chat_id)))
+        if not warned_user:
+            warned_user = Warns(user_id, str(chat_id))
+        warned_user.num_warns = warns
+        warned_user.reasons = reasons
+        SESSION.add(warned_user)
+        SESSION.commit()
+
+        return
+
+
 def get_warns(user_id, chat_id):
     try:
         user = SESSION.query(Warns).get((user_id, str(chat_id)))
@@ -248,6 +261,15 @@ def num_warn_chat_filters(chat_id):
         )
     finally:
         SESSION.close()
+
+
+def get_allwarns(chat_id):
+    get = SESSION.query(Warns).all()
+    return [
+        {"user_id": x.user_id, 'warns': x.num_warns, 'reasons': x.reasons}
+        for x in get
+        if x.chat_id == str(chat_id) and x.num_warns > 0
+    ]
 
 
 def num_warn_filter_chats():
