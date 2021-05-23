@@ -15,7 +15,6 @@ from tg_bot.modules.helper_funcs.alternate import send_message
 import tg_bot.modules.sql.antiflood_sql as antifloodsql
 import tg_bot.modules.sql.blacklist_sql as blacklistsql
 import tg_bot.modules.sql.blacklist_s_sql as blackliststksql
-from tg_bot.modules.sql import disable_sql as disabledsql
 from tg_bot.modules.sql import cust_filters_sql as filtersql
 from tg_bot.modules.sql import language_sql as langsql
 import tg_bot.modules.sql.locks_sql as locksql
@@ -95,7 +94,6 @@ def import_data(update, context):
                 imp_blacklist_count = 0
                 imp_blsticker = False
                 imp_blsticker_count = 0
-                imp_disabled_count = 0
                 imp_filters_count = 0
                 imp_greet = False
                 imp_gdbye = False
@@ -161,15 +159,6 @@ def import_data(update, context):
                         for x in blstickers:
                             blackliststksql.add_to_stickers(chat_id, x.lower())
                             imp_blsticker_count += 1
-
-                # Import disabled
-                if data.get("disabled"):
-                    candisable = disabledsql.get_disableable()
-                    if data["disabled"].get("disabled"):
-                        for listdisabled in data["disabled"].get("disabled"):
-                            if listdisabled in candisable:
-                                disabledsql.disable_command(chat_id, listdisabled)
-                                imp_disabled_count += 1
 
                 # Import filters
                 if data.get("filters"):
@@ -512,10 +501,6 @@ def import_data(update, context):
                     )
                 if imp_blsticker:
                     text += "- {} blacklist stickers\n".format(imp_blsticker_count)
-                if imp_disabled_count:
-                    text += "- {} cmd disabled\n".format(
-                        imp_disabled_count
-                    )
                 if imp_filters_count:
                     text += "- {} filters\n".format(
                         imp_filters_count
@@ -582,7 +567,6 @@ def import_data(update, context):
                 imp_antiflood = False
                 imp_blacklist = False
                 imp_blacklist_count = 0
-                imp_disabled_count = 0
                 imp_filters_count = 0
                 imp_greet = False
                 imp_gdbye = False
@@ -664,16 +648,6 @@ def import_data(update, context):
                                     chat_id, x["name"].lower()
                                 )
                                 imp_blacklist_count += 1
-                    # Import disabled
-                    if data["data"].get("disabled"):
-                        if data["data"]["disabled"].get("disabled"):
-                            candisable = disabledsql.get_disableable()
-                            for listdisabled in data["data"]["disabled"].get(
-                                "disabled"
-                            ):
-                                if listdisabled in candisable:
-                                    disabledsql.disable_command(chat_id, listdisabled)
-                                    imp_disabled_count += 1
                     # Import filters
                     if data["data"].get("filters"):
                         NOT_IMPORTED += "\n\nFilters:\n"
@@ -809,8 +783,6 @@ def import_data(update, context):
                         text += "- Blacklist Settings\n"
                     if imp_blacklist_count:
                         text += "- {} blacklists\n".format(imp_blacklist_count)
-                    if imp_disabled_count:
-                        text += "- {} cmd disabled\n".format(imp_disabled_count)
                     if imp_filters_count:
                         text += "- {} filters\n".format(
                             imp_filters_count
@@ -1013,10 +985,6 @@ def export_data(update, context):
         "blstickers": all_blsticker,
     }
 
-    # Backuping disabled
-    cmd_disabled = disabledsql.get_all_disabled(chat_id)
-    disabled = {"disabled": cmd_disabled}
-
     # Backuping filters
     all_filters = filtersql.get_chat_triggers(chat_id)
     filters_gen = []
@@ -1189,7 +1157,6 @@ def export_data(update, context):
         "antiflood": antiflood,
         "blacklists": blacklists,
         "blstickers": blstickers,
-        "disabled": disabled,
         "filters": filters,
         "greetings": greetings,
         "language": language,
