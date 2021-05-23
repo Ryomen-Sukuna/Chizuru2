@@ -355,10 +355,6 @@ def import_data(update, context):
 
                 # Import Locks
                 if data.get("locks"):
-                    if data["locks"].get("lock_warn"):
-                        locksql.set_lockconf(chat_id, True)
-                    else:
-                        locksql.set_lockconf(chat_id, False)
                     if data["locks"].get("locks"):
                         for x in list(data["locks"].get("locks")):
                             if x in LOCK_TYPES:
@@ -1125,9 +1121,8 @@ def export_data(update, context):
     else:
         locked_restr = {}
 
-    lock_warn = locksql.get_lockconf(chat_id)
 
-    locks = {"lock_warn": lock_warn, "locks": locked_lock, "restrict": locked_restr}
+    locks = {"locks": locked_lock, "restrict": locked_restr}
 
     # Backuping notes
     note_list = notesql.get_all_chat_notes(chat_id)
