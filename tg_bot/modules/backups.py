@@ -1165,7 +1165,7 @@ def export_data(update, context):
     rules = {"rules": getrules}
 
     # Backuping warns config and warn filters
-    warn_limit, _, warn_mode = warnssql.get_warn_setting(chat_id)
+    warn_limit, warn_mode = warnssql.get_warn_setting(chat_id)
     all_handlers = warnssql.get_chat_warn_triggers(chat_id)
     all_warn_filter = []
     for x in all_handlers:
