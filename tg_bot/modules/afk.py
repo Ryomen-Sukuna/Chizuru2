@@ -1,6 +1,7 @@
 import html
-import time
 import random
+import humanize
+from datetime import datetime
 
 from telegram import Update, MessageEntity, ParseMode
 from telegram.utils.helpers import escape_markdown
@@ -10,19 +11,10 @@ from telegram.error import BadRequest
 from tg_bot import OWNER_ID
 from tg_bot.modules.sql import afk_sql as sql
 from tg_bot.modules.users import get_user_id
-from tg_bot.modules.helper_funcs.get_time import get_time
 from tg_bot.modules.helper_funcs.decorators import kigcmd, kigmsg
 
-# exception msg for afk
-EXCEPT_MSGS = (
-~Filters.update.edited_message & ~Filters.venue & 
-# ~Filters.command('afk') & ~Filters.regex(r"^(?i)brb(.*)$") &
-~Filters.status_update & ~Filters.game & ~Filters.forwarded
-)
 
-
-@kigmsg(Filters.regex("(?i)brb"), friendly="afk", group=3)
-@kigcmd(command="afk", group=3)
+@kigcmd(command=["afk", "dnd"], group=3)
 def afk(update: Update, context: CallbackContext):
     args = update.effective_message.text.split(None, 1)
     user = update.effective_user
@@ -43,16 +35,16 @@ def afk(update: Update, context: CallbackContext):
         reason = ""
 
     sql.set_afk(user.id, reason)
-    fname = user.first_name
+    fname = user.first_name if user.id != OWNER_ID else "My Master"
     try:
         update.effective_message.reply_text(
             "{} Is Now Away!{}".format(fname, notice),
         )
     except BadRequest:
-        pass
+        return
 
 
-@kigmsg((Filters.all & (EXCEPT_MSGS) & Filters.chat_type.groups), friendly='afk', group=1)
+@kigmsg((Filters.all & (~Filters.update.edited_message & ~Filters.status_update & ~Filters.forwarded & ~Filters.venue) & Filters.chat_type.groups), friendly='afk', group=1)
 def no_longer_afk(update: Update, context: CallbackContext):
     user = update.effective_user
     message = update.effective_message
@@ -69,13 +61,13 @@ def no_longer_afk(update: Update, context: CallbackContext):
             ]
             reply_msg = random.choice(options)
             message.reply_text(
-                reply_msg.format(user.first_name),
+                reply_msg.format(user.first_name if user.id != OWNER_ID else "My Master"),
             )
         except:
             return
 
 
-@kigmsg((Filters.all & (~Filters.update.edited_message & ~Filters.forwarded) & Filters.chat_type.groups), friendly='afk', group=8)
+@kigmsg((Filters.all & ~Filters.update.edited_message & Filters.chat_type.groups), friendly='afk', group=8)
 def reply_afk(update: Update, context: CallbackContext):
     bot = context.bot
     message = update.effective_message
@@ -135,22 +127,23 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
             MSG = update.effective_message.reply_text("{} Is Currently AFK!".
                   format('My Master' if int(user_id) == OWNER_ID else f'User *{escape_markdown(fst_name)}*'),
                   parse_mode=ParseMode.MARKDOWN, timeout=60)
-        except:
+        except BadRequest:
             return
-        since_afk = get_time((time.time() - int(user.time)))
+
+        since_afk = humanize.naturaldelta(datetime.now() - user.time)
         if not user.reason:
             if int(user_id) == OWNER_ID:
-                 res = "My Master Is Currently AFK!\nSince AFK: `{}`".format(since_afk)
+                 res = "My Master Is Currently AFK!\nSince AFK: _{} ago_".format(since_afk)
             else:
-                 res = "User *{}* Is Currently AFK!\nSince AFK: `{}`".format(escape_markdown(fst_name), since_afk)
+                 res = "User *{}* Is Currently AFK!\nSince AFK: _{} ago_".format(escape_markdown(fst_name), since_afk)
             try:
                 MSG.edit_text(res, parse_mode=ParseMode.MARKDOWN, timeout=60)
-            except:
-                pass
+            except BadRequest:
+                return
         else:
             reason = user.reason
-            if '%%%' in reason:
-               split = reason.split('%%%')
+            if "%%%" in reason:
+               split = reason.split("%%%")
                if all(split):
                   rison = random.choice(split)
                else:
@@ -159,18 +152,18 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
                rison = reason
 
             if int(user_id) == OWNER_ID:
-                 res = "My Master Is Currently AFK!\nSince AFK: `{}` \n\nSays It's Because Of:\n{}".format(since_afk, rison)
+                 res = "My Master Is Currently AFK!\nSince AFK: _{} ago_ \n\nSays It's Because Of:\n{}".format(since_afk, rison)
             else:
-                 res = "User *{}* Is Currently AFK!\nSince AFK: `{}` \n\nSays It's Because Of:\n{}".format(escape_markdown(fst_name), since_afk, rison)
+                 res = "User *{}* Is Currently AFK!\nSince AFK: _{} ago_ \n\nSays It's Because Of:\n{}".format(escape_markdown(fst_name), since_afk, rison)
 
             try:
                 try:
                     MSG.edit_text(res, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True, timeout=60)
                 except:
-                    res = "{} Is Currently AFK!\nSince AFK: `{}`".format('My Master' if int(user_id) == OWNER_ID else f'User *{escape_markdown(fst_name)}*', since_afk)
+                    res = "{} Is Currently AFK!\nSince AFK: _{} ago_".format('My Master' if int(user_id) == OWNER_ID else f'User *{escape_markdown(fst_name)}*', since_afk)
                     MSG.edit_text(res, parse_mode=ParseMode.MARKDOWN, timeout=60)
-            except:
-                pass
+            except BadRequest:
+                return
 
 
 
