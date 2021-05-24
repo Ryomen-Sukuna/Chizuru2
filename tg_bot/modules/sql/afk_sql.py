@@ -1,8 +1,8 @@
-import time
 import threading
+from datetime import datetime
 
 from tg_bot.modules.sql import BASE, SESSION
-from sqlalchemy import Boolean, Column, Integer, UnicodeText
+from sqlalchemy import Boolean, Column, Integer, UnicodeText, DateTime
 
 
 class AFK(BASE):
@@ -11,13 +11,13 @@ class AFK(BASE):
     user_id = Column(Integer, primary_key=True)
     is_afk = Column(Boolean)
     reason = Column(UnicodeText)
-    time = Column(Integer)
+    time = Column(DateTime)
 
     def __init__(self, user_id: int, reason: str = "", is_afk: bool = True):
         self.user_id = user_id
         self.reason = reason
         self.is_afk = is_afk
-        self.time = time.time()
+        self.time = datetime.now()
 
     def __repr__(self):
         return "afk_status for {}".format(self.user_id)
