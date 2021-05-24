@@ -19,7 +19,7 @@ psutil
 psycopg2-binary
 pyYAML>=5.1.2
 pyrate-limiter
-pykeyboard
+humanize
 pyrogram
 python-telegram-bot==13.5
 requests
