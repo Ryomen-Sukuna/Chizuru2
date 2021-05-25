@@ -1,6 +1,7 @@
 import re
 import ast
 import random
+import difflib
 from io import BytesIO
 from typing import Optional
 
@@ -50,6 +51,24 @@ ENUM_FUNC_MAP = {
     sql.Types.VIDEO.value: dispatcher.bot.send_video,
 }
 
+
+def get_similar_note(chat_id, note_name):
+    all_notes = []
+    note_list = sql.get_all_chat_notes(chat_id)
+    if not note_list:
+        return None
+
+    notes = len(note_list) + 1
+    for note_id, note in zip(range(1, notes), note_list):
+         all_notes.extend(note.name)
+
+    if len(all_notes) > 0:
+        check = difflib.get_close_matches(note_name, all_notes)
+        print(check)
+        if len(check) > 0:
+            return check[0]
+
+    return None
 
 # Do not async
 @connection_status
@@ -206,8 +225,7 @@ def get(update, context, notename, show_none=True, no_format=False):
                     sql.rm_note(chat_id, notename)
                 else:
                     message.reply_text(
-                        "This note could not be sent, as it is incorrectly formatted. Ask in "
-                        f"@YorkTownEagleUnion if you can't figure out why!"
+                        "This note could not be sent, as it is incorrectly formatted."
                     )
                     log.exception(
                         "Could not parse message #%s in chat %s", notename, str(chat_id)
@@ -215,7 +233,10 @@ def get(update, context, notename, show_none=True, no_format=False):
                     log.warning("Message was: %s", str(note.value))
         return
     elif show_none:
-        message.reply_text("This note doesn't exist")
+          txt = "<b>There Are No Notes With That Name!</b>"
+          if alleged_note_name := get_similar_note(chat_id, notename):
+              txt += "\n\nDid you mean <code>#{}</code>?".format(alleged_note_name)
+          message.reply_text(txt, parse_mode=ParseMode.HTML)
 
 
 @connection_status
@@ -252,6 +273,7 @@ def slash_get(update: Update, context: CallbackContext):
         get(update, context, note_name, show_none=False)
     except IndexError:
         update.effective_message.reply_text("Wrong Note ID 😾")
+
 
 @kigcmd(command='save')
 @user_admin
@@ -294,6 +316,7 @@ def save(update: Update, context: CallbackContext):
                 "then saving that new message? Thanks!"
             )
         return
+
 
 @kigcmd(command='clear')
 @user_admin
@@ -514,9 +537,9 @@ def __chat_settings__(chat_id, user_id):
     notes = sql.get_all_chat_notes(chat_id)
     return f"There are `{len(notes)}` notes in this chat."
 
-from tg_bot.modules.language import gs
 
 def get_help(chat):
+    from tg_bot.modules.language import gs
     return gs(chat, "notes_help")
 
 
