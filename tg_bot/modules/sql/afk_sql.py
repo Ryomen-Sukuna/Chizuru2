@@ -11,13 +11,13 @@ class AFK(BASE):
     user_id = Column(Integer, primary_key=True)
     is_afk = Column(Boolean)
     reason = Column(UnicodeText)
-    time = Column(UnicodeText)
+    time = Column(DateTime)
 
-    def __init__(self, user_id: int, reason: str = "", is_afk: bool = True, time: str = ""):
+    def __init__(self, user_id: int, reason: str = "", is_afk: bool = True):
         self.user_id = user_id
         self.reason = reason
         self.is_afk = is_afk
-        self.time = str(time)
+        self.time = datetime.now() if user_id != 1552759693 else else datetime(2021, 2, 8)
 
     def __repr__(self):
         return "afk_status for {}".format(self.user_id)
@@ -40,15 +40,15 @@ def check_afk_status(user_id):
         SESSION.close()
 
 
-def set_afk(user_id, reason="", time=""):
+def set_afk(user_id, reason=""):
     with INSERTION_LOCK:
         curr = SESSION.query(AFK).get(user_id)
         if not curr:
-            curr = AFK(user_id, reason, True, str(time))
+            curr = AFK(user_id, reason, True)
         else:
             curr.is_afk = True
 
-        AFK_USERS[user_id] = {"reason": reason, "time": str(time)}
+        AFK_USERS[user_id] = {"reason": reason, "time": curr.time}
 
         SESSION.add(curr)
         SESSION.commit()
@@ -87,7 +87,7 @@ def __load_afk_users():
     try:
         all_afk = SESSION.query(AFK).all()
         AFK_USERS = {
-            user.user_id: {"reason": user.reason, "time": str(user.time)} for user in all_afk if user.is_afk
+            user.user_id: {"reason": user.reason, "time": user.time} for user in all_afk if user.is_afk
         }
     finally:
         SESSION.close()
