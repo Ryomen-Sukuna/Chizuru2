@@ -707,10 +707,10 @@ def admim_button(update: Update, context: CallbackContext):
     user_id = splitter[1]
     if query_match == "admim_reload":
         try:
-            ADMIN_CACHE.pop(update.effective_chat.id)
+            ADMIN_CACHE.pop(chat.id)
+            query.answer("Admin Cache Refreshed!", show_alert=True)
         except:
             pass
-        query.answer("Admin Cache Refreshed!", show_alert=True)
         return
 
     elif query_match == "admim_promote":
@@ -762,6 +762,7 @@ def admim_button(update: Update, context: CallbackContext):
                       ]
                 ),
             )
+            query.answer("Demoted Successfully!", show_alert=True)
 
     elif query_match == "admim_demote":
         member = chat.get_member(int(user_id))
@@ -812,6 +813,7 @@ def admim_button(update: Update, context: CallbackContext):
                       ]
                 ),
             )
+            query.answer("Demoted Successfully!", show_alert=True)
 
     context.bot.answer_callback_query(query.id)
 
