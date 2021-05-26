@@ -34,7 +34,7 @@ def afk(update: Update, context: CallbackContext):
     else:
         reason = ""
 
-    sql.set_afk(user.id, reason)
+    sql.set_afk(user.id, reason, datetime.now())
     fname = user.first_name if user.id != OWNER_ID else "My Master"
     try:
         update.effective_message.reply_text(
