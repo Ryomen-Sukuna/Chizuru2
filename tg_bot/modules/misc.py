@@ -29,14 +29,6 @@ from tg_bot.modules.helper_funcs.decorators import kigcmd
 import tg_bot.modules.helper_funcs.health as hp
 from tg_bot.modules.helper_funcs.get_time import get_time
 
-@kigcmd(command='stat', filters=Filters.chat_type.group)
-def stat(update: Update, _):
-    update.effective_message.reply_text(
-       f"<b>Total Message:</b> <code>{update.effective_message.message_id}</code>",
-       parse_mode=ParseMode.HTML,
-       timeout=60,
-    )
-
 
 @kigcmd(command='gifid')
 def gifid(update: Update, _):
@@ -253,79 +245,6 @@ def ping(update: Update, _):
         "*Pong!!!*\n`{}ms`".format(ping_time),
         parse_mode=ParseMode.MARKDOWN,
     )
-
-
-@kigcmd(command='app')
-def app(update: Update, context: CallbackContext):
-    message = update.effective_message
-    try:
-        if message.text == '/app':
-            message.reply_text(
-               "Tell App Name :) \nFormat: `/app <name>`",
-               parse_mode=ParseMode.MARKDOWN,
-            )
-            return
-
-        url = "https://play.google.com"
-        search = message.reply_text("Searching In Play-Store....")
-        app_name = message.text[len('/app '):]
-
-        # Searching Data
-        remove_space = app_name.split(' ')
-        final_name = '+'.join(remove_space)
-        page = requests.get(
-           f"{url}/store/search?q={final_name}&c=apps"
-        )
-        soup = BeautifulSoup(page.content, "lxml", from_encoding="utf-8")
-        results = soup.findAll("div", "ZmHEEd")
-        print(results[0])
-
-        # Preparing Data
-        app_name = results[0].findNext(
-                        'div', 'Vpfmgd').findNext(
-                                   'div', 'WsMG1c nnK0zc').text
-
-        app_devs = results[0].findNext(
-                       'div', 'Vpfmgd').findNext(
-                                  'div', 'KoLSrc').text
-
-        app_dev_link = url + results[0].findNext(
-                                  'div', 'Vpfmgd').findNext(
-                                               'a', 'mnKHRc')['href']
-
-        app_rating = results[0].findNext(
-                          'div', 'Vpfmgd').findNext(
-                                     'div', 'pf5lIe').find('div')['aria-label']
-
-        app_link = url + results[0].findNext(
-                              'div', 'Vpfmgd').findNext(
-                                         'div', 'vU6FJ p63iDd').a['href']
-        app_icon = results[0].findNext(
-                        'div', 'Vpfmgd').findNext(
-                                   'div', 'uzcko').img['data-src']
-
-        # Structuring Data
-        data = (
-          f"<a href='{html.escape(app_icon)}'>•</a> <b>{html.escape(app_name)}</b>\n"
-          f"\n∘ <b>Developer</b>: <a href='{html.escape(app_dev_link)}'>{html.escape(app_devs)}</a>"
-          f"\n∘ <b>Rating</b>: {html.escape(app_rating.replace('Rated ', '').replace(' out of ', '/').replace(' stars', '', 1).replace(' stars', '').replace('five', '5'))}" 
-        )
-
-        context.bot.send_message(
-            update.effective_chat.id,
-            text=data,
-            parse_mode=ParseMode.HTML,
-            disable_web_page_preview=False,
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Link", url=app_link)]]),
-        )
-    except IndexError:
-        message.reply_text(
-            "No Result Found In Search. Are You Entered A Valid App Name?"
-        )
-    except Exception as err:
-        message.reply_text(err)
-    search.delete()
-
 
 
 def get_help(chat):
