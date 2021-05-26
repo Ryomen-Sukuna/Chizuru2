@@ -11,13 +11,13 @@ class AFK(BASE):
     user_id = Column(Integer, primary_key=True)
     is_afk = Column(Boolean)
     reason = Column(UnicodeText)
-    time = Column(DateTime)
+    time = Column(UnicodeText)
 
     def __init__(self, user_id: int, reason: str = "", is_afk: bool = True, time: str = ""):
         self.user_id = user_id
         self.reason = reason
         self.is_afk = is_afk
-        self.time = time
+        self.time = str(time)
 
     def __repr__(self):
         return "afk_status for {}".format(self.user_id)
@@ -40,7 +40,7 @@ def check_afk_status(user_id):
         SESSION.close()
 
 
-def set_afk(user_id, reason="", time=datetime.now()):
+def set_afk(user_id, reason="", time=""):
     with INSERTION_LOCK:
         curr = SESSION.query(AFK).get(user_id)
         if not curr:
@@ -87,7 +87,7 @@ def __load_afk_users():
     try:
         all_afk = SESSION.query(AFK).all()
         AFK_USERS = {
-            user.user_id: {"reason": user.reason, "time": user.time} for user in all_afk if user.is_afk
+            user.user_id: {"reason": user.reason, "time": str(user.time)} for user in all_afk if user.is_afk
         }
     finally:
         SESSION.close()
