@@ -129,8 +129,8 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
         txt = f"{fname} Is AFK"
 
         try:
-            MSG = update.effective_message.reply_text(
-                      f"{fname}!",
+            DND = update.effective_message.reply_text(
+                      f"{txt}!",
                       parse_mode=ParseMode.MARKDOWN,
                   )
         except BadRequest:
@@ -140,20 +140,18 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
         txt += f" {since_afk}!"
 
         if user.reason:
-            reason = user.reason
-            if "%%%" in reason:
-                split = reason.split("%%%")
+            if "%%%" in user.reason:
+                split = user.reason.split("%%%")
                 if all(split):
                     reason = random.choice(split)
                 else:
-                    reason = reason
+                    reason = user.reason
             else:
-                reason = reason
-
+                reason = user.reason
             txt += f"\n\n*Says It's Because Of*:\n{rison}"
 
         try:
-            MSG.edit_text(txt,
+            DND.edit_text(txt,
                           disable_web_page_preview=True,
                           parse_mode=ParseMode.MARKDOWN,
                      )
