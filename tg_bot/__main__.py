@@ -374,22 +374,9 @@ def about_callback(update: Update, context: CallbackContext):
         query.message.edit_text(
             text=gs(chat.id, "antispam_help"),
             parse_mode=ParseMode.MARKDOWN,
-            reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton(text="NPL", callback_data="aboutmanu_spamprotcf")],
-                [InlineKeyboardButton(text="Back", callback_data="aboutmanu_howto")]
-            ]), 
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Back", callback_data="aboutmanu_howto")]]),
         )
         query.answer("Antispam")
-
-    elif query.data == "aboutmanu_spamprotcf":
-        query.message.edit_text(
-            text=gs(chat.id, "nlp_help"),
-            parse_mode=ParseMode.MARKDOWN,
-            reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton(text="Back", callback_data="aboutmanu_spamprot")]
-            ]), 
-        )
-        query.answer("Chatroom Spam Prediction")
 
     elif query.data == "aboutmanu_tac":
         query.message.edit_text(
@@ -413,6 +400,8 @@ def about_callback(update: Update, context: CallbackContext):
             )
         )
         query.answer("Terms & Conditions")
+
+    context.bot.answer_callback_query(query.id)
 
 
 @kigcmd(command='help')
