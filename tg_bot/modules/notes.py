@@ -3,7 +3,7 @@ import ast
 import random
 import difflib
 from io import BytesIO
-from typing import Optional
+from typing import List, Optional
 
 import tg_bot.modules.sql.notes_sql as sql
 from tg_bot import log, dispatcher, SUDO_USERS
@@ -53,14 +53,14 @@ ENUM_FUNC_MAP = {
 
 
 def get_similar_note(chat_id, note_name):
-    all_notes = []
+    all_notes: List = []
     note_list = sql.get_all_chat_notes(chat_id)
     if not note_list:
         return None
 
     notes = len(note_list) + 1
     for note_id, note in zip(range(1, notes), note_list):
-         all_notes.extend(note.name)
+         all_notes.append(note.name)
 
     if len(all_notes) > 0:
         check = difflib.get_close_matches(note_name, all_notes)
