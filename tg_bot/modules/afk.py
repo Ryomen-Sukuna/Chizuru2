@@ -148,7 +148,7 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
                     reason = user.reason
             else:
                 reason = user.reason
-            txt += f"\n\n*Says It's Because Of*:\n{rison}"
+            txt += f"\n\n*Says It's Because Of*:\n{reason}"
 
         try:
             DND.edit_text(txt,
