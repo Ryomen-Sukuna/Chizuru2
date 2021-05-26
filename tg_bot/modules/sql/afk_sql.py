@@ -44,11 +44,11 @@ def set_afk(user_id, reason="", time=datetime.now()):
     with INSERTION_LOCK:
         curr = SESSION.query(AFK).get(user_id)
         if not curr:
-            curr = AFK(user_id, reason, True, time)
+            curr = AFK(user_id, reason, True, str(time))
         else:
             curr.is_afk = True
 
-        AFK_USERS[user_id] = {"reason": reason, "time": time}
+        AFK_USERS[user_id] = {"reason": reason, "time": str(time)}
 
         SESSION.add(curr)
         SESSION.commit()
