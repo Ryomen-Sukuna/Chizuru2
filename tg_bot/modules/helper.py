@@ -29,13 +29,6 @@ def get_help_btns(name):
                 [InlineKeyboardButton(text="Back", callback_data="help_back")],
             ]
 
-     if str(name) == "Blacklists":
-            buttuns = [
-                [InlineKeyboardButton(text="Trigger", callback_data="subhelp_blt"),
-                InlineKeyboardButton(text="Sticker", callback_data="subhelp_bls")],
-                [InlineKeyboardButton(text="Back", callback_data="help_back")],
-            ]
-
      return buttuns
 
 
@@ -165,39 +158,6 @@ def subhelp_button(update: Update, context: CallbackContext):
                 timeout=60, 
             )
 
-
-    # Sub - Buttons For BLACKLIST Help
-    elif query.data == "subhelp_back3":
-        query.message.edit_text(
-                text="Here is the help for the *Blacklist* module:\n" + gs(chat, "bl_help"),
-                reply_markup=InlineKeyboardMarkup(
-                        get_help_btns("Blacklists")
-                ),
-                parse_mode=ParseMode.MARKDOWN,
-                disable_web_page_preview=True,
-                timeout=60, 
-            )
-    elif query.data == "subhelp_blt":
-        query.message.edit_text(
-                text=gs(chat, "blacklist_help"),
-                reply_markup=InlineKeyboardMarkup(
-                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back3"),]]
-                ),
-                parse_mode=ParseMode.MARKDOWN,
-                disable_web_page_preview=True,
-                timeout=60, 
-            )
-
-    elif query.data == "subhelp_bls":
-        query.message.edit_text(
-                text=gs(chat, "sblacklist_help"),
-                reply_markup=InlineKeyboardMarkup(
-                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back3"),]]
-                ),
-                parse_mode=ParseMode.MARKDOWN,
-                disable_web_page_preview=True,
-                timeout=60, 
-            )
 
     context.bot.answer_callback_query(query.id)
 
