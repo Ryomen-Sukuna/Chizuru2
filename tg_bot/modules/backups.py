@@ -2,7 +2,7 @@ import json, time, os
 from io import BytesIO
 from telegram import ParseMode, Message
 from telegram.error import BadRequest
-from tg_bot import dispatcher, log as LOGGER, OWNER_ID
+from tg_bot import dispatcher, log as LOGGER, OWNER_ID, SUDO_USERS
 from tg_bot.__main__ import DATA_IMPORT
 from tg_bot.modules.helper_funcs.chat_status import user_admin
 from tg_bot.modules.helper_funcs.alternate import typing_action
@@ -24,21 +24,12 @@ import tg_bot.modules.sql.rules_sql as rulessql
 from tg_bot.modules.sql import warns_sql as warnssql
 import tg_bot.modules.sql.welcome_sql as welcsql
 
-from tg_bot import SUDO_USERS
 from tg_bot.modules.connection import connected
-from tg_bot.modules.language import gs
 from tg_bot.modules.helper_funcs.msg_types import Types
 from tg_bot.modules.helper_funcs.string_handling import (
     button_markdown_parser,
     make_time,
 )
-
-
-def get_help(chat):
-    return gs(chat, "backup_help")
-
-
-__mod_name__ = "Backup"
 
 
 @kigcmd(command="import", can_disable=False)
@@ -1183,3 +1174,11 @@ class SetEncoder(json.JSONEncoder):
         if isinstance(obj, set):
             return list(obj)
         return json.JSONEncoder.default(self, obj)
+
+
+def get_help(chat):
+     from tg_bot.modules.language import gs
+     return gs(chat, "backup_help")
+
+
+__mod_name__ = "Backup"
