@@ -1,4 +1,3 @@
-import html
 import random
 import humanize
 from datetime import datetime
@@ -100,8 +99,7 @@ def reply_afk(update: Update, context: CallbackContext):
                 message.text[ent.offset: ent.offset + ent.length],
             )
             if not user_id:
-                # Should never happen, since for a user to become AFK they must have spoken. Maybe changed username?
-                return
+                return # Should never happen, since for a user to become AFK they must have spoken. Maybe changed username?
 
             if user_id in chk_users:
                 return
@@ -109,7 +107,7 @@ def reply_afk(update: Update, context: CallbackContext):
 
             try:
                 chat = bot.get_chat(user_id)
-            except BadRequest:
+            except (BadRequest, ValueError):
                 return
             fst_name = chat.first_name
 
@@ -126,54 +124,48 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
         if int(userc_id) == int(user_id):
             return
         user = sql.check_afk_status(user_id)
+
+        fname = "My Master" if int(user_id) == OWNER_ID else f"User *{escape_markdown(fst_name)}*"
+        txt = f"{fname} Is AFK"
+
         try:
-            MSG = update.effective_message.reply_text("{} Is Currently AFK!".
-                  format('My Master' if int(user_id) == OWNER_ID else f'User *{escape_markdown(fst_name)}*'),
-                  parse_mode=ParseMode.MARKDOWN, timeout=60)
+            MSG = update.effective_message.reply_text(
+                      f"{fname}!",
+                      parse_mode=ParseMode.MARKDOWN,
+                  )
         except BadRequest:
             return
 
         since_afk = humanize.naturaldelta(datetime.now() - user.time)
-        if not user.reason:
-            if int(user_id) == OWNER_ID:
-                 res = "My Master Is Currently AFK!\nSince AFK: _{} ago_".format(since_afk)
-            else:
-                 res = "User *{}* Is Currently AFK!\nSince AFK: _{} ago_".format(escape_markdown(fst_name), since_afk)
-            try:
-                MSG.edit_text(res, parse_mode=ParseMode.MARKDOWN, timeout=60)
-            except BadRequest:
-                return
-        else:
+        txt += f" {since_afk}!"
+
+        if user.reason:
             reason = user.reason
             if "%%%" in reason:
-               split = reason.split("%%%")
-               if all(split):
-                  rison = random.choice(split)
-               else:
-                  rison = reason
+                split = reason.split("%%%")
+                if all(split):
+                    reason = random.choice(split)
+                else:
+                    reason = reason
             else:
-               rison = reason
+                reason = reason
 
-            if int(user_id) == OWNER_ID:
-                 res = "My Master Is Currently AFK!\nSince AFK: _{} ago_ \n\nSays It's Because Of:\n{}".format(since_afk, rison)
-            else:
-                 res = "User *{}* Is Currently AFK!\nSince AFK: _{} ago_ \n\nSays It's Because Of:\n{}".format(escape_markdown(fst_name), since_afk, rison)
+            txt += f"\n\n*Says It's Because Of*:\n{rison}"
 
-            try:
-                try:
-                    MSG.edit_text(res, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True, timeout=60)
-                except:
-                    res = "{} Is Currently AFK!\nSince AFK: _{} ago_".format('My Master' if int(user_id) == OWNER_ID else f'User *{escape_markdown(fst_name)}*', since_afk)
-                    MSG.edit_text(res, parse_mode=ParseMode.MARKDOWN, timeout=60)
-            except BadRequest:
-                return
-
-
+        try:
+            MSG.edit_text(txt,
+                          disable_web_page_preview=True,
+                          parse_mode=ParseMode.MARKDOWN,
+                     )
+        except BadRequest:
+            return
 
 
 
 def __gdpr__(user_id):
     sql.rm_afk(user_id)
 
+
 __mod_name__ = "AFK"
+
 __commands__ = ["afk"]
