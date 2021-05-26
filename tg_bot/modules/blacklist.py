@@ -455,4 +455,4 @@ __mod_name__ = "Blacklists"
 
 def get_help(chat):
     from tg_bot.modules.language import gs
-    return gs(chat, "bl_help")
+    return gs(chat, "blacklist_help")
