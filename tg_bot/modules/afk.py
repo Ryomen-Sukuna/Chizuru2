@@ -34,7 +34,7 @@ def afk(update: Update, context: CallbackContext):
     else:
         reason = ""
 
-    sql.set_afk(user.id, reason, str(datetime.now()))
+    sql.set_afk(user.id, reason)
     fname = user.first_name if user.id != OWNER_ID else "My Master"
     try:
         update.effective_message.reply_text(
@@ -50,6 +50,9 @@ def no_longer_afk(update: Update, context: CallbackContext):
     message = update.effective_message
 
     if not user:  # ignore channels
+        return
+
+    if not sql.is_afk(user.id):
         return
 
     res = sql.rm_afk(user.id)
