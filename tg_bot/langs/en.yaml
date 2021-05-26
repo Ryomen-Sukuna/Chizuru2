@@ -114,12 +114,6 @@ bans_help: |
     • /unban <userhandle>: unbans a user. (via handle, or reply)
     • /kick <userhandle>: kick a user out of the group, (via handle, or reply)
 
-bl_help: |
-
-   *Trigger*: this blacklists are used to stop certain triggers from being said in a group. Any time the trigger is mentioned, the message will immediately be deleted. A good combo is sometimes to pair this up with warn filters!
-
-   *Sticker*: this blacklists is used to stop certain stickers. Whenever a sticker is sent, the message will be deleted immediately.
-
 blacklist_help: |
     *CMD*:
      • /blacklist*:* View the current blacklisted words.
@@ -128,18 +122,6 @@ blacklist_help: |
      • /addblacklist <triggers>*:* Add a trigger to the blacklist. Each line is considered one trigger, so using different lines will allow you to add multiple triggers.
      • /unblacklist <triggers>*:* Remove triggers from the blacklist. Same newline logic applies here, so you can remove multiple triggers at once.
      • /blacklistmode <off/del/warn/ban/kick/mute/tban/tmute>*:* Action to perform when someone sends blacklisted words.
-
-sblacklist_help: |
-    *CMD*:
-    • /sblacklist: See current blacklisted sticker.
-
-    *Only admin*:
-    • /addsblacklist <sticker link>: Add the sticker trigger to the black list. Can be added via reply sticker.
-    • /unsblacklist <sticker link>: Remove triggers from blacklist. The same newline logic applies here, so you can delete multiple triggers at once.
-    • /sblacklistmode <ban/tban/mute/tmute>: sets up a default action on what to do if users use blacklisted stickers. (`tmute seems broken right now`)
-
-    *Tip*:
-    • `<sticker link>` can be `https://t.me/addstickers/<sticker>` or just `<sticker>` or reply to the sticker message.
 
 cleaner_help: |
     • /cleanbluetext <on/off/yes/no> - clean commands after sending
@@ -251,16 +233,6 @@ antispam_help: |
      Anti-Spam, used by bot devs to ban spammers across all groups. This helps protect
      you and your groups by removing spam flooders as quickly as possible.
      *Note:* Users can appeal gbans or report spammers at @ElitesOfSupport
-
-     Chizuru also integrates @Spamwatch and @Intellivoid's SpamProtectionBot API to remove Spammers as much as possible from your chatroom!
-     *What is SpamWatch?*
-     SpamWatch maintains a large constantly updated ban-list of spambots, trolls, bitcoin spammers and unsavoury characters.
-     Constantly help banning spammers off from your group automatically So, you wont have to worry about spammers storming your group.
-     *Note:* Users can appeal spamwatch bans at @SpamwatchSupport
-
-     *What is Spam protection?*
-     SpamProtection is the new AI antispam service which makes sure that your chat is free of spambots, scammers, and pedophiles.
-     Uses @Intellivoid's Coffeehouse Artificial Engine. Every ban is checked by real trusty people before being finalized.
 
 gtranslate_help: |
      Use this module to translate stuff... duh!
