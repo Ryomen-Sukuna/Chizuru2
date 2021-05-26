@@ -14,7 +14,6 @@ from tg_bot.modules.helper_funcs.alternate import send_message
 # SQL
 import tg_bot.modules.sql.antiflood_sql as antifloodsql
 import tg_bot.modules.sql.blacklist_sql as blacklistsql
-import tg_bot.modules.sql.blacklist_s_sql as blackliststksql
 from tg_bot.modules.sql import cust_filters_sql as filtersql
 from tg_bot.modules.sql import language_sql as langsql
 import tg_bot.modules.sql.locks_sql as locksql
@@ -91,7 +90,7 @@ def import_data(update, context):
             data = json.load(file)
 
         try:
-            if data.get("bot_base") == "Kigyo":
+            if data.get("bot_base") == context.bot.first_name:
                 imp_antiflood = False
                 imp_blacklist = False
                 imp_blacklist_count = 0
@@ -116,7 +115,7 @@ def import_data(update, context):
                     is_self = True
                 else:
                     is_self = False
-                if data.get("bot_base") == "Kigyo":
+                if data.get("bot_base") == context.bot.first_name:
                     is_kigyo = True
                 else:
                     is_kigyo = False
@@ -146,22 +145,6 @@ def import_data(update, context):
                         for x in blacklisted:
                             blacklistsql.add_to_blacklist(chat_id, x.lower())
                             imp_blacklist_count += 1
-
-                # Import blacklist sticker
-                if data.get("blstickers"):
-                    imp_blsticker = True
-                    blsticker_mode = data["blstickers"].get("blsticker_mode")
-                    blsticker_duration = data["blstickers"].get("blsticker_duration")
-                    blstickers = data["blstickers"].get("blstickers")
-
-                    # Add to db
-                    blackliststksql.set_blacklist_strength(
-                        chat_id, blsticker_mode, blsticker_duration
-                    )
-                    if blstickers:
-                        for x in blstickers:
-                            blackliststksql.add_to_stickers(chat_id, x.lower())
-                            imp_blsticker_count += 1
 
                 # Import filters
                 if data.get("filters"):
@@ -502,8 +485,6 @@ def import_data(update, context):
                     text += "- {} blacklists\n".format(
                         imp_blacklist_count
                     )
-                if imp_blsticker:
-                    text += "- {} blacklist stickers\n".format(imp_blsticker_count)
                 if imp_filters_count:
                     text += "- {} filters\n".format(
                         imp_filters_count
@@ -557,7 +538,7 @@ def import_data(update, context):
         except Exception as err:
             send_message(
                 update.effective_message,
-                f"There has been an error importing Kigyo's backup! {err}",
+                f"There has been an error importing {context.bot.first_name}'s backup! {err}",
                 parse_mode="markdown",
             )
             LOGGER.exception("An error when importing from Kigyo base!")
@@ -959,7 +940,7 @@ def export_data(update, context):
     # Backup version
     # Revision: 07/07/2019
     backup_ver = 1
-    bot_base = "Kigyo"
+    bot_base = context.bot.first_name
 
     # Make sure this backup is for this bot
     bot_id = context.bot.id
@@ -980,15 +961,6 @@ def export_data(update, context):
         "blacklist_mode": blacklist_mode,
         "blacklist_duration": blacklist_duration,
         "blacklists": all_blacklisted,
-    }
-
-    # Backuping blacklists sticker
-    all_blsticker = blackliststksql.get_chat_stickers(chat_id)
-    blsticker_mode, blsticker_duration = blacklistsql.get_blacklist_setting(chat.id)
-    blstickers = {
-        "blsticker_mode": blsticker_mode,
-        "blsticker_duration": blsticker_duration,
-        "blstickers": all_blsticker,
     }
 
     # Backuping filters
@@ -1162,7 +1134,6 @@ def export_data(update, context):
         "bot_base": bot_base,
         "antiflood": antiflood,
         "blacklists": blacklists,
-        "blstickers": blstickers,
         "filters": filters,
         "greetings": greetings,
         "language": language,
@@ -1175,16 +1146,16 @@ def export_data(update, context):
     }
 
     all_backups = json.dumps(backup, indent=4, cls=SetEncoder)
-    f = open("{}-tg_bot.backup".format(chat_id), "w")
+    f = open("{}-tg_bot.txt".format(chat_id), "w")
     f.write(str(all_backups))
     f.close()
     context.bot.sendChatAction(current_chat_id, "upload_document")
     tgl = time.strftime("%H:%M:%S - %d/%m/%Y", time.localtime(time.time()))
     try:
-        context.bot.sendDocument(current_chat_id, document=open('{}-tg_bot.backup'.format(chat_id), 'rb'), caption="*Chat Successfully Backedup:*\nName of chat: `{}`\nChat ID: `{}`\nBackup taken on: `{}`".format(chat.title, chat_id, tgl), timeout=360, reply_to_message_id=msg.message_id, parse_mode=ParseMode.MARKDOWN)
+        context.bot.sendDocument(current_chat_id, document=open('{}-tg_bot.txt'.format(chat_id), 'rb'), caption="*Chat Successfully Backedup:*\nName of chat: `{}`\nChat ID: `{}`\nBackup taken on: `{}`".format(chat.title, chat_id, tgl), timeout=360, reply_to_message_id=msg.message_id, parse_mode=ParseMode.MARKDOWN)
     except BadRequest:
         pass
-    os.remove("{}-tg_bot.backup".format(chat_id))  # Cleaning file
+    os.remove("{}-tg_bot.txt".format(chat_id))  # Cleaning file
 
 
 # Temporary data
