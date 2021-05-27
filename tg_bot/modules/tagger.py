@@ -4,8 +4,8 @@ from tg_bot.modules.helper_funcs.extraction import extract_user
 from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback
 
 import tg_bot.modules.sql.tagger_sql as sql
-from tg_bot.modules.helper_funcs.chat_status import user_admin
 from tg_bot.modules.log_channel import loggable
+from tg_bot.modules.helper_funcs.chat_status import user_admin
 
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton, Update
 from telegram.ext import CallbackContext, CallbackQueryHandler, Filters
@@ -246,7 +246,6 @@ def addtag_button(update: Update, context: CallbackContext):
             query.answer("You're not the user being added in tag list!")
 
 
-@loggable
 @kigcallback(pattern=r"untagall_.*")
 def untagall_btn(update: Update, context: CallbackContext):
     query = update.callback_query
@@ -263,31 +262,25 @@ def untagall_btn(update: Update, context: CallbackContext):
                 sql.untag(chat.id, user_id)
             query.answer("OK!")
             message.edit_text(f"Successully Untagged All Users From {chat.title}!")
-            log_message = (
-                  f"<b>{html.escape(chat.title)}:</b>\n"
-                  f"#UNTAGGED_ALL\n"
-                  f"<b>Admin:</b> {mention_html(query.from_user.id, query.from_user.first_name)}\n"
-            )
-            return log_message
 
         if member.status == "administrator":
             query.answer("Only owner of the chat can do this.")
-            return ""
+            return
 
         if member.status == "member":
             query.answer("You need to be admin to do this.")
-            return ""
+            return
     elif query.data == "untagll_cancel":
         if member.status == "creator" or query.from_user.id in SUDO_USERS:
             message.edit_text(
                 "Removing of all tagged users has been cancelled.")
-            return ""
+            return
         if member.status == "administrator":
             query.answer("Only owner of the chat can do this.")
-            return ""
+            return
         if member.status == "member":
             query.answer("You need to be admin to do this.")
-            return ""
+            return
 
 
 
