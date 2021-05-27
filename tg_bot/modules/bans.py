@@ -44,6 +44,7 @@ def ban(update, context):
     message = update.effective_message  # type: Optional[Message]
     args = context.args
     log_message = ""
+    reason = ""
     user_id, reason = extract_user_and_text(message, args)
 
     if not user_id:
@@ -100,8 +101,8 @@ def ban(update, context):
         # context.bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
         context.bot.sendMessage(
             chat.id,
-            "let {} walk the plank.".format(
-                mention_html(member.user.id, member.user.first_name)
+            "{} was banned by {} in <b>{}</b>\n<b>Reason</b>: <code>{}</code>".format(
+                mention_html(member.user.id, member.user.first_name), mention_html(user.id, user.first_name), message.chat.title, reason
             ),
             parse_mode=ParseMode.HTML,
         )
@@ -137,6 +138,7 @@ def temp_ban(update: Update, context: CallbackContext) -> str:
     user = update.effective_user
     message = update.effective_message
     log_message = ""
+    reason = ""
     bot, args = context.bot, context.args
     user_id, reason = extract_user_and_text(message, args)
 
@@ -195,6 +197,7 @@ def temp_ban(update: Update, context: CallbackContext) -> str:
             chat.id,
             f"Banned! User {mention_html(member.user.id, member.user.first_name)} "
             f"will be banned for {time_val}.",
+            f"\nReason: {reason}",
             parse_mode=ParseMode.HTML,
         )
         return log
@@ -260,7 +263,7 @@ def kick(update: Update, context: CallbackContext) -> str:
         # bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
         bot.sendMessage(
             chat.id,
-            f"Kicked out {mention_html(member.user.id, member.user.first_name)} from the chat.",
+            f"{mention_html(member.user.id, member.user.first_name)} was kicked by {mention_html(user.id, user.first_name)} in {message.chat.title}\n<b>Reason</b>: <code>{reason}</code>",
             parse_mode=ParseMode.HTML,
         )
         log = (
@@ -295,10 +298,11 @@ def kickme(update: Update, context: CallbackContext):
     else:
         update.effective_message.reply_text("Huh? I can't :/")
 
+
 @bot_admin
 @can_restrict
 @kigcmd(command='banme', pass_args=True, filters=Filters.chat_type.groups)
-def kickme(update: Update, context: CallbackContext):
+def banme(update: Update, context: CallbackContext):
     user_id = update.effective_message.from_user.id
     if is_user_admin(update.effective_chat, user_id):
         update.effective_message.reply_text("I wish I could... but you're an admin.")
@@ -306,9 +310,10 @@ def kickme(update: Update, context: CallbackContext):
 
     res = update.effective_chat.kick_member(user_id)
     if res:
-        update.effective_message.reply_text("*banned you out of the group*")
+        update.effective_message.reply_text("Yes, you're right! Get Out!..")
     else:
         update.effective_message.reply_text("Huh? I can't :/")
+
 
 @connection_status
 @kigcmd(command='unban', pass_args=True, can_disable=False)
@@ -346,7 +351,13 @@ def unban(update: Update, context: CallbackContext) -> str:
         return log_message
 
     chat.unban_member(user_id)
-    message.reply_text("Yep, this user can join!")
+    bot.sendMessage(
+            chat.id,
+            "{} was unbanned by {} in <b>{}</b>\n<b>Reason</b>: <code>{}</code>".format(
+                mention_html(member.user.id, member.user.first_name), mention_html(user.id, user.first_name), message.chat.title, reason
+            ),
+            parse_mode=ParseMode.HTML,
+        )
 
     log = (
         f"<b>{html.escape(chat.title)}:</b>\n"
@@ -361,7 +372,7 @@ def unban(update: Update, context: CallbackContext) -> str:
 
 
 @connection_status
-@kigcmd(command='unbanme', pass_args=True, can_disable=False)
+@kigcmd(command='selfunban', pass_args=True, can_disable=False)
 @bot_admin
 @can_restrict
 @gloggable
@@ -406,11 +417,10 @@ def selfunban(context: CallbackContext, update: Update) -> str:
 
 
 def get_help(chat):
-    from tg_bot.modules.language import gs
-    return gs(chat, "bans_help")
+     from tg_bot.modules.language import gs
+     return gs(chat, "bans_help")
 
 
 
 __mod_name__ = "Bans"
-
 __commands__ = ["kickme", "banme"]
