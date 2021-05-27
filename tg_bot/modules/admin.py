@@ -708,10 +708,9 @@ def admim_button(update: Update, context: CallbackContext):
     if query_match == "admim_reload":
         try:
             ADMIN_CACHE.pop(chat.id)
-            query.answer("Admin Cache Refreshed!", show_alert=True)
         except:
             pass
-        return
+        query.answer("Admin Cache Refreshed!", show_alert=True)
 
     elif query_match == "admim_promote":
         member = chat.get_member(int(user_id))
@@ -742,6 +741,8 @@ def admim_button(update: Update, context: CallbackContext):
             except BadRequest as br:
                 message.reply_text(f"failed to promote: \n{br.message}")
                 return
+
+            query.answer("Promoted Successfully!", show_alert=True)
             query.message.edit_text(
                 text=f"<b>{mention_html(user_id, member.user.first_name or user_id)}</b> was promoted by <b>{mention_html(query.from_user.id, query.from_user.first_name or query.from_user.id)}</b> in <b>{chat.title}</b>!",
                 parse_mode=ParseMode.HTML,
@@ -762,7 +763,6 @@ def admim_button(update: Update, context: CallbackContext):
                       ]
                 ),
             )
-            query.answer("Demoted Successfully!", show_alert=True)
 
     elif query_match == "admim_demote":
         member = chat.get_member(int(user_id))
@@ -793,6 +793,8 @@ def admim_button(update: Update, context: CallbackContext):
             except BadRequest as br:
                 message.reply_text(f"failed to demote: \n{br.message}")
                 return
+
+            query.answer("Demoted Successfully!", show_alert=True)
             query.message.edit_text(
                 text=f"<b>{mention_html(user_id, member.user.first_name or user_id)}</b> was demoted by <b>{mention_html(query.from_user.id, query.from_user.first_name or query.from_user.id)}</b> in <b>{chat.title}</b>!",
                 parse_mode=ParseMode.HTML,
@@ -813,7 +815,6 @@ def admim_button(update: Update, context: CallbackContext):
                       ]
                 ),
             )
-            query.answer("Demoted Successfully!", show_alert=True)
 
     context.bot.answer_callback_query(query.id)
 
