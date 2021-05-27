@@ -16,19 +16,10 @@ from tg_bot.modules.helper_funcs.extraction import extract_user
 import tg_bot.modules.fun_strings as fun
 
 
-# truth / dare
-@kigcmd(command="truth")
-def truth(update, context):
-     update.effective_message.reply_text(random.choice(fun.TRUTHS))
-
-@kigcmd(command="dare")
-def dare(update, context):
-     update.effective_message.reply_text(random.choice(fun.DARES))
-
-
 @kigcmd(command='runs')
 def runs(update, context):
     update.effective_message.reply_text(random.choice(fun.RUN_STRINGS))
+
 
 @kigcmd(command='slap')
 def slap(update: Update, context: CallbackContext):
@@ -149,6 +140,7 @@ def pat(update: Update, context: CallbackContext):
         except BadRequest:
             return
 
+
 @kigcmd(command='hug')
 def hug(update: Update, context: CallbackContext):
     reply_animation = (
@@ -176,6 +168,7 @@ def yesnowtf(update: Update, context: CallbackContext):
         )
     except BadRequest:
         return
+
 
 @kigmsg(Filters.regex(r"(?i)^Chizuru\?"), friendly="decide")
 def decide(update: Update, context: CallbackContext):
