@@ -175,9 +175,9 @@ CHATBOT_HANDLER = MessageHandler(
      (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/")) &
      Filters.chat_type.groups), chatbot
 )
-dispatcher.add_handler(CHATBOT_HANDLER)
+# dispatcher.add_handler(CHATBOT_HANDLER)
 
 
 __mod_name__ = "Chatbot"
 __handlers__ = [CHATBOT_HANDLER]
-__command_list__ = ["chatbot", "listchatbot"]
+__command_list__ = ["chatbot"]
