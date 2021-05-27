@@ -1,3 +1,5 @@
+import random
+
 RUN_STRINGS = (
     "Where do you think you're going?",
     "Huh? what? did they get away?",
