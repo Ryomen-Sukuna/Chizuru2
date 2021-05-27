@@ -1,7 +1,7 @@
 import html
 from typing import Optional
 
-from tg_bot import log, SARDEGNA_USERS, dispatcher
+from tg_bot import SARDEGNA_USERS
 from tg_bot.modules.helper_funcs.chat_status import (
     bot_admin,
     can_restrict,
@@ -14,9 +14,8 @@ from tg_bot.modules.helper_funcs.string_handling import extract_time
 from tg_bot.modules.log_channel import loggable
 from telegram import Bot, Chat, ChatPermissions, ParseMode, Update
 from telegram.error import BadRequest
-from telegram.ext import CallbackContext, CommandHandler
+from telegram.ext import CallbackContext
 from telegram.utils.helpers import mention_html
-from tg_bot.modules.language import gs
 from tg_bot.modules.helper_funcs.decorators import kigcmd
 
 
@@ -81,7 +80,9 @@ def mute(update: Update, context: CallbackContext) -> str:
         bot.restrict_chat_member(chat.id, user_id, chat_permissions)
         bot.sendMessage(
             chat.id,
-            f"Muted <b>{html.escape(member.user.first_name)}</b> with no expiration date!",
+            "{} was muted by {} in <b>{}</b>\n<b>Reason</b>: <code>{}</code>".format(
+                mention_html(member.user.id, member.user.first_name), mention_html(user.id, user.first_name), message.chat.title, reason
+            ),
             parse_mode=ParseMode.HTML,
         )
         return log
@@ -102,7 +103,7 @@ def unmute(update: Update, context: CallbackContext) -> str:
     user = update.effective_user
     message = update.effective_message
 
-    user_id = extract_user(message, args)
+    user_id, reason = extract_user_and_text(message, args)
     if not user_id:
         message.reply_text(
             "You'll need to either give me a username to unmute, or reply to someone to be unmuted."
@@ -135,9 +136,11 @@ def unmute(update: Update, context: CallbackContext) -> str:
             except BadRequest:
                 pass
             bot.sendMessage(
-                chat.id,
-                f"I shall allow <b>{html.escape(member.user.first_name)}</b> to text!",
-                parse_mode=ParseMode.HTML,
+            chat.id,
+            "{} was unmuted by {} in <b>{}</b>\n<b>Reason</b>: <code>{}</code>".format(
+                mention_html(member.user.id, member.user.first_name), mention_html(user.id, user.first_name), message.chat.title, reason
+            ),
+            parse_mode=ParseMode.HTML,
             )
             return (
                 f"<b>{html.escape(chat.title)}:</b>\n"
@@ -209,7 +212,7 @@ def temp_mute(update: Update, context: CallbackContext) -> str:
             )
             bot.sendMessage(
                 chat.id,
-                f"Muted <b>{html.escape(member.user.first_name)}</b> for {time_val}!",
+                f"Muted <b>{html.escape(member.user.first_name)}</b> for {time_val}!\n<b>Reason</b>: <code>{reason}</code>",
                 parse_mode=ParseMode.HTML,
             )
             return log
@@ -235,6 +238,7 @@ def temp_mute(update: Update, context: CallbackContext) -> str:
     return ""
 
 def get_help(chat):
-    return gs(chat, "muting_help")
+     from tg_bot.modules.language import gs
+     return gs(chat, "muting_help")
 
 __mod_name__ = "Muting"
