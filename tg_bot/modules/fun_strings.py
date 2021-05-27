@@ -50,12 +50,12 @@ RUN_STRINGS = (
     "As The Doctor would say... RUN!",
 )
 
-SLAP_Kigyō_TEMPLATES = (
-    "Slap me one more time and I'll mute you.",
-    "Stop slapping me. REEEEEEEEEEEEEE.",
+SLAP_BOT_TEMPLATES = (
+    "Slap me one more time and I'll mute you!",
+    "Stop slapping me.........",
     [
         "I am muting you for a minute.",  # normal reply
-        "Stop slapping me just because I can't mute you. REEEEEEEEEE.",  # reply to admin
+        "Stop slapping me just because I can't mute you......",  # reply to admin
         "tmute",  # command
     ],
 )
@@ -397,7 +397,7 @@ WEL_MSG = (
     "Where’s {first}? In The Chat!",
     "{first} Hopped Into The Chat. Kangaroo!!",
     "{first} Just Showed Up. Hold My Beer.",
-    "Challenger Approaching! {First} Has Appeared!",
+    "Challenger Approaching! {first} Has Appeared!",
     "It's A Bird! It's A Plane! Nevermind, It's Just {first}.",
     "It's {first}! Praise The Sun! \o/",
     "Never Gonna Give {first} Up. Never Gonna Let {first} Down.",
