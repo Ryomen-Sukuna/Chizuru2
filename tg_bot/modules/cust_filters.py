@@ -1,5 +1,6 @@
 import re
 import random
+import difflib
 from html import escape
 
 import telegram
@@ -48,6 +49,23 @@ ENUM_FUNC_MAP = {
     sql.Types.VIDEO.value: dispatcher.bot.send_video,
     # sql.Types.VIDEO_NOTE.value: dispatcher.bot.send_video_note
 }
+
+
+def get_similar_filter(chat_id, filter_name):
+    all_filters = []
+    all_handlers = sql.get_chat_triggers(chat_id)
+    if not all_handlers:
+        return None
+
+    for keyword in all_handlers:
+         all_filters.append(keyword)
+
+    if len(all_filters) > 0:
+        check = difflib.get_close_matches(filter_name, all_filters)
+        print(check)
+        if len(check) > 0:
+            return check[0]
+    return None
 
 
 @typing_action
@@ -105,9 +123,7 @@ def filters(update, context):
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
-    args = msg.text.split(
-        None, 1
-    )  # use python's maxsplit to separate Cmd, keyword, and reply_text
+    args = msg.text.split(" " or None, 1)  # use python's maxsplit to separate Cmd, keyword, and reply_text
 
     conn = connected(context.bot, update, chat, user.id)
     if not conn is False:
@@ -232,7 +248,7 @@ def filters(update, context):
 def stop_filter(update, context):
     chat = update.effective_chat
     user = update.effective_user
-    args = update.effective_message.text.split(None, 1)
+    args = update.effective_message.text.split(" " or None, 1)
 
     conn = connected(context.bot, update, chat, user.id)
     if not conn is False:
@@ -265,10 +281,15 @@ def stop_filter(update, context):
             )
             raise DispatcherHandlerStop
 
+    txt = "That's not a filter - Click: /filters to get active filters."
+    if alleged_filter := get_similar_filter(chat_id, args[1]):
+        txt += "\n\nDid you mean <code>{}</code>?".format(alleged_filter)
     send_message(
         update.effective_message,
-        "That's not a filter - Click: /filters to get currently active filters.",
+        txt,
+        parse_mode=ParseMode.HTML,
     )
+
 
 @kigmsg((CustomFilters.has_text & ~Filters.update.edited_message))
 def reply_filter(update, context):
@@ -500,6 +521,7 @@ def reply_filter(update, context):
                         pass
                 break
 
+
 @kigcmd(command="removeallfilters", filters=Filters.chat_type.groups)
 def rmall_filters(update, context):
     chat = update.effective_chat
@@ -610,9 +632,9 @@ def __chat_settings__(chat_id, user_id):
     cust_filters = sql.get_chat_triggers(chat_id)
     return "There are `{}` custom filters here.".format(len(cust_filters))
 
-from tg_bot.modules.language import gs
 
 def get_help(chat):
-    return gs(chat, "cust_filters_help")
+     from tg_bot.modules.language import gs
+     return gs(chat, "cust_filters_help")
 
 __mod_name__ = "Filters"
