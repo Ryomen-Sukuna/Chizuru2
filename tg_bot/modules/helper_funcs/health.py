@@ -2,7 +2,6 @@ from tg_bot import dispatcher
 from tg_bot.modules.sql.antispam_sql import is_user_gbanned
 from tg_bot.modules.sql.users_sql import get_user_num_chats
 from tg_bot.modules.sql.afk_sql import is_afk, check_afk_status
-from tg_bot.modules.sql.userinfo_sql import get_user_me_info, get_user_bio
 
 #HELTH-BAR - Show User Health -- This Feature From @SaitamaRobot
 def no_by_per(totalhp, percentage):
@@ -41,17 +40,21 @@ def hpmanager(user):
         # if no lastname decrease 5% of hp.
         if not user.last_name:
             new_hp -= no_by_per(total_hp, 5)
+
+        try:
+            a = dispatcher.bot.get_chat(user.id)
+            a_bio = a.bio or None
+            if not a_bio or a_bio == None:
+                # no bio ==> -20% of hp
+                new_hp -= no_by_per(total_hp, 20)
+        except:
+            pass
+
         try:
             dispatcher.bot.get_user_profile_photos(user.id).photos[0][-1]
         except IndexError:
             # no profile photo ==> -25% of hp
             new_hp -= no_by_per(total_hp, 25)
-        # if no /setme exist ==> -20% of hp
-        if not get_user_me_info(user.id):
-            new_hp -= no_by_per(total_hp, 20)
-        # if no bio exsit ==> -10% of hp
-        if not get_user_bio(user.id):
-            new_hp -= no_by_per(total_hp, 10)
 
         if is_afk(user.id):
             afkr = check_afk_status(user.id)
