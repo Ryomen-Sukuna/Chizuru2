@@ -203,7 +203,6 @@ feds_help: |
      • /importfbans: Reply to the Federation backup message file to import the banned list to the Federation now. (disabled for now.)
 
 fun_help: |
-     • /truth or /dare: Send random truth or dare.
      • /runs: reply a random string from an array of replies.
      • /slap: slap a user, or get slapped if not a reply.
      • /pat: pat a person, cool thing to have for cute ones :3
