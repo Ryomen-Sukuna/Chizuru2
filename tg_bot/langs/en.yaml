@@ -60,7 +60,8 @@ admin_help: |
 
 afk_help: |
    • /afk <reason>: mark yourself as AFK(away from keyboard).
-   • brb <reason>: same as the afk command - but not a command.
+   • /dnd <reason>: same as the afk command.
+
    When marked as AFK, any mentions will be replied to with a message to say you're not available!
 
 anilist_help: |
@@ -107,6 +108,7 @@ backup_help: |
 
 bans_help: |
     • /kickme: kicks the user who issued the command
+    • /banme: ban the user who issued the command
 
      *Admin only:*
     • /ban <userhandle>: bans a user. (via handle, or reply)
@@ -206,10 +208,7 @@ fun_help: |
      • /slap: slap a user, or get slapped if not a reply.
      • /pat: pat a person, cool thing to have for cute ones :3
      • /hug: Hug a user warmly, or get hugged if not a reply.
-     • /decide : Randomly answers yes/no/maybe
-     • /toss : Tosses A coin
-     • /rmeme: Sends random meme scraped from reddit.
-     • /squote: Random Superheroes quotes.
+     • /decide : Randomly answers (yes/no/maybe)
 
 
 sticker_help: |
@@ -305,13 +304,11 @@ markdown_help_text: |
 
 misc_help: |
       • /id: get the current group id. If used by replying to a message, gets that user's id.
+      • /info: get information about a user.
       • /gifid: reply to a gif to me to tell you its file ID.
       • /formatting: quick summary of how formatting works in telegram - can only be called in private chats.
       • /ud <word>: Type the word or expression you want to search use.
-      • /paste - Do a paste at `nekobin.com`.
-      • /getpaste - Get the content of a paste or shortened url from `nekobin.com`.
       • /close: Got a nasty bot keyboard stuck in your group?
-      • /app <app name>: Finds an app in playstore for you.
 
 muting_help: |
       *Admins only*:
