@@ -69,19 +69,19 @@ def chatmode(update, context):
          return ""
 
 
-def checker(context, message):
+def checker(context: CallbackContext, message):
     abc = False
     if message.text.lower() == f"@{context.bot.username}".lower():
         abc = True
 
     reply_msg = message.reply_to_message
-    if reply_msg:
-        if reply_msg.from_user.id == context.bot.id:
+    if reply_msg and reply_msg.from_user is not None:
+        if reply_msg.from_user.id == context.bot.get_me().id:
             abc = True
 
     return abc
 
-def get_response(update):
+def get_response(update: Update):
      user = update.effective_user
      message = update.effective_message
      url = f"http://api.brainshop.ai/get?bid=156213&key=AFL4yzDEQfAQkbyZ&uid={user.id}&msg={message.text}"
@@ -157,7 +157,7 @@ def listchatbot(update: Update, context: CallbackContext):
             fullname = f"<a href='https://t.me/'{uname}>{title}</a>" if uname is not None else title
             totalchats += f"\n• {fullname} (<code>{chat_id}</code>)"
 
-    if totalchats.endswith(":\n"):
+    if totalchats.endswith("Chats</b>:\n"):
         message.reply_text("There Are No Active Chats With AI Feature!")
         return
     message.reply_text(
@@ -175,7 +175,7 @@ CHATBOT_HANDLER = MessageHandler(
      (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/")) &
      Filters.chat_type.groups), chatbot
 )
-# dispatcher.add_handler(CHATBOT_HANDLER)
+dispatcher.add_handler(CHATBOT_HANDLER)
 
 
 __mod_name__ = "Chatbot"
