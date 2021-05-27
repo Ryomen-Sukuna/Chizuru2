@@ -1,4 +1,3 @@
-import re
 import html
 import json
 import random
@@ -8,11 +7,10 @@ import urllib.parse
 import requests
 
 from telegram import ParseMode, Update, ChatAction, ChatPermissions
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Filters, CallbackContext
 from telegram.error import BadRequest
 
-from tg_bot.modules.helper_funcs.decorators import kigcmd, kigmsg, kigcallback
+from tg_bot.modules.helper_funcs.decorators import kigcmd, kigmsg
 from tg_bot.modules.helper_funcs.chat_status import is_user_admin
 from tg_bot.modules.helper_funcs.extraction import extract_user
 import tg_bot.modules.fun_strings as fun
@@ -21,14 +19,11 @@ import tg_bot.modules.fun_strings as fun
 # truth / dare
 @kigcmd(command="truth")
 def truth(update, context):
-     xyz = requests.get("https://elianaapi.herokuapp.com/games/truth")
-     update.effective_message.reply_text(xyz.truth)
+     update.effective_message.reply_text(random.choice(fun.TRUTHS))
 
 @kigcmd(command="dare")
 def dare(update, context):
-     xyz = requests.get("https://elianaapi.herokuapp.com/games/dares").json()
-     dare = xyz.get("dare")
-     update.effective_message.reply_text(dare)
+     update.effective_message.reply_text(random.choice(fun.DARES))
 
 
 @kigcmd(command='runs')
@@ -164,9 +159,6 @@ def hug(update: Update, context: CallbackContext):
     hug = requests.get('https://some-random-api.ml/animu/hug').json()
     reply_animation(hug['link'])
 
-@kigcmd(command='toss')
-def toss(update, context):
-    update.message.reply_text(random.choice(fun.TOSS))
 
 @kigcmd(command='decide')
 def yesnowtf(update: Update, context: CallbackContext):
