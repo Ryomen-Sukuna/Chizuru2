@@ -17,7 +17,6 @@ from tg_bot import (
 )
 from tg_bot.modules.helper_funcs.chat_status import (
     is_user_ban_protected,
-    can_restrict,
     user_admin,
 )
 from tg_bot.modules.helper_funcs.misc import build_keyboard, revert_buttons
@@ -326,7 +325,7 @@ def new_member(update: Update, context: CallbackContext):
             should_mute = False
 
         if user.id == new_mem.id:
-            if should_mute and can_restrict:
+            if should_mute and chat.get_member(bot.id).can_restrict_members:
                 if welc_mutes == "soft":
                     bot.restrict_chat_member(
                         chat.id,
