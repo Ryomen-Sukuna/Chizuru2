@@ -6,7 +6,8 @@ from telethon.errors import ChatAdminRequiredError, UserAdminInvalidError
 from telethon.tl.functions.channels import EditBannedRequest
 from telethon.tl.types import ChatBannedRights, ChannelParticipantsAdmins
 
-from tg_bot import client, OWNER_ID, DEV_USERS, SUDO_USERS
+from tg_bot import client
+from tg_bot.modules.helper_funcs.telethn.chatstatus import user_is_admin, can_ban_users
 
 
 # =================== CONSTANT ===================
@@ -33,20 +34,6 @@ UNBAN_RIGHTS = ChatBannedRights(
 )
 
 
-SLAYERS = [OWNER_ID] + DEV_USERS + SUDO_USERS
-
-# Check if user has admin rights
-async def is_admin(user_id: int, message):
-    admin = False
-    async for user in client.iter_participants(
-        message.chat_id, filter=ChannelParticipantsAdmins
-    ):
-        if user_id == user.id or user_id in SLAYERS:
-            admin = True
-            break
-    return admin
-
-
 # Demons
 async def demons(event):
     del_u = 0 
@@ -56,11 +43,11 @@ async def demons(event):
     admin = chat.admin_rights
 
     # Check Permissions
-    if not await is_admin(event.sender_id, event) and event.from_id not in [1087968824]:
-        await event.respond("You're Not An Admin!")
+    if not await user_is_admin(event.sender_id, event) and event.from_id not in [1087968824]:
+        await event.respond("You don't have the necessary rights to do this!")
         return
-    if not admin:
-        await event.respond("I Am Not An Admin Here!")
+    if not admin and not await can_ban_users(event):
+        await event.respond("I haven't got the rights to do this.")
         return
 
     X = await event.respond("Searching For Demons...")
@@ -87,14 +74,18 @@ async def demons(event):
 @client.on(events.CallbackQuery)
 async def dimonhandler(event):
     if event.data == b'demon_yes':
-        if not await is_admin(event.query.user_id, event) and event.from_id not in [1087968824]:
-             await event.answer("You're Not An Admin!")
-             return
+        # Here laying the sanity check
         but = await event.get_chat()
         admim = but.admin_rights
-        if not admim:
-             await event.answer("I Am Not An Admin Here!")
-             return
+
+        # Check Permissions
+        if not await user_is_admin(event.sender_id, event) and event.from_id not in [1087968824]:
+            await event.respond("You don't have the necessary rights to do this!")
+            return
+        if not admim and not await can_ban_users(event):
+            await event.respond("I haven't got the rights to do this.")
+            return
+
         await event.edit("Hunting Demons...")
         del_u = 0
         del_a = 0
