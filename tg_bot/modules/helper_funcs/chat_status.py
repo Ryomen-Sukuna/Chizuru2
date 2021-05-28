@@ -112,16 +112,6 @@ def dev_plus(func):
             return func(update, context, *args, **kwargs)
         elif not user:
             pass
-        elif DEL_CMDS and " " not in update.effective_message.text:
-            try:
-                update.effective_message.delete()
-            except:
-                pass
-        else:
-            update.effective_message.reply_text(
-                "This is a developer restricted command."
-                " You do not have permissions to run this."
-            )
 
     return is_dev_plus_func
 
@@ -137,15 +127,6 @@ def sudo_plus(func):
             return func(update, context, *args, **kwargs)
         elif not user:
             pass
-        elif DEL_CMDS and " " not in update.effective_message.text:
-            try:
-                update.effective_message.delete()
-            except:
-                pass
-        else:
-            update.effective_message.reply_text(
-                "Who dis non-admin telling me what to do?"
-            )
 
     return is_sudo_plus_func
 
@@ -159,11 +140,6 @@ def support_plus(func):
 
         if user and is_support_plus(chat, user.id):
             return func(update, context, *args, **kwargs)
-        elif DEL_CMDS and " " not in update.effective_message.text:
-            try:
-                update.effective_message.delete()
-            except:
-                pass
 
     return is_support_plus_func
 
@@ -179,10 +155,6 @@ def whitelist_plus(func):
 
         if user and is_whitelist_plus(chat, user.id):
             return func(update, context, *args, **kwargs)
-        else:
-            update.effective_message.reply_text(
-                f"You don't have access to use this.\nVisit @YorkTownEagleUnion"
-            )
 
     return is_whitelist_plus_func
 
@@ -200,12 +172,13 @@ def user_admin(func):
             pass
         elif DEL_CMDS and " " not in update.effective_message.text:
             try:
-                update.effective_message.delete()
+                if can_delete:
+                    update.effective_message.delete()
             except:
                 pass
         else:
             update.effective_message.reply_text(
-                "Who dis non-admin telling me what to do?"
+                "You don't have the necessary rights to do this!"
             )
 
     return is_admin
@@ -226,7 +199,8 @@ def user_admin_no_reply(func):
             pass
         elif DEL_CMDS and " " not in update.effective_message.text:
             try:
-                update.effective_message.delete()
+                if can_delete:
+                    update.effective_message.delete()
             except:
                 pass
 
@@ -257,9 +231,9 @@ def bot_admin(func):
         message_chat_title = update.effective_message.chat.title
 
         if update_chat_title == message_chat_title:
-            not_admin = "I'm not admin! - REEEEEE"
+            not_admin = "I haven't got the rights to do this."
         else:
-            not_admin = f"I'm not admin in <b>{update_chat_title}</b>! - REEEEEE"
+            not_admin = f"I haven't got the rights to do this in <b>{update_chat_title}</b>!"
 
         if is_bot_admin(chat, bot.id):
             return func(update, context, *args, **kwargs)
