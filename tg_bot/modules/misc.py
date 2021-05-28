@@ -8,7 +8,7 @@ from telegram.error import BadRequest
 from telegram import Update, MessageEntity, ParseMode
 from telegram.utils.helpers import mention_html, escape_markdown
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.ext import Filters, CommandHandler, CallbackContext
+from telegram.ext import Filters, CallbackContext
 
 from tg_bot import (
     dispatcher,
@@ -20,7 +20,6 @@ from tg_bot import (
     StartTime
 )
 from tg_bot.__main__ import STATS, TOKEN
-from tg_bot.modules.disable import DisableAbleCommandHandler
 from tg_bot.modules.helper_funcs.chat_status import user_admin, sudo_plus
 from tg_bot.modules.helper_funcs.extraction import extract_user
 import tg_bot.modules.sql.users_sql as sql
@@ -165,7 +164,7 @@ def ud(update: Update, _):
     ).json()
 
     try:
-        output = f"*{escape_markdown(text[1])}*:\n\nResult*:* {escape_markdown(results.get('list')[0].get('definition'))}\n\nExample*:* _{escape_markdown(results.get('list')[0].get('example'))}_"
+        output = f"*{escape_markdown(text[1])}*:\n\nResult*:* {results.get('list')[0].get('definition')}\n\nExample*:* _{results.get('list')[0].get('example')}_"
     except:
         output = "No results found!"
 
