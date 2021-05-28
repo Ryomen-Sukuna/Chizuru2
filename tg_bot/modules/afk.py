@@ -1,3 +1,4 @@
+import time
 import random
 import humanize
 from datetime import datetime
@@ -123,8 +124,8 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
     if sql.is_afk(user_id):
         if int(userc_id) == int(user_id):
             return
-        user = sql.check_afk_status(user_id)
 
+        user = sql.check_afk_status(user_id)
         fname = "My Master" if int(user_id) == OWNER_ID else f"User *{escape_markdown(fst_name)}*"
         txt = f"{fname} Is AFK"
 
@@ -137,7 +138,7 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
             return
 
         since_afk = humanize.naturaldelta(datetime.now() - user.time)
-        txt += f" {since_afk}!"
+        txt += f" Since {since_afk}!"
 
         if user.reason:
             if "%%%" in user.reason:
@@ -151,11 +152,10 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
             txt += f"\n\n*Says It's Because Of*:\n{reason}"
 
         try:
-            DND.edit_text(txt,
-                          disable_web_page_preview=True,
-                          parse_mode=ParseMode.MARKDOWN,
-                     )
-        except BadRequest:
+            DND.edit_text(txt, disable_web_page_preview=True, parse_mode=ParseMode.MARKDOWN)
+            time.sleep(30)
+            DND.delete()
+        except:
             return
 
 
