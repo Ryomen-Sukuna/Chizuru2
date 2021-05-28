@@ -127,18 +127,16 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
 
         user = sql.check_afk_status(user_id)
         fname = "My Master" if int(user_id) == OWNER_ID else f"User *{escape_markdown(fst_name)}*"
-        txt = f"{fname} Is AFK"
+        since_afk = humanize.naturaldelta(datetime.now() - user.time)
+        textmsg = f"{fname} Is AFK Since {since_afk}!"
 
         try:
             DND = update.effective_message.reply_text(
-                      f"{txt}!",
+                      textmsg,
                       parse_mode=ParseMode.MARKDOWN,
                   )
         except BadRequest:
             return
-
-        since_afk = humanize.naturaldelta(datetime.now() - user.time)
-        txt += f" Since {since_afk}!"
 
         if user.reason:
             if "%%%" in user.reason:
@@ -149,10 +147,14 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
                     reason = user.reason
             else:
                 reason = user.reason
-            txt += f"\n\n*Says It's Because Of*:\n{reason}"
+
+            textmsg += f"\n\n*Says It's Because Of*:\n{reason}"
+            try:
+                DND.edit_text(textmsg, disable_web_page_preview=True, parse_mode=ParseMode.MARKDOWN)
+            except:
+                pass
 
         try:
-            DND.edit_text(txt, disable_web_page_preview=True, parse_mode=ParseMode.MARKDOWN)
             time.sleep(30)
             DND.delete()
         except:
