@@ -16,7 +16,6 @@ def get_help_btns(name):
      if str(name) == "Fun":
             buttuns = [
                 [InlineKeyboardButton(text="AFK", callback_data="subhelp_afk"),
-                InlineKeyboardButton(text="Bio/About", callback_data="subhelp_infobio"),
                 InlineKeyboardButton(text="Chatbot", callback_data="subhelp_chatbot")],
                 [InlineKeyboardButton(text="Sticker", callback_data="subhelp_stick"),
                 InlineKeyboardButton(text="Translation", callback_data="subhelp_tr")],
@@ -51,17 +50,6 @@ def subhelp_button(update: Update, context: CallbackContext):
     elif query.data == "subhelp_afk":
         query.message.edit_text(
                 text="Here is the help for the *AFK* module:\n" + gs(chat, "afk_help"),
-                reply_markup=InlineKeyboardMarkup(
-                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
-                ),
-                parse_mode=ParseMode.MARKDOWN,
-                disable_web_page_preview=True,
-                timeout=60, 
-            )
-
-    elif query.data == "subhelp_infobio":
-        query.message.edit_text(
-                text="Here is the help for the *Bio/About* module:\n" + gs(chat, "userinfo_help"),
                 reply_markup=InlineKeyboardMarkup(
                         [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
                 ),
