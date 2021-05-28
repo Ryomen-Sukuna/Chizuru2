@@ -59,13 +59,6 @@ def inlinequery(update: Update, _) -> None:
             "keyboard": ".info ",
         },
         {
-            "title": "Stickers",
-            "description": "Search Any Telegram Sticker Packs on Combot.org",
-            "message_text": "Search stickers for given term on combot sticker catalogue",
-            "thumb_urL": "https://telegra.ph/file/8917d882b623b0c2a1012.jpg",
-            "keyboard": ".stickers ",
-        },
-        {
             "title": "Applications",
             "description": "Search Any Application on play.google.com",
             "message_text": "Search Application On Playstore",
@@ -78,7 +71,6 @@ def inlinequery(update: Update, _) -> None:
         ".anime": media_query,
         ".char": character_query,
         ".info": info_query,
-        ".stickers": stickers_query,
         ".app": app_query,
     }
 
@@ -129,10 +121,8 @@ def info_query(query: str, update: Update, context: CallbackContext) -> None:
             getuser = get_user_id(str(search))
             if getuser:
                user = bot.get_chat(int(getuser))
-            else:
-               user = bot.get_chat(str(search))
         else:
-            user = bot.get_chat("@" + str(search))
+            user = bot.get_chat(user.id)
     except (BadRequest, ValueError):
         user = bot.get_chat(user.id)
     chat = update.effective_chat
@@ -143,7 +133,7 @@ def info_query(query: str, update: Update, context: CallbackContext) -> None:
     text = (
         f"<b>• User Info:</b>\n"
         f"\n∘ ID: <code>{user.id}</code>"
-        f"\n∘ First Name: {html.escape(user.first_name) or '☠️ <code>Demon</code> ☠️'}"
+        f"\n∘ First Name: {html.escape(user.first_name) or '<code>Deleted Account</code>'}"
     )
 
     if user.last_name:
@@ -219,58 +209,6 @@ def info_query(query: str, update: Update, context: CallbackContext) -> None:
 
     update.inline_query.answer(results, cache_time=5)
 
-
-
-def stickers_query(query: str, update: Update, context: CallbackContext) -> None:
-    """Handle the inline sticker query."""
-
-    query = update.inline_query.query
-    user = update.effective_user
-
-    stickers: List = []
-    try:
-        try:
-            split = str(query.split(" ", 1)[1])
-        except IndexError:
-            return 
-
-        comboturl = f"https://combot.org/telegram/stickers?q={split}"
-        headers = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0"}
-        text = requests.get(comboturl, headers=headers).text
-
-        soup = BeautifulSoup(text, "lxml")
-        results = soup.findAll("a", {'class': "sticker-pack__btn"})
-        titles = soup.findAll("div", "sticker-pack__title")
-
-        Packs = {}
-        if results:
-            for result, title in zip(results, titles):
-                 link = result["href"]
-                 Packs[f"{link}"] = title
-
-            for packlink, title in Packs.items():
-                 kb = InlineKeyboardMarkup([[InlineKeyboardButton(text="Add Pack", url=packlink)], [InlineKeyboardButton(text="Search Again", switch_inline_query_current_chat=".stickers ")]])
-                 stickers.append(
-                     InlineQueryResultArticle(
-                            id=str(uuid4()),
-                            title=title.get_text() or split,
-                            input_message_content=InputTextMessageContent(f"Result Of <b>{split}</b>:", parse_mode=ParseMode.HTML, disable_web_page_preview=True),
-                            reply_markup=kb,
-                     )
-                 )
-
-    except Exception as e:
-        kb = InlineKeyboardMarkup([[InlineKeyboardButton(text="Search Again", switch_inline_query_current_chat=".stickers ")]])
-        stickers.append(
-            InlineQueryResultArticle(
-                id=str(uuid4()),
-                title=f"Sticker-Pack {split} not found",
-                input_message_content=InputTextMessageContent(f"Stickers {split} not found due to {e}", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True),
-                reply_markup=kb,
-            )
-        )
-
-    update.inline_query.answer(stickers, cache_time=5)
 
 
 def app_query(query: str, update: Update, context: CallbackContext) -> None:
