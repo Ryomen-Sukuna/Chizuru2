@@ -19,7 +19,7 @@ from tg_bot import (
     WHITELIST_USERS,
     StartTime
 )
-from tg_bot.__main__ import STATS, USER_INFO, TOKEN
+from tg_bot.__main__ import STATS, TOKEN
 from tg_bot.modules.disable import DisableAbleCommandHandler
 from tg_bot.modules.helper_funcs.chat_status import user_admin, sudo_plus
 from tg_bot.modules.helper_funcs.extraction import extract_user
@@ -153,24 +153,23 @@ def info(update: Update, context: CallbackContext):
 def ud(update: Update, _):
     message = update.effective_message
     text =  message.text.split(" ", 1)
-
     if len(text) == 1:
         message.reply_text(
-           "_Format:_ `/ud <anything>`",
+           "Format: `/ud <anything>`",
            parse_mode=ParseMode.MARKDOWN,
         )
         return
 
     results = requests.get(
-        "https://api.urbandictionary.com/v0/define?term=" + text
+        f"https://api.urbandictionary.com/v0/define?term={text[1]}"
     ).json()
 
     try:
-        results = f"*{escape_markdown(text)}*:\n\nResult*:* {escape_markdown(results.get('list')[0].get('definition'))}\n\nExample*:* _{escape_markdown(results.get('list')[0].get('example'))}_"
+        output = f"*{escape_markdown(text)}*:\n\nResult*:* {escape_markdown(results.get('list')[0].get('definition'))}\n\nExample*:* _{escape_markdown(results.get('list')[0].get('example'))}_"
     except:
-        results = "No results found!"
+        output = "No results found!"
 
-    message.reply_text(results, parse_mode=ParseMode.MARKDOWN)
+    message.reply_text(output, parse_mode=ParseMode.MARKDOWN)
 
 
 @kigcmd(command='echo', pass_args=True, filters=Filters.chat_type.groups)
