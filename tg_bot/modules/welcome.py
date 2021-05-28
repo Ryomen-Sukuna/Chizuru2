@@ -17,6 +17,7 @@ from tg_bot import (
 )
 from tg_bot.modules.helper_funcs.chat_status import (
     is_user_ban_protected,
+    can_restrict,
     user_admin,
 )
 from tg_bot.modules.helper_funcs.misc import build_keyboard, revert_buttons
@@ -131,6 +132,7 @@ def send(update, message, keyboard, backup_message):
             log.warning(keyboard)
             log.exception("Could not parse! got invalid url host errors")
         elif excp.message == "Have no rights to send a message":
+            dispatcher.bot.leave_chat(chat.id)
             return
         else:
             msg = update.effective_message.reply_text(
@@ -324,7 +326,7 @@ def new_member(update: Update, context: CallbackContext):
             should_mute = False
 
         if user.id == new_mem.id:
-            if should_mute:
+            if should_mute and can_restrict:
                 if welc_mutes == "soft":
                     bot.restrict_chat_member(
                         chat.id,
