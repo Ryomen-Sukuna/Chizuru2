@@ -165,7 +165,7 @@ def ud(update: Update, _):
     ).json()
 
     try:
-        output = f"*{escape_markdown(text)}*:\n\nResult*:* {escape_markdown(results.get('list')[0].get('definition'))}\n\nExample*:* _{escape_markdown(results.get('list')[0].get('example'))}_"
+        output = f"*{escape_markdown(text[1])}*:\n\nResult*:* {escape_markdown(results.get('list')[0].get('definition'))}\n\nExample*:* _{escape_markdown(results.get('list')[0].get('example'))}_"
     except:
         output = "No results found!"
 
