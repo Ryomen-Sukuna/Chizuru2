@@ -5,8 +5,8 @@ import datetime
 from bs4 import BeautifulSoup
 
 from telegram.error import BadRequest
-from telegram.utils.helpers import mention_html
 from telegram import Update, MessageEntity, ParseMode
+from telegram.utils.helpers import mention_html, escape_markdown
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Filters, CommandHandler, CallbackContext
 
@@ -26,7 +26,6 @@ from tg_bot.modules.helper_funcs.extraction import extract_user
 import tg_bot.modules.sql.users_sql as sql
 from tg_bot.modules.language import gs
 from tg_bot.modules.helper_funcs.decorators import kigcmd
-import tg_bot.modules.helper_funcs.health as hp
 from tg_bot.modules.helper_funcs.get_time import get_time
 
 
@@ -41,13 +40,14 @@ def gifid(update: Update, _):
     else:
         update.effective_message.reply_text("Please reply to a gif to get its ID.")
 
+
 @kigcmd(command='info', pass_args=True)
 def info(update: Update, context: CallbackContext):
     bot = context.bot
     args = context.args
-    message = update.effective_message
     chat = update.effective_chat
-    user_id = extract_user(update.effective_message, args)
+    message = update.effective_message
+    user_id = extract_user(message, args)
 
     if user_id:
         user = bot.get_chat(user_id)
@@ -64,8 +64,7 @@ def info(update: Update, context: CallbackContext):
             and not message.parse_entities([MessageEntity.TEXT_MENTION])
         )
     ):
-        message.reply_text("I can't extract a user from this.")
-        return
+        user = message.from_user
 
     else:
         return
@@ -78,7 +77,7 @@ def info(update: Update, context: CallbackContext):
     text = (
         f"<b>• User Information:</b>\n"
         f"\n∘ ID: <code>{user.id}</code>"
-        f"\n∘ First Name: {html.escape(user.first_name)}"
+        f"\n∘ First Name: {html.escape(user.first_name) or '<code>Deleted Account</code>'}"
     )
 
     if user.last_name:
@@ -95,7 +94,7 @@ def info(update: Update, context: CallbackContext):
 
     try:
         if chat.type != 'private':
-           status = status = bot.get_chat_member(chat.id, user.id).status
+           status = bot.get_chat_member(chat.id, user.id).status
            if status:
                if status in "left":
                    text += "\n∘ Chat Status: Not Here!"
@@ -117,20 +116,13 @@ def info(update: Update, context: CallbackContext):
             result = result.json()["result"]
             if "custom_title" in result.keys():
                 custom_title = result["custom_title"]
-                text += f"\n∘ Admin Title: <code>{custom_title}</code> \n"
+                text += f"\n∘ Admin Title: <code>{custom_title}</code>"
     except BadRequest:
         pass
 
-    if user_id not in [bot.id, 777000, 1087968824]:                                                                                         
-       if user.first_name != "":
-          userhp = hp.hpmanager(user)
-          text += f"\n∘ Health: <code>{userhp['earnedhp']}/{userhp['totalhp']}</code> ∙ <code>{userhp['percentage']}% </code> \n  {hp.make_bar(int(userhp['percentage']))}\n "                                                                                         
-    else:
-       text += "\n"
-
    
     if user.id == OWNER_ID:
-      # text += "\n<b>This Person Is My Master!</b>"
+      # text += "\n<b>This Person Is My Creator!</b>"
         text += ""
 
     elif user.id in DEV_USERS:
@@ -146,18 +138,6 @@ def info(update: Update, context: CallbackContext):
         text += "\n∘ <b>WHITELIST USER: </b>Yes!"
 
 
-    text += "\n"
-    for mod in USER_INFO:
-        if mod.__mod_name__ == "Users":
-            continue
-
-        try:
-            mod_info = mod.__user_info__(user.id)
-        except TypeError:
-            mod_info = mod.__user_info__(user.id, chat.id)
-        if mod_info:
-            text += "\n" + mod_info
-
     try:
         MsG.edit_text(
             text,
@@ -166,7 +146,7 @@ def info(update: Update, context: CallbackContext):
             disable_web_page_preview=True,
         )
     except:
-        pass
+        return
 
 
 @kigcmd(command="ud")
@@ -186,7 +166,7 @@ def ud(update: Update, _):
     ).json()
 
     try:
-        results = f"*{text}*:\n\nResult*:* {results['list'][0]['definition']}\n\nExample*:* _{results['list'][0]['example']}_"
+        results = f"*{escape_markdown(text)}*:\n\nResult*:* {escape_markdown(results.get('list')[0].get('definition'))}\n\nExample*:* _{escape_markdown(results.get'list')[0].get('example'))}_"
     except:
         results = "No results found!"
 
