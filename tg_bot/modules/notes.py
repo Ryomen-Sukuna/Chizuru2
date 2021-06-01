@@ -335,7 +335,7 @@ def clear(update: Update, context: CallbackContext):
         update.effective_message.reply_text("Provide a notename.")
 
 
-@kigcmd(command='removeallnotes')
+@kigcmd(command='clearall')
 def clearall(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
