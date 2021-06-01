@@ -522,7 +522,7 @@ def reply_filter(update, context):
                 break
 
 
-@kigcmd(command="removeallfilters", filters=Filters.chat_type.groups)
+@kigcmd(command="stopall", filters=Filters.chat_type.groups)
 def rmall_filters(update, context):
     chat = update.effective_chat
     user = update.effective_user
