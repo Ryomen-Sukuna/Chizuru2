@@ -403,8 +403,9 @@ def makepack_internal(
 
     if success:
         msg.reply_text(
-            f"Sticker pack successfully created. Get it [here](t.me/addstickers/{packname})",
+            f"Sticker pack successfully created.)",
             parse_mode=ParseMode.MARKDOWN,
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="View", url=packname)]]),
         )
     else:
         msg.reply_text("Failed to create sticker pack. Possibly due to blek mejik.")
