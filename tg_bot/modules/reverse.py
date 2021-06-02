@@ -37,8 +37,10 @@ def reverse(update: Update, context: CallbackContext):
             file_id = reply.document.file_id
         elif reply.animation:
             file_id = reply.animation.file_id
+        elif reply.video:
+            file_id = reply.video.file_id
         else:
-             msg.reply_text("Reply To An Image Or Sticker Or GIF To Lookup!")
+             msg.reply_text("Reply To An Image Or Sticker Or Video Or GIF To Lookup!")
              return
 
         image_file = context.bot.get_file(file_id)
@@ -86,8 +88,9 @@ def reverse(update: Update, context: CallbackContext):
             return
 
         buttuns = [[InlineKeyboardButton(text="Images Link", url=fetchUrl)], [InlineKeyboardButton(text="Similar Images", url=imgspage)]]
+        search_result = guess.replace("Possible related search: ", "")
 
-        MsG.edit_text("*Possible Related Search:* \n\n`{}`".format(guess.replace("Possible related search: ", "")),
+        MsG.edit_text("*Possible Related Search:* \n\n`{}`".format(search_result),
                       parse_mode=ParseMode.MARKDOWN,
                       reply_markup=InlineKeyboardMarkup(buttuns),
         )
