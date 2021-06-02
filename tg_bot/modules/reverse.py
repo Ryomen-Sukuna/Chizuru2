@@ -4,7 +4,7 @@ import urllib
 import requests
 from bs4 import BeautifulSoup
 
-from telegram impor TelegramError
+from telegram import TelegramError
 from telegram.error import BadRequest
 from telegram.ext import CallbackContext
 from telegram import Update, ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
@@ -89,7 +89,7 @@ def reverse(update: Update, context: CallbackContext):
 
         MsG.edit_text("*Possible Related Search:* \n\n`{}`".format(guess.replace("Possible related search: ", "")),
                       parse_mode=ParseMode.MARKDOWN,
-                      reply_markup=InlineKeyboardMarkup(buttuns)
+                      reply_markup=InlineKeyboardMarkup(buttuns),
         )
 
     except BadRequest as Bdr:
