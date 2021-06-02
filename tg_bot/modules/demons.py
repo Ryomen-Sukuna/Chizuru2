@@ -118,7 +118,7 @@ async def dimonhandler(event):
 
 
 
-DEMONS = demons, events.NewMessage(pattern="^[!/]demons ?(.*)")
+DEMONS = demons, events.NewMessage(pattern="^[!/]demons$")
 client.add_event_handler(*DEMONS)
 
 
