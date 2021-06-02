@@ -9,7 +9,6 @@ from tg_bot.__main__ import (
     IMPORTED,
     MIGRATEABLE,
     STATS,
-    USER_INFO,
     USER_SETTINGS,
 )
 from tg_bot.modules.helper_funcs.chat_status import dev_plus, sudo_plus
@@ -63,9 +62,6 @@ def load(update: Update, context: CallbackContext):
 
     if hasattr(imported_module, "__stats__"):
         STATS.append(imported_module)
-
-    if hasattr(imported_module, "__user_info__"):
-        USER_INFO.append(imported_module)
 
     if hasattr(imported_module, "__import_data__"):
         DATA_IMPORT.append(imported_module)
@@ -131,9 +127,6 @@ def unload(update: Update, context: CallbackContext):
     if hasattr(imported_module, "__stats__"):
         STATS.remove(imported_module)
 
-    if hasattr(imported_module, "__user_info__"):
-        USER_INFO.remove(imported_module)
-
     if hasattr(imported_module, "__import_data__"):
         DATA_IMPORT.remove(imported_module)
 
@@ -152,7 +145,7 @@ def unload(update: Update, context: CallbackContext):
 
 
 @sudo_plus
-@kigcmd(command='listmodules')
+@kigcmd(command='listmodules', can_disable=False)
 def listmodules(update: Update, context: CallbackContext):
     message = update.effective_message
     module_list = []
