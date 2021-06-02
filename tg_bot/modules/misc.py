@@ -37,7 +37,7 @@ def gifid(update: Update, _):
             parse_mode=ParseMode.HTML,
         )
     else:
-        update.effective_message.reply_text("Please reply to a gif to get its ID.")
+        msg.reply_text("Please reply to a gif to get its ID.")
 
 
 @kigcmd(command='info', pass_args=True)
@@ -159,14 +159,11 @@ def ud(update: Update, _):
         )
         return
 
-    results = requests.get(
-        f"https://api.urbandictionary.com/v0/define?term={text[1]}"
-    ).json()
-
     try:
-        output = f"*{escape_markdown(text[1])}*:\n\nResult*:* {results.get('list')[0].get('definition')}\n\nExample*:* _{results.get('list')[0].get('example')}_"
-    except:
-        output = "No results found!"
+        results = requests.get(f"http://api.urbandictionary.com/v0/define?term={text[1]}").json()
+        output = f"*Word*: {escape_markdown(text[1])}\n\nResult*:* {results.get('list')[0].get('definition')}\n\nExample*:* {results.get('list')[0].get('example')}"
+    except IndexError:
+        output = f"*Word*: escape_markdown(text[1])\nResult*:* Sorry could not find any matching results!"
 
     message.reply_text(output, parse_mode=ParseMode.MARKDOWN)
 
