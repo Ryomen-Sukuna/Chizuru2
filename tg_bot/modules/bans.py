@@ -87,6 +87,9 @@ def ban(update, context):
             message.reply_text("This user has immunity and cannot be banned.")
             return log_message
 
+    txt = "{} was banned by {} in <b>{}</b>".format(
+               mention_html(member.user.id, member.user.first_name), mention_html(user.id, user.first_name), message.chat.title
+          )
     log = (
         f"<b>{html.escape(chat.title)}:</b>\n"
         f"#BANNED\n"
@@ -95,15 +98,13 @@ def ban(update, context):
     )
     if reason:
         log += "\n<b>Reason:</b> {}".format(reason)
+        txt += "\n<b>Reason</b>: <code>{}</code>".format(reason)
 
     try:
         chat.kick_member(user_id)
-        # context.bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
         context.bot.sendMessage(
             chat.id,
-            "{} was banned by {} in <b>{}</b>\n<b>Reason</b>: <code>{}</code>".format(
-                mention_html(member.user.id, member.user.first_name), mention_html(user.id, user.first_name), message.chat.title, reason
-            ),
+            txt,
             parse_mode=ParseMode.HTML,
         )
         return log
@@ -180,6 +181,10 @@ def temp_ban(update: Update, context: CallbackContext) -> str:
     if not bantime:
         return log_message
 
+    txt = (
+        f"Temp-Banned! User {mention_html(member.user.id, member.user.first_name)} "
+        f"will be banned for {time_val}."
+    )
     log = (
         f"<b>{html.escape(chat.title)}:</b>\n"
         "#TEMP BANNED\n"
@@ -189,15 +194,13 @@ def temp_ban(update: Update, context: CallbackContext) -> str:
     )
     if reason:
         log += "\n<b>Reason:</b> {}".format(reason)
+        txt += f"\nReason: {reason}",
 
     try:
         chat.kick_member(user_id, until_date=bantime)
-        # bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
         bot.sendMessage(
             chat.id,
-            f"Banned! User {mention_html(member.user.id, member.user.first_name)} "
-            f"will be banned for {time_val}.",
-            f"\nReason: {reason}",
+            txt,
             parse_mode=ParseMode.HTML,
         )
         return log
@@ -206,7 +209,7 @@ def temp_ban(update: Update, context: CallbackContext) -> str:
         if excp.message == "Reply message not found":
             # Do not reply
             message.reply_text(
-                f"Banned! User will be banned for {time_val}.", quote=False
+                f"Temp-Banned! User will be banned for {time_val}.", quote=False
             )
             return log
         else:
@@ -233,39 +236,33 @@ def kick(update: Update, context: CallbackContext) -> str:
     chat = update.effective_chat
     user = update.effective_user
     message = update.effective_message
-    log_message = ""
     bot, args = context.bot, context.args
     user_id, reason = extract_user_and_text(message, args)
 
     if not user_id:
         message.reply_text("I doubt that's a user.")
-        return log_message
+        return ""
 
     try:
         member = chat.get_member(user_id)
     except BadRequest as excp:
         if excp.message == "User not found":
             message.reply_text("I can't seem to find this user.")
-            return log_message
+            return ""
         else:
             raise
 
     if user_id == bot.id:
         message.reply_text("Yeahhh I'm not gonna do that.")
-        return log_message
+        return ""
 
     if is_user_ban_protected(chat, user_id):
         message.reply_text("I really wish I could kick this user....")
-        return log_message
+        return ""
 
     res = chat.unban_member(user_id)  # unban on current user = kick
     if res:
-        # bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
-        bot.sendMessage(
-            chat.id,
-            f"{mention_html(member.user.id, member.user.first_name)} was kicked by {mention_html(user.id, user.first_name)} in {message.chat.title}\n<b>Reason</b>: <code>{reason}</code>",
-            parse_mode=ParseMode.HTML,
-        )
+        txt = f"{mention_html(member.user.id, member.user.first_name)} was kicked by {mention_html(user.id, user.first_name)} in {message.chat.title}"
         log = (
             f"<b>{html.escape(chat.title)}:</b>\n"
             f"#KICKED\n"
@@ -274,13 +271,18 @@ def kick(update: Update, context: CallbackContext) -> str:
         )
         if reason:
             log += f"\n<b>Reason:</b> {reason}"
+            txt += f"\n<b>Reason</b>: <code>{reason}</code>"
 
+        bot.sendMessage(
+            chat.id,
+            txt,
+            parse_mode=ParseMode.HTML,
+        )
         return log
 
     else:
         message.reply_text("Well damn, I can't kick that user.")
-
-    return log_message
+        return ""
 
 
 @bot_admin
@@ -350,15 +352,9 @@ def unban(update: Update, context: CallbackContext) -> str:
         message.reply_text("Isn't this person already here??")
         return log_message
 
-    chat.unban_member(user_id)
-    bot.sendMessage(
-            chat.id,
-            "{} was unbanned by {} in <b>{}</b>\n<b>Reason</b>: <code>{}</code>".format(
-                mention_html(member.user.id, member.user.first_name), mention_html(user.id, user.first_name), message.chat.title, reason
-            ),
-            parse_mode=ParseMode.HTML,
-        )
-
+    txt = "{} was unbanned by {} in <b>{}</b>".format(
+                mention_html(member.user.id, member.user.first_name), mention_html(user.id, user.first_name), message.chat.title
+          )
     log = (
         f"<b>{html.escape(chat.title)}:</b>\n"
         f"#UNBANNED\n"
@@ -367,7 +363,14 @@ def unban(update: Update, context: CallbackContext) -> str:
     )
     if reason:
         log += f"\n<b>Reason:</b> {reason}"
+        txt += "\n<b>Reason</b>: <code>{}</code>".format(reason)
 
+    chat.unban_member(user_id)
+    bot.sendMessage(
+            chat.id,
+            txt,
+            parse_mode=ParseMode.HTML,
+        )
     return log
 
 
