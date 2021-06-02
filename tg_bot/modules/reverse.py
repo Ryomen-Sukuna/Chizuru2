@@ -109,15 +109,15 @@ def ParseSauce(googleurl):
     try:
         for bess in soup.findAll("a", {"class": "PBorbe"}):
              url = "https://www.google.com" + bess.get("href")
-             results.get("override") = url
+             results["override"] = url
     except:
         pass
 
     for similar_image in soup.findAll("input", {"class": "gLFyf"}):
          url = "https://www.google.com/search?tbm=isch&q=" + urllib.parse.quote_plus(similar_image.get("value"))
-         results.get("similar_images") = url
+         results["similar_images"] = url
 
     for best_guess in soup.findAll("div", attrs={"class": "r5a77d"}):
-         results.get("best_guess") = best_guess.get_text()
+         results["best_guess"] = best_guess.get_text()
 
     return results
