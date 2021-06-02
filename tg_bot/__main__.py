@@ -323,6 +323,9 @@ def about_callback(update: Update, context: CallbackContext):
                     InlineKeyboardButton(text="T & C", callback_data="aboutmanu_tac")
                   ],
                  [
+                    InlineKeyboardButton(text="Commands", callback_data="help_back")
+                 ],
+                 [
                     InlineKeyboardButton(text="Back", callback_data="aboutmanu_back")
                  ]
                 ]
