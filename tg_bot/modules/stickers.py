@@ -8,7 +8,7 @@ from urllib.error import HTTPError
 
 from PIL import Image
 from telegram import TelegramError
-from telegram import Update, ParseMode
+from telegram import Update, ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CallbackContext
 from telegram.utils.helpers import mention_html
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
