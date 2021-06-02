@@ -161,9 +161,9 @@ def ud(update: Update, _):
 
     try:
         results = requests.get(f"http://api.urbandictionary.com/v0/define?term={text[1]}").json()
-        output = f"*Word*: {escape_markdown(text[1])}\n\nResult*:* {results.get('list')[0].get('definition')}\n\nExample*:* {results.get('list')[0].get('example')}"
+        output = f"*Word*: {escape_markdown(text[1])}\n\n*Definition*: \n{results.get('list')[0].get('definition')}\n\n*Example*: \n{results.get('list')[0].get('example')}"
     except IndexError:
-        output = f"*Word*: escape_markdown(text[1])\nResult*:* Sorry could not find any matching results!"
+        output = f"*Word*: {escape_markdown(text[1])}\n*Definition*: \nSorry could not find any matching results!"
 
     message.reply_text(output, parse_mode=ParseMode.MARKDOWN)
 
