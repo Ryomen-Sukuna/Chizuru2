@@ -88,9 +88,9 @@ def reverse(update: Update, context: CallbackContext):
             return
 
         buttuns = [[InlineKeyboardButton(text="Images Link", url=fetchUrl)], [InlineKeyboardButton(text="Similar Images", url=imgspage)]]
-        search_result = guess.replace("Possible related search: ", "")
+        search_result = guess.replace("Possible related search: ", "")
 
-        MsG.edit_text("*Possible Related Search:* \n\n`{}`".format(search_result),
+        MsG.edit_text("*Search Results*: \n\n`{}`".format(search_result),
                       parse_mode=ParseMode.MARKDOWN,
                       reply_markup=InlineKeyboardMarkup(buttuns),
         )
