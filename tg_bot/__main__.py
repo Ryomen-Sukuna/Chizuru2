@@ -74,7 +74,7 @@ IMPORTED = {}
 MIGRATEABLE = []
 HELPABLE = {}
 STATS = []
-USER_INFO = []
+USER_BOOK = []
 DATA_IMPORT = []
 DATA_EXPORT = []
 
@@ -101,8 +101,8 @@ for module_name in ALL_MODULES:
     if hasattr(imported_module, "__stats__"):
         STATS.append(imported_module)
 
-    if hasattr(imported_module, "__user_info__"):
-        USER_INFO.append(imported_module)
+    if hasattr(imported_module, "__user_book__"):
+        USER_BOOK.append(imported_module)
 
     if hasattr(imported_module, "__import_data__"):
         DATA_IMPORT.append(imported_module)
@@ -211,6 +211,7 @@ def error_callback(update: Update, context: CallbackContext):
         pass
         # handle all other telegram related errors
 
+
 @kigcallback(pattern=r'help_.*')
 def help_button(update: Update, context: CallbackContext):
     '''#TODO
@@ -307,14 +308,13 @@ def about_callback(update: Update, context: CallbackContext):
                 [
                   [
                     InlineKeyboardButton(text="How To Use", callback_data="aboutmanu_howto"),
-                    InlineKeyboardButton(text="T & C", callback_data="aboutmanu_tac")
                   ],
                  [
-                    InlineKeyboardButton(text="Commands", callback_data="help_back")
+                    InlineKeyboardButton(text="Commands", callback_data="help_back"),
                  ],
                  [
-                    InlineKeyboardButton(text="Back", callback_data="aboutmanu_back")
-                 ]
+                    InlineKeyboardButton(text="Back", callback_data="aboutmanu_back"),
+                 ],
                 ]
             ),
         )
@@ -367,23 +367,6 @@ def about_callback(update: Update, context: CallbackContext):
             reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Back", callback_data="aboutmanu_howto")]]),
         )
         query.answer("Antispam")
-
-    elif query.data == "aboutmanu_tac":
-        query.message.edit_text(
-            text="<b>Terms and Conditions:</b>\n"
-                 "\n<i>To Use This Bot, You Need To Read Terms and Conditions</i>\n"
-                 "\n∘ Watch your group, if someone \n  spamming your group, you can \n  use report feature from your \n  Telegram Client."
-                 "\n∘ Make sure antiflood is enabled, so \n  nobody can ruin your group."
-                 "\n∘ Do not spam commands, buttons, \n  or anything in bot PM, else you will \n  be Gbanned."
-                f"\n∘ If you need to ask anything about \n  this bot, Go @{SUPPORT_CHAT}."
-                 "\n∘ If you asking nonsense in Support \n  Chat, you will get banned."
-                 "\n∘ Sharing any files/videos others \n  than about bot in Support Chat is \n  prohibited."
-                 "\n∘ Sharing NSFW in Support Chat,\n  will reward you banned/gbanned \n  and reported to Telegram as well."
-                 "\n\n<i>T & C will be changed anytime</i>\n",
-            parse_mode=ParseMode.HTML,
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Back", callback_data="aboutmanu_")]]),
-        )
-        query.answer("Terms & Conditions")
 
     context.bot.answer_callback_query(query.id)
 
