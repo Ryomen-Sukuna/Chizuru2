@@ -499,25 +499,20 @@ def gbanstat(update: Update, context: CallbackContext):
 def __stats__():
     return f"• {sql.num_gbanned_users()} gbanned users."
 
-
-def __user_info__(user_id):
-    if user_id in (777000, 1087968824):
-        return ""
-
+def __user_book__(user_id):
     is_gbanned = sql.is_user_gbanned(user_id)
-    text = "Gbanned: <b>{}</b>"
+    text = "<b>Globally Banned : </b>{}"
     if user_id in [777000, 1087968824]:
         return ""
     if user_id == dispatcher.bot.id:
         return ""
-    if int(user_id) in SUDO_USERS + SARDEGNA_USERS + WHITELIST_USERS:
+    if int(user_id) in DEV_USERS + SUDO_USERS + SUPPORT_USERS + SARDEGNA_USERS + WHITELIST_USERS:
         return ""
     if is_gbanned:
         text = text.format("Yes")
         user = sql.get_gbanned_user(user_id)
         if user.reason:
-            text += f"\n<b>Reason:</b> <code>{html.escape(user.reason)}</code>"
-        text += f"\n<b>Appeal Chat:</b> @YorkTownEagleUnion"
+            text += f"\n<b>Reason:</b> {html.escape(user.reason)}\n"
     else:
         text = text.format("No")
     return text
