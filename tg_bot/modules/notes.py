@@ -374,11 +374,21 @@ def clearall_btn(update: Update, context: CallbackContext):
     if query.data == "notes_rmall":
         if member.status == "creator" or query.from_user.id in SUDO_USERS:
             note_list = sql.get_all_chat_notes(chat.id)
+            if not note_list:
+                message.reply_text("No notes in this chat!")
+                return
             try:
+                count = 0
+                noteslist: List = []
                 for notename in note_list:
-                    note = notename.name.lower()
-                    sql.rm_note(chat.id, note)
-                message.edit_text("Deleted all notes.")
+                     note = notename.name.lower()
+                     noteslist.append(note)
+                     count += 1
+
+                for i in noteslist:
+                     sql.rm_note(chat.id, i)
+
+                message.edit_text(f"Cleared {count} notes in {chat.title}.")
             except BadRequest:
                 return
 
