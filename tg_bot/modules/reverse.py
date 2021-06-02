@@ -35,17 +35,12 @@ def reverse(update: Update, context: CallbackContext):
             file_id = reply.photo[-1].file_id
         elif reply.document:
             file_id = reply.document.file_id
-        elif reply.animation:
-            file_id = reply.animation.file_id
-        elif reply.video:
-            file_id = reply.video.file_id
         else:
-             msg.reply_text("Reply To An Image Or Sticker Or Video Or GIF To Lookup!")
+             msg.reply_text("Reply To An Image Or Sticker To Lookup!")
              return
 
         image_file = context.bot.get_file(file_id)
         image_file.download(imagename)
-        lim = 2
     else:
          msg.reply_text(
              "Please Reply To A Sticker, Or An Image To Search It!", parse_mode=ParseMode.MARKDOWN,
@@ -63,7 +58,7 @@ def reverse(update: Update, context: CallbackContext):
             "image_content": "",
         }
         response = requests.post(searchUrl, files=multipart, allow_redirects=False)
-        fetchUrl = response.headers["Location"]
+        fetchUrl = response.headers.get("Location")
 
         os.remove(imagename)
         if response != 400:
@@ -73,12 +68,12 @@ def reverse(update: Update, context: CallbackContext):
             return
 
         match = ParseSauce(fetchUrl + "&hl=en")
-        guess = match["best_guess"]
+        guess = match.get("best_guess")
         MsG.edit_text("Uploading...")
-        if match["override"] and not match["override"] == "":
-            imgspage = match["override"]
+        if match.get("override") and not match.get("override") == "":
+            imgspage = match.get("override")
         else:
-            imgspage = match["similar_images"]
+            imgspage = match.get("similar_images")
 
 
         if guess and imgspage:
@@ -96,13 +91,13 @@ def reverse(update: Update, context: CallbackContext):
         )
 
     except BadRequest as Bdr:
-        MsG.edit_text(f"ERROR! - Couldn't Find Anything!! \n\nReason: BadRequest\n\n{Bdr}")
+        MsG.edit_text(f"ERROR! - _Couldn't Find Anything!!_ \n\n*Reason*: BadRequest!\n\n{Bdr}", parse_mode=ParseMode.MARKDOWN)
     except TelegramError as Tge:
-        MsG.edit_text(f"ERROR! - Couldn't Find Anything!! \n\nReason: TelegramError\n\n{Tge}")
+        MsG.edit_text(f"ERROR! - _Couldn't Find Anything!!_ \n\n*Reason*: TelegramError!\n\n{Tge}", parse_mode=ParseMode.MARKDOWN)
     except Exception as Exp:
-        MsG.edit_text(f"ERROR! - Couldn't Find Anything!! \n\nReason: Exception\n\n{Exp}")
+        MsG.edit_text(f"ERROR! - _Couldn't Find Anything!!_ \n\n*Reason*: Exception!\n\n{Exp}", parse_mode=ParseMode.MARKDOWN)
     except:
-        MsG.edit_text("ERROR! - Couldn't Find Anything!!")
+        MsG.edit_text("ERROR! - _Couldn't Find Anything!!_ \n\n*Reason*: Duno!", parse_mode=ParseMode.MARKDOWN)
 
 
 def ParseSauce(googleurl):
@@ -113,18 +108,16 @@ def ParseSauce(googleurl):
 
     try:
         for bess in soup.findAll("a", {"class": "PBorbe"}):
-            url = "https://www.google.com" + bess.get("href")
-            results["override"] = url
+             url = "https://www.google.com" + bess.get("href")
+             results.get("override") = url
     except:
         pass
 
     for similar_image in soup.findAll("input", {"class": "gLFyf"}):
-        url = "https://www.google.com/search?tbm=isch&q=" + urllib.parse.quote_plus(
-            similar_image.get("value")
-        )
-        results["similar_images"] = url
+         url = "https://www.google.com/search?tbm=isch&q=" + urllib.parse.quote_plus(similar_image.get("value"))
+         results.get("similar_images") = url
 
     for best_guess in soup.findAll("div", attrs={"class": "r5a77d"}):
-        results["best_guess"] = best_guess.get_text()
+         results.get("best_guess") = best_guess.get_text()
 
     return results
