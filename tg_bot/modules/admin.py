@@ -106,7 +106,7 @@ def promote(update: Update, context: CallbackContext) -> str:
 
     bot.sendMessage(
         chat.id,
-        f"<b>{mention_html(user_id, user_member.user.first_name or user_id)}</b> was promoted with full rights by <b>{mention_html(message.from_user.id, message.from_user.first_name or message.from_user.id)}</b> in <b>{chat.title}</b>!",
+        f"<b>{mention_html(user_id, user_member.user.first_name or user_id)}</b> was promoted with all rights by <b>{mention_html(message.from_user.id, message.from_user.first_name or message.from_user.id)}</b> in <b>{chat.title}</b>!",
         parse_mode=ParseMode.HTML,
         reply_markup=InlineKeyboardMarkup(
                       [
