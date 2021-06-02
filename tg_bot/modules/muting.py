@@ -65,6 +65,9 @@ def mute(update: Update, context: CallbackContext) -> str:
 
     member = chat.get_member(user_id)
 
+    txt = "{} was muted by {} in <b>{}</b>".format(
+             mention_html(member.user.id, member.user.first_name), mention_html(user.id, user.first_name), message.chat.title, reason
+          )
     log = (
         f"<b>{html.escape(chat.title)}:</b>\n"
         f"#MUTE\n"
@@ -74,15 +77,14 @@ def mute(update: Update, context: CallbackContext) -> str:
 
     if reason:
         log += f"\n<b>Reason:</b> {reason}"
+        txt += "\n<b>Reason</b>: <code>{}</code>".format(reason)
 
     if member.can_send_messages is None or member.can_send_messages:
         chat_permissions = ChatPermissions(can_send_messages=False)
         bot.restrict_chat_member(chat.id, user_id, chat_permissions)
         bot.sendMessage(
             chat.id,
-            "{} was muted by {} in <b>{}</b>\n<b>Reason</b>: <code>{}</code>".format(
-                mention_html(member.user.id, member.user.first_name), mention_html(user.id, user.first_name), message.chat.title, reason
-            ),
+            txt
             parse_mode=ParseMode.HTML,
         )
         return log
@@ -131,23 +133,31 @@ def unmute(update: Update, context: CallbackContext) -> str:
                 can_send_other_messages=True,
                 can_add_web_page_previews=True,
             )
+
             try:
                 bot.restrict_chat_member(chat.id, int(user_id), chat_permissions)
             except BadRequest:
                 pass
-            bot.sendMessage(
-            chat.id,
-            "{} was unmuted by {} in <b>{}</b>\n<b>Reason</b>: <code>{}</code>".format(
-                mention_html(member.user.id, member.user.first_name), mention_html(user.id, user.first_name), message.chat.title, reason
-            ),
-            parse_mode=ParseMode.HTML,
-            )
-            return (
+
+            txt = "{} was unmuted by {} in <b>{}</b>".format(
+                     mention_html(member.user.id, member.user.first_name), mention_html(user.id, user.first_name), message.chat.title
+                  )
+            log =  (
                 f"<b>{html.escape(chat.title)}:</b>\n"
                 f"#UNMUTE\n"
                 f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
                 f"<b>User:</b> {mention_html(member.user.id, member.user.first_name)}"
             )
+            if reason:
+               log += f"\n<b>Reason:</b> {reason}"
+               txt += "\n<b>Reason</b>: <code>{}</code>".format(reason)
+
+            bot.sendMessage(
+                chat.id,
+                txt,
+                parse_mode=ParseMode.HTML,
+            )
+            return log
     else:
         message.reply_text(
             "This user isn't even in the chat, unmuting them won't make them talk more than they "
@@ -194,6 +204,7 @@ def temp_mute(update: Update, context: CallbackContext) -> str:
     if not mutetime:
         return ""
 
+    txt = f"Muted <b>{html.escape(member.user.first_name)}</b> for {time_val}!"
     log = (
         f"<b>{html.escape(chat.title)}:</b>\n"
         f"#TEMP MUTED\n"
@@ -203,6 +214,7 @@ def temp_mute(update: Update, context: CallbackContext) -> str:
     )
     if reason:
         log += f"\n<b>Reason:</b> {reason}"
+        txt += f"\n<b>Reason</b>: <code>{reason}</code>"
 
     try:
         if member.can_send_messages is None or member.can_send_messages:
@@ -212,7 +224,7 @@ def temp_mute(update: Update, context: CallbackContext) -> str:
             )
             bot.sendMessage(
                 chat.id,
-                f"Muted <b>{html.escape(member.user.first_name)}</b> for {time_val}!\n<b>Reason</b>: <code>{reason}</code>",
+                txt,
                 parse_mode=ParseMode.HTML,
             )
             return log
@@ -222,7 +234,7 @@ def temp_mute(update: Update, context: CallbackContext) -> str:
     except BadRequest as excp:
         if excp.message == "Reply message not found":
             # Do not reply
-            message.reply_text(f"Muted for {time_val}!", quote=False)
+            message.reply_text(f"Temp-Muted for {time_val}!", quote=False)
             return log
         else:
             log.warning(update)
