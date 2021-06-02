@@ -235,7 +235,7 @@ def get(update, context, notename, show_none=True, no_format=False):
     elif show_none:
           txt = "<b>There Are No Notes With That Name!</b>"
           if alleged_note_name := get_similar_note(chat_id, notename):
-              txt += "\n\nDid you mean <code>#{}</code>?".format(alleged_note_name)
+              txt += "\n\nDid you mean '<code>#{}</code>'?".format(alleged_note_name)
           message.reply_text(txt, parse_mode=ParseMode.HTML)
 
 
@@ -330,7 +330,10 @@ def clear(update: Update, context: CallbackContext):
         if sql.rm_note(chat_id, notename):
             update.effective_message.reply_text("Successfully removed note.")
         else:
-            update.effective_message.reply_text("That's not a note in my database!")
+            txt = "<b>There Are No Notes With That Name!</b>"
+            if alleged_note_name := get_similar_note(chat_id, notename):
+                txt += "\n\nDid you mean '<code>#{}</code>'?".format(alleged_note_name)
+            update.effective_message.reply_text(txt, parse_mode=ParseMode.HTML)
     else:
         update.effective_message.reply_text("Provide a notename.")
 
