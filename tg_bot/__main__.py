@@ -51,7 +51,7 @@ from tg_bot.modules.helper import get_help_btns
 from tg_bot.modules.language import gs
 
 SUPPORT_CHAT = "ElitesOfSupport"
-START_IMG = "https://telegra.ph/file/e5100e06c03767af80023.jpg"
+START_IMG = "https://telegra.ph/file/70139da07d839b2d2c057.jpg"
 
 buttuns = [
     [        
@@ -133,19 +133,6 @@ def send_help(chat_id, text, keyboard=None):
         chat_id=chat_id, text=text, parse_mode=ParseMode.MARKDOWN, reply_markup=keyboard
     )
 
-@kigcmd(command='text')
-def test(update: Update, context: CallbackContext):
-    '''#TODO
-
-    Params:
-        update: Update           -
-        context: CallbackContext -
-    '''
-
-    # pprint(eval(str(update)))
-    # update.effective_message.reply_text("Hola tester! _I_ *have* `markdown`", parse_mode=ParseMode.MARKDOWN)
-    update.effective_message.reply_text("This person edited a message")
-    print(update.effective_message)
 
 @kigcmd(command='start', pass_args=True)
 def start(update: Update, context: CallbackContext):
@@ -162,7 +149,7 @@ def start(update: Update, context: CallbackContext):
             if args[0].lower() == "help":
                 send_help(update.effective_chat.id, (gs(chat.id, "pm_help_text")))
 
-            elif args[0].lower() in ["formatting", "formattings"]:
+            elif args[0].lower() in ("formatting", "formattings"):
                 IMPORTED["misc"].send_formatting(update, context)
 
             elif args[0].lower().startswith("stngs_"):
@@ -217,7 +204,7 @@ def error_callback(update: Update, context: CallbackContext):
     except NetworkError:
         pass
         # handle other connection problems
-    except ChatMigrated as e:
+    except ChatMigrated:
         pass
         # the chat_id of a group has changed, use e.new_chat_id instead
     except TelegramError:
@@ -394,13 +381,7 @@ def about_callback(update: Update, context: CallbackContext):
                  "\n∘ Sharing NSFW in Support Chat,\n  will reward you banned/gbanned \n  and reported to Telegram as well."
                  "\n\n<i>T & C will be changed anytime</i>\n",
             parse_mode=ParseMode.HTML,
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                      InlineKeyboardButton(text="Back", callback_data="aboutmanu_")
-                    ] 
-                ]
-            )
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Back", callback_data="aboutmanu_")]]),
         )
         query.answer("Terms & Conditions")
 
@@ -453,7 +434,7 @@ def get_help(update: Update, context: CallbackContext):
             ),
         )
 
-    elif len(args) >= 2 and args[1].lower() in ["formatting", "formattings"]:
+    elif len(args) >= 2 and args[1].lower() in ("formatting", "formattings"):
           IMPORTED["misc"].formatting(update, context)
 
     else:
