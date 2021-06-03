@@ -84,11 +84,11 @@ def paginate_modules(page_n: int, module_dict: Dict, prefix, chat=None) -> List:
     if len(pairs) > 3:
         pairs = pairs[modulo_page * 3 : 3 * (modulo_page + 1)] + [
             (EqInlineKeyboardButton("<-", callback_data="{}_prev({})".format(prefix, modulo_page)),
-             EqInlineKeyboardButton("Home", callback_data="aboutmanu_back"),
+             EqInlineKeyboardButton("Home", callback_data="aboutmanu_"),
              EqInlineKeyboardButton("->", callback_data="{}_next({})".format(prefix, modulo_page)))]
 
     else:
-        pairs += [[EqInlineKeyboardButton("Home", callback_data="aboutmanu_back")]]
+        pairs += [[EqInlineKeyboardButton("Home", callback_data="aboutmanu_")]]
 
 
     return pairs
