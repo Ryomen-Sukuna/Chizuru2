@@ -13,7 +13,7 @@ from tg_bot import (
     DEV_USERS,
     dispatcher,
     JOIN_LOGGER,
-    ALLOW_CHATS,
+    RentalBot,
 )
 from tg_bot.modules.helper_funcs.chat_status import (
     is_user_ban_protected,
@@ -168,7 +168,7 @@ def new_member(update: Update, context: CallbackContext):
         welcome_bool = True
         media_wel = False
 
-        if new_mem.id == bot.id and not ALLOW_CHATS and user.id not in DEV_USERS:
+        if new_mem.id == bot.id and not RentalBot.ALLOW_CHATS and user.id not in DEV_USERS:
             with suppress(BadRequest):
                 bot.send_message(chat.id, f"You Can't Rent {bot.first_name}, Groups are disabled for me!")
             bot.leave_chat(update.effective_chat.id)
