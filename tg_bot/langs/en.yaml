@@ -10,8 +10,10 @@ set_chat_lang: "Great, {} it is from now on!"
 
 pm_start_text: |
    Hey There! I'm *{}* 
-   [✧]({}) I'm Here To Help You Manage \n    Your Groups!
-   [✧]({}) Hit /help To Find Out More About\n    How To Use Me.
+   [✧]({}) I'm Here To Help You Manage 
+    Your Groups!
+   [✧]({}) Hit /help To Find Out More About
+    How To Use Me.
    Join My [Support Chat](t.me/{}) To Get Information & Help.
    
 grp_start_text: "Hmm?"
@@ -60,7 +62,7 @@ admin_help: |
 
 afk_help: |
    • /afk <reason>: mark yourself as AFK(away from keyboard).
-   • /dnd <reason>: same as the afk command.
+   • /dnd <reason>: same as the afk.
 
    When marked as AFK, any mentions will be replied to with a message to say you're not available!
 
@@ -101,20 +103,19 @@ approve_help: |
      • /unapproveall*:* Unapprove *ALL* users in a chat. This cannot be undone.
 
 backup_help: |
-    *Admin only:*
-     • /import: reply to a group butler backup file to import as much as possible, making the transfer super simple! Note \
-       that files/photos can't be imported due to telegram restrictions.
-     • /export: !!! This isn't a command yet, but should be coming soon!
+    *Admin only*:
+     • /export*:* Generate a file containing all your chat data.
+     • /import*:* Import the settings in the replied to data file.
 
 bans_help: |
-    • /kickme: kicks the user who issued the command
-    • /banme: ban the user who issued the command
+    • /kickme*:* kicks the user who issued the command
+    • /banme*:* ban the user who issued the command
 
-     *Admin only:*
-    • /ban <userhandle>: bans a user. (via handle, or reply)
-    • /tban <userhandle> x(m/h/d): bans a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
-    • /unban <userhandle>: unbans a user. (via handle, or reply)
-    • /kick <userhandle>: kick a user out of the group, (via handle, or reply)
+     *Admin only*:
+    • /ban <userhandle>*:* bans a user. (via handle, or reply)
+    • /tban <userhandle> x(m/h/d)*:* bans a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
+    • /unban <userhandle>*:* unbans a user. (via handle, or reply)
+    • /kick <userhandle>*:* kick a user out of the group, (via handle, or reply)
 
 blacklist_help: |
     *CMD*:
