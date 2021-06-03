@@ -145,7 +145,7 @@ def start(update: Update, context: CallbackContext):
             if args[0].lower() == "help":
                 send_help(update.effective_chat.id, (gs(chat.id, "pm_help_text")))
 
-            elif args[0].lower() in ("formatting", "formattings"):
+            elif args[0].lower() == "formatting":
                 IMPORTED["misc"].send_formatting(update, context)
 
             elif args[0].lower().startswith("stngs_"):
@@ -159,6 +159,19 @@ def start(update: Update, context: CallbackContext):
 
             elif args[0][1:].isdigit() and "rules" in IMPORTED:
                 IMPORTED["rules"].send_rules(update, args[0], from_pm=True)
+
+
+            elif any(args[0].lower() == x for x in HELPABLE):
+                module = args[1].lower()
+                text = (
+                   "Here is the available help for the *{}* module:\n".
+                   format(HELPABLE[module].__mod_name__) + HELPABLE[module].get_help
+                )
+                send_help(
+                     chat.id,
+                     text,
+                     InlineKeyboardMarkup([[InlineKeyboardButton(text="Back", callback_data="help_back")]]),
+                )
 
 
         else:
@@ -231,23 +244,18 @@ def help_button(update: Update, context: CallbackContext):
                 "Here is the help for the *{}* module:\n".format(
                     HELPABLE[module].__mod_name__
                 )
-                + HELPABLE[module].get_help(update.effective_chat.id)
+                + HELPABLE[module].get_help
             )
             try:
                 x = get_help_btns(HELPABLE[module].__mod_name__)
-                if x is not None:
-                     markup = InlineKeyboardMarkup(x)
-                else:
-                     markup = InlineKeyboardMarkup(
-                                    [[InlineKeyboardButton(text="Back", callback_data="help_back")]]
-                              )
+                if x is None:
+                    x = [[InlineKeyboardButton(text="Back", callback_data="help_back")]]
             except:
-                markup = InlineKeyboardMarkup(
-                               [[InlineKeyboardButton(text="Back", callback_data="help_back")]]
-                         )
+                x = [[InlineKeyboardButton(text="Back", callback_data="help_back")]]
+
             query.message.edit_text(
                 text=text,
-                reply_markup=markup,
+                reply_markup=InlineKeyboardMarkup(x),
                 disable_web_page_preview=True,
                 parse_mode=ParseMode.MARKDOWN,
             )
@@ -314,7 +322,6 @@ def about_callback(update: Update, context: CallbackContext):
                 ]
             ),
         )
-        query.answer("About Menu")
 
     elif query.data == "aboutmanu_back":
         query.message.edit_text(
@@ -341,7 +348,6 @@ def about_callback(update: Update, context: CallbackContext):
                 [InlineKeyboardButton(text="Back", callback_data="aboutmanu_")]
             ]),
         )
-        query.answer("How To Use")
 
     elif query.data == "aboutmanu_permis":
         query.message.edit_text(
@@ -354,7 +360,6 @@ def about_callback(update: Update, context: CallbackContext):
             parse_mode=ParseMode.HTML,
             reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Back", callback_data="aboutmanu_howto")]]),
         )
-        query.answer("Admin Permissions")
 
     elif query.data == "aboutmanu_spamprot":
         query.message.edit_text(
@@ -362,7 +367,6 @@ def about_callback(update: Update, context: CallbackContext):
             parse_mode=ParseMode.MARKDOWN,
             reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Back", callback_data="aboutmanu_howto")]]),
         )
-        query.answer("Antispam")
 
     context.bot.answer_callback_query(query.id)
 
@@ -377,7 +381,7 @@ def get_help(update: Update, context: CallbackContext):
     '''
 
     chat = update.effective_chat  # type: Optional[Chat]
-    args = update.effective_message.text.split(None, 1)
+    args = update.effective_message.text.split(" " or None, 1)
 
     # ONLY send help in PM
     if chat.type != chat.PRIVATE:
@@ -413,7 +417,7 @@ def get_help(update: Update, context: CallbackContext):
             ),
         )
 
-    elif len(args) >= 2 and args[1].lower() in ("formatting", "formattings"):
+    elif len(args) >= 2 and args[1].lower() == "formatting":
           IMPORTED["misc"].formatting(update, context)
 
     else:
