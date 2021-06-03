@@ -75,17 +75,17 @@ def reverse(update: Update, context: CallbackContext):
         else:
             imgspage = match.get("similar_images")
 
-
+        buttuns = []
         if guess:
             MsG.edit_text("Hmmm....")
             search_result = guess.replace("Possible related search: ", "")
-            buttuns = [[InlineKeyboardButton(text="Images Link", url=fetchUrl)]]
+            buttuns.append([InlineKeyboardButton(text="Images Link", url=fetchUrl)])
         else:
             MsG.edit_text("Couldn't Find Anything!")
             return
 
         if imgspage:
-            buttons += [[InlineKeyboardButton(text="Similar Images", url=imgspage)]]
+            buttuns.append([InlineKeyboardButton(text="Similar Images", url=imgspage)])
 
         MsG.edit_text("*Search Results*: \n\n`{}`".format(search_result),
                       parse_mode=ParseMode.MARKDOWN,
