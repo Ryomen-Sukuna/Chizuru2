@@ -70,20 +70,22 @@ def reverse(update: Update, context: CallbackContext):
         match = ParseSauce(fetchUrl + "&hl=en")
         guess = match.get("best_guess")
         MsG.edit_text("Uploading...")
-        if match.get("override") and not match.get("override") == "":
+        if match.get("override") and (not match.get("override") == "" or not match.get("override") == None):
             imgspage = match.get("override")
         else:
             imgspage = match.get("similar_images")
 
 
-        if guess and imgspage:
+        if guess:
             MsG.edit_text("Hmmm....")
+            search_result = guess.replace("Possible related search: ", "")
+            buttuns = [[InlineKeyboardButton(text="Images Link", url=fetchUrl)]]
         else:
             MsG.edit_text("Couldn't Find Anything!")
             return
 
-        buttuns = [[InlineKeyboardButton(text="Images Link", url=fetchUrl)], [InlineKeyboardButton(text="Similar Images", url=imgspage)]]
-        search_result = guess.replace("Possible related search: ", "")
+        if imgspage:
+            buttons += [[InlineKeyboardButton(text="Similar Images", url=imgspage)]]
 
         MsG.edit_text("*Search Results*: \n\n`{}`".format(search_result),
                       parse_mode=ParseMode.MARKDOWN,
