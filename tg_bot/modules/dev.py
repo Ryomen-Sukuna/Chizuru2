@@ -9,7 +9,7 @@ from tg_bot.modules.helper_funcs.chat_status import dev_plus
 def allow_groups(update: Update, context: CallbackContext):
     args = context.args
     if not args:
-        state = "Lockdown is " + "on" if not SaitamaRobot.ALLOW_CHATS else "off"
+        state = "Lockdown is " + "on" if not RentalBot.ALLOW_CHATS else "off"
         update.effective_message.reply_text(f"Current state: {state}")
         return
     if args[0].lower() in ["off", "no"]:
