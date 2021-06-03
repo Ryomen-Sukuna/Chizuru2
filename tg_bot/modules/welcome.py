@@ -235,13 +235,13 @@ def new_member(update: Update, context: CallbackContext):
                     )
                 except:
                     pass
-                update.effective_message.reply_text(
-                    "You Have Rented Chizuru For Your Chat. *That's Awesome!*" 
-                    "\nSend [/help](t.me/ElitesOfRobot?start=help) Command In PM To Know About Me More." 
-                    "\nJoin Our Chats For [Discussion](https://t.me/ElitesOfAnime) & [Support](https://t.me/ElitesOfSupport). \n[Click Here](t.me/ElitesOfRobot?start=-1001175341127) To Redirect In PM.", 
+                bot.send_message(
+                     chat.id,
+                     f"You Have Rented {bot.first_name} For Your Chat. *That's Awesome!*" 
+                     "\nSend [/help](t.me/ElitesOfRobot?start=help) Command In PM To Know About Me More. " 
+                     "Join Our Chats For [Discussion](https://t.me/TheLaughingCoffin) & [Support](https://t.me/ElitesOfSupport).", 
                      parse_mode=ParseMode.MARKDOWN, 
                      disable_web_page_preview=True,
-                     reply_to_message_id=reply,
                 )
                 continue
 
@@ -273,19 +273,20 @@ def new_member(update: Update, context: CallbackContext):
                     else:
                         username = mention
 
-                    if "%%%" in cust_welcome:
-                        split = cust_welcome.split("%%%")
+                    valid_format = escape_invalid_curly_brackets(
+                        cust_welcome, VALID_WELCOME_FORMATTERS
+                    )
+
+                    if "%%%" in valid_format:
+                        split = valid_format.split("%%%")
                         if all(split):
                             cust_wel = random.choice(split)
                         else:
-                            cust_wel = cust_welcome
+                            cust_wel = valid_format
                     else:
-                        cust_wel = cust_welcome
+                        cust_wel = valid_format
 
-                    valid_format = escape_invalid_curly_brackets(
-                        cust_wel, VALID_WELCOME_FORMATTERS
-                    )
-                    res = valid_format.format(
+                    res = cust_wel.format(
                         first=escape_markdown(first_name),
                         last=escape_markdown(new_mem.last_name or first_name),
                         fullname=escape_markdown(fullname),
