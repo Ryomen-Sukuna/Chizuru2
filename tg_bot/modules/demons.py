@@ -1,5 +1,4 @@
 import asyncio
-from asyncio import sleep
 
 from telethon import events, Button
 from telethon.errors import ChatAdminRequiredError, UserAdminInvalidError
@@ -35,9 +34,7 @@ UNBAN_RIGHTS = ChatBannedRights(
 
 
 # Demons
-async def demons(event):
-    del_u = 0 
-
+async def demons(event): 
     # Here laying the sanity check
     chat = await event.get_chat()
     admin = chat.admin_rights
@@ -50,21 +47,21 @@ async def demons(event):
         await event.respond("I haven't got the rights to do this.")
         return
 
+    demons: int = 0
     X = await event.respond("Searching For Demons...")
     async for user in event.client.iter_participants(event.chat_id):
             if user.deleted:
-                del_u += 1
-                await sleep(1)
-    if del_u > 0:
+                demons += 1
+                await asyncio.sleep(1)
+
+    if demons > 0:
         markup = [
-           [Button.inline('Yes', data='demon_yes'),],
-           [Button.inline('No', data='demon_no'),],
+           [Button.inline("Yes", data="demon_yes")],
+           [Button.inline("No", data="demon_no")],
         ]
-        dimon = f"Found **{del_u} - Demon** In This Chat!\n\nWould You Like To Hunt That Demon ?"
-        dimons = f"Found **{del_u} - Demons** In This Chat!\n\nWould You Like To Hunt Them All ?"
-        demons = dimons if del_u > 1 else dimon
+        demon = f"Found **{demons}** Demon{'s' if demons > 1 else ''} In This Chat!\n\nWould You Like To Hunt {'Them All' if demons > 1 else 'That Demon'} ?"
         await X.edit(
-            demons,
+            demon,
             buttons=markup,
         )
     else:
@@ -73,7 +70,7 @@ async def demons(event):
 
 @client.on(events.CallbackQuery)
 async def dimonhandler(event):
-    if event.data == b'demon_yes':
+    if event.data == b"demon_yes":
         # Here laying the sanity check
         but = await event.get_chat()
         admim = but.admin_rights
@@ -83,12 +80,12 @@ async def dimonhandler(event):
             await event.respond("You don't have the necessary rights to do this!")
             return
         if not admim and not await can_ban_users(event):
-            await event.respond("I haven't got the rights to do this.")
+            await event.respond("I haven't got the necessary rights to do this.")
             return
 
         await event.edit("Hunting Demons...")
-        del_u = 0
-        del_a = 0
+        normy_demons: int = 0
+        pro_demons: int = 0
 
         async for user in event.client.iter_participants(event.chat_id):
             if user.deleted:
@@ -96,23 +93,25 @@ async def dimonhandler(event):
                     await event.client(
                         EditBannedRequest(event.chat_id, user.id, BANNED_RIGHTS)
                     )
+                    await asyncio.sleep(1)
                 except ChatAdminRequiredError:
-                    await event.edit("I Don't Have Ban Rights In This Chat!")
+                    await event.edit("I haven't got the necessary rights to do this.")
                     return
                 except UserAdminInvalidError:
-                    del_u -= 1
-                    del_a += 1
+                    normy_demons -= 1
+                    pro_demons += 1
                 await event.client(EditBannedRequest(event.chat_id, user.id, UNBAN_RIGHTS))
-                del_u += 1
+                normy_demons += 1
 
-        if del_u > 0:
-            demon = f"Hunted `{del_u}` - Demon{'s' if del_u > 1 else ''}"
-            if del_a > 0:
-                demon += f"\n`{del_a}` - Upper Level Demon{'s' if del_a > 1 else ''} {'Are' if del_a > 1 else 'Is'} Escaped!"
+        demon = ""
+        if normy_demons > 0:
+            demon += f"**{normy_demons}** - Hunted Demon{'s' if normy_demons > 1 else ''}!"
+        if pro_demons > 0:
+            demon += f"\n**{pro_demons}** - Upper Level Demon{'s' if pro_demons > 1 else ''} {'Are' if pro_demons > 1 else 'Is'} Escaped!"
 
-            await event.edit(demon)
-            await event.answer("Demon Hunted!")
-    elif event.data == b'demon_no':
+        await event.edit(demon)
+        await event.answer("Demon Hunted!")
+    elif event.data == b"demon_no":
           await event.edit("Demom Hunting Task Cancelled!")
           await event.answer("Cancelled!")
 
