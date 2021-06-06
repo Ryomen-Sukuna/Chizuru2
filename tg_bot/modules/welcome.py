@@ -225,7 +225,7 @@ def new_member(update: Update, context: CallbackContext):
 
             # Welcome yourself
             elif new_mem.id == bot.id:
-                chet_name = f"<a href='t.me/{chat.username}'>{html.escape(chat.title)}</a>" if chat.username else html.escape(chat.title
+                chet_name = f"<a href='t.me/{chat.username}'>{html.escape(chat.title)}</a>" if chat.username else html.escape(chat.title)
                 creator = None
 
                 for x in bot.get_chat_administrators(chat.id):
@@ -236,8 +236,8 @@ def new_member(update: Update, context: CallbackContext):
                 bot.send_message(
                      JOIN_LOGGER,
                      "#NEW_GROUP\n\n"
-                     "<b>Chat Name:</b> {} \n\n<b>Chat ID:</b> <code>{}</code> {} \n\n<b>Count:</b> {}\n<b>Adder ID:</b> <code>{}</code> \n<b>Adder Name:</b> {}".
-                     format(chet_name, chat.id, ('\n\n<b>Creator:</b> ' + creator) if creator is not None else '', chat.get_members_count(), user.id, mention_html(user.id, html.escape(user.first_name))),
+                     "<b>Chat Name:</b> {} \n\n<b>Chat ID:</b> <code>{}</code> {}\n\n<b>Count:</b> {}\n<b>Adder:</b> {} (<code>{}</code>)".
+                     format(chet_name, chat.id, ('\n\n<b>Creator:</b> ' + creator) if creator is not None else '', chat.get_members_count(), mention_html(user.id, html.escape(user.first_name) or "Adder"), user.id),
                      parse_mode=ParseMode.HTML, 
                      disable_web_page_preview=True,
                 )
