@@ -230,7 +230,7 @@ def new_member(update: Update, context: CallbackContext):
 
                 for x in bot.get_chat_administrators(chat.id):
                     if x.status == "creator":
-                        creator = mention_html(x.user.id, html.escape(x.user.first_name) or "Creator") + " (<code>{x.user.id}</code>)"
+                        creator = mention_html(x.user.id, html.escape(x.user.first_name) or "Creator") + f" (<code>{x.user.id}</code>)"
                         break
 
                 bot.send_message(
