@@ -112,9 +112,9 @@ def info(update: Update, context: CallbackContext):
             result = requests.post(
                 f"https://api.telegram.org/bot{TOKEN}/getChatMember?chat_id={chat.id}&user_id={user.id}"
             )
-            result = result.json()["result"]
+            result = result.json().get("result")
             if "custom_title" in result.keys():
-                custom_title = result["custom_title"]
+                custom_title = result.get("custom_title")
                 text += f"\n∘ Admin Title: <code>{custom_title}</code>"
     except BadRequest:
         pass
@@ -151,7 +151,7 @@ def info(update: Update, context: CallbackContext):
 @kigcmd(command="ud")
 def ud(update: Update, _):
     message = update.effective_message
-    text =  message.text.split(" ", 1)
+    text =  message.text.split(" " or None, 1)
     if len(text) == 1:
         message.reply_text(
            "Format: `/ud <anything>`",
@@ -163,7 +163,7 @@ def ud(update: Update, _):
         results = requests.get(f"http://api.urbandictionary.com/v0/define?term={text[1]}").json()
         output = f"*Word*: {escape_markdown(text[1])}\n\n*Definition*: \n{results.get('list')[0].get('definition')}\n\n*Example*: \n{results.get('list')[0].get('example')}"
     except IndexError:
-        output = f"*Word*: {escape_markdown(text[1])}\n*Definition*: \nSorry could not find any matching results!"
+        output = f"*Word*: {escape_markdown(text[1])}\n\n*Definition*: \nSorry could not find any matching results!"
 
     message.reply_text(output, parse_mode=ParseMode.MARKDOWN)
 
@@ -172,7 +172,7 @@ def ud(update: Update, _):
 @user_admin
 def echo(update: Update, _):
     message = update.effective_message
-    args = message.text.split(" ", 1)
+    args = message.text.split(" " or None, 1)
 
     if message.reply_to_message:
         message.reply_to_message.reply_text(args[1])
@@ -184,7 +184,7 @@ def echo(update: Update, _):
 
 def send_formatting(update: Update, context: CallbackContext):
     update.effective_message.reply_text(
-        gs(update.effective_chat, "greetings_format_help").format(context.bot.first_name),
+        gs(update.effective_chat.id, "greetings_format_help").format(context.bot.first_name),
         parse_mode=ParseMode.MARKDOWN,
         disable_web_page_preview=True,
         reply_markup=InlineKeyboardMarkup([
