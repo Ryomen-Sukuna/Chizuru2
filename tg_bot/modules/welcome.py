@@ -13,7 +13,6 @@ from tg_bot import (
     DEV_USERS,
     dispatcher,
     JOIN_LOGGER,
-    RentalBot,
 )
 from tg_bot.modules.helper_funcs.chat_status import (
     is_user_ban_protected,
@@ -168,11 +167,21 @@ def new_member(update: Update, context: CallbackContext):
         welcome_bool = True
         media_wel = False
 
-        if new_mem.id == bot.id and not RentalBot.ALLOW_CHATS and user.id not in DEV_USERS:
-            with suppress(BadRequest):
-                bot.send_message(chat.id, f"You Can't Rent {bot.first_name}, Groups are disabled for me!")
-            bot.leave_chat(update.effective_chat.id)
-            return
+        if new_mem.id == bot.id and user.id not in DEV_USERS:
+          try:
+              tXt = "You Can't Add Me Because, You Are Not Member Of @TheLaughingCoffin!"
+              member = bot.get_chat_member(-1001287667199, user.id)
+              if member.status in ("kicked", "left"):
+                  with suppress(BadRequest):
+                        bot.send_message(chat.id, text=tXt)
+                  bot.leave_chat(chat.id)
+                  return
+          except BadRequest as BR:
+              if BR.message in ("User not found", "User_not_mutual_contact", "User_not_participant"):
+                  with suppress(BadRequest):
+                        bot.send_message(chat.id, text=tXt)
+                  bot.leave_chat(chat.id)
+                  return
 
         if is_user_gbanned(new_mem.id):
             return
