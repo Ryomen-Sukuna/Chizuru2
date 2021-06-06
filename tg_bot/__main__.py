@@ -21,7 +21,6 @@ from telegram.ext import (
 from telegram.ext.dispatcher import DispatcherHandlerStop
 from telegram.utils.helpers import escape_markdown
 from tg_bot import (
-    RentalBot,
     dispatcher,
     updater,
     TOKEN,
@@ -398,7 +397,7 @@ def get_help(update: Update, context: CallbackContext):
             ),
         )
 
-    elif len(args) >= 2 and args[1].lower() == "formatting":
+    elif len(args) >= 5 and args[1].lower() == "formatting":
           IMPORTED["misc"].formatting(update, context)
 
     else:
@@ -625,9 +624,6 @@ def main():
 
     else:
         log.info(f"Using long polling. | BOT: [@{dispatcher.bot.username}]")
-        RentalBot.bot_id = dispatcher.bot.id
-        RentalBot.bot_username = dispatcher.bot.username
-        RentalBot.bot_name = dispatcher.bot.first_name
         updater.start_polling(timeout=15, read_latency=4, drop_pending_updates=True)
     if len(argv) not in (1, 3, 4):
         telethn.disconnect()
