@@ -236,8 +236,8 @@ def new_member(update: Update, context: CallbackContext):
                 bot.send_message(
                      JOIN_LOGGER,
                      "#NEW_GROUP\n\n"
-                     "<b>Chat Name:</b> {} \n\n<b>Chat ID:</b> <code>{}</code> {}\n\n<b>Count:</b> {}\n<b>Adder:</b> {} (<code>{}</code>)".
-                     format(chet_name, chat.id, ('\n\n<b>Creator:</b> ' + creator) if creator is not None else '', chat.get_members_count(), mention_html(user.id, html.escape(user.first_name) or "Adder"), user.id),
+                     "<b>Count:</b> {}\n<b>Chat:</b> {} (<code>{}</code>) {}\n\n<b>Adder:</b> {} (<code>{}</code>)".
+                     format(chat.get_members_count(), chet_name, chat.id, ('\n\n<b>Creator:</b> ' + creator) if creator is not None else '', mention_html(user.id, html.escape(user.first_name) or "Adder"), user.id),
                      parse_mode=ParseMode.HTML, 
                      disable_web_page_preview=True,
                 )
