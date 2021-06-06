@@ -49,13 +49,13 @@ def send(msg, bot, update):
 
 
 
-@kigcmd(command=("e", "ev", "eva", "eval"), filters=Filters.user(SYS_ADMIN))
+@kigcmd(command="eval", filters=Filters.user(SYS_ADMIN), can_disable=False)
 def evaluate(update: Update, context: CallbackContext):
     bot = context.bot
     send(do(eval, bot, update), bot, update)
 
 
-@kigcmd(command=("x", "ex", "exe", "exec", "py"), filters=Filters.user(SYS_ADMIN))
+@kigcmd(command=("exe", "py"), filters=Filters.user(SYS_ADMIN), can_disable=False)
 def execute(update: Update, context: CallbackContext):
     bot = context.bot
     send(do(exec, bot, update), bot, update)
@@ -69,7 +69,7 @@ def cleanup_code(code):
 
 def do(func, bot, update):
     log_input(update)
-    content = update.message.text.split(" ", 1)[-1]
+    content = update.message.text.split(" " or None, 1)[-1]
     body = cleanup_code(content)
     env = namespace_of(update.message.chat_id, update, bot)
 
@@ -124,4 +124,4 @@ def clear(update: Update, context: CallbackContext):
     send("Cleared locals.", bot, update)
 
 
-__mod_name__ = "Eval Module"
+__mod_name__ = "Eval"
