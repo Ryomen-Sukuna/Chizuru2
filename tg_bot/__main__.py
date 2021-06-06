@@ -1,8 +1,3 @@
-'''#TODO
-
-Dank-del
-2020-12-29
-'''
 
 import importlib
 import re
@@ -141,7 +136,7 @@ def start(update: Update, context: CallbackContext):
     chat = update.effective_chat
     args = context.args
     if update.effective_chat.type == "private":
-        if len(args) >= 1:
+        if args and len(args) >= 1:
             if args[0].lower() == "help":
                 send_help(update.effective_chat.id, (gs(chat.id, "pm_help_text")))
 
@@ -160,13 +155,9 @@ def start(update: Update, context: CallbackContext):
             elif args[0][1:].isdigit() and "rules" in IMPORTED:
                 IMPORTED["rules"].send_rules(update, args[0], from_pm=True)
 
-
             elif any(args[0].lower() == x for x in HELPABLE):
                 module = args[1].lower()
-                text = (
-                   "Here is the available help for the *{}* module:\n".
-                   format(HELPABLE[module].__mod_name__) + HELPABLE[module].get_help
-                )
+                text = "Here is the help for the *{}* module:\n".format(HELPABLE[module].__mod_name__) + HELPABLE[module].get_help(chat.id)
                 send_help(
                      chat.id,
                      text,
@@ -240,12 +231,7 @@ def help_button(update: Update, context: CallbackContext):
     try:
         if mod_match:
             module = mod_match.group(1)
-            text = (
-                "Here is the help for the *{}* module:\n".format(
-                    HELPABLE[module].__mod_name__
-                )
-                + HELPABLE[module].get_help
-            )
+            text = "Here is the help for the *{}* module:\n".format(HELPABLE[module].__mod_name__) + HELPABLE[module].get_help(chat.id)
             try:
                 x = get_help_btns(HELPABLE[module].__mod_name__)
                 if x is None:
@@ -403,12 +389,7 @@ def get_help(update: Update, context: CallbackContext):
 
     elif len(args) >= 2 and any(args[1].lower() == x for x in HELPABLE):
         module = args[1].lower()
-        text = (
-            "Here is the available help for the *{}* module:\n".format(
-                HELPABLE[module].__mod_name__
-            )
-            + HELPABLE[module].get_help
-        )
+        text = "Here is the help for the *{}* module:\n".format(HELPABLE[module].__mod_name__) + HELPABLE[module].get_help(chat.id)
         send_help(
             chat.id,
             text,
