@@ -218,32 +218,30 @@ def new_member(update: Update, context: CallbackContext):
             # Welcome Devs
             elif new_mem.id in DEV_USERS:
                 update.effective_message.reply_text(
-                    "Whoa! A member of the Eagle Union just joined!",
+                    "Whoa! An Admin of the @TheLaughingCoffin just joined!",
                     reply_to_message_id=reply,
                 )
                 continue
 
             # Welcome yourself
             elif new_mem.id == bot.id:
-                try: 
-                    CHAT_NAMe = f"<a href='t.me/{chat.username}'>{html.escape(chat.title)}</a>" if chat.username else f"{html.escape(chat.title)}"
-                    creator = None
+                chet_name = f"<a href='t.me/{chat.username}'>{html.escape(chat.title)}</a>" if chat.username else html.escape(chat.title
+                creator = None
 
-                    for x in bot.get_chat_administrators(chat.id):
-                        if x.status == "creator":
-                            creator = x.user
-                            break
+                for x in bot.get_chat_administrators(chat.id):
+                    if x.status == "creator":
+                        creator = mention_html(x.user.id, html.escape(x.user.first_name) or "Creator") + " (<code>{x.user.id}</code>)"
+                        break
 
-                    bot.send_message(
-                              JOIN_LOGGER,
-                              "#NEW_GROUP\n\n"
-                              "<b>Chat Name:</b> {} \n\n<b>Chat ID:</b> <code>{}</code> {} \n\n<b>Count:</b> {}\n<b>Adder ID:</b> <code>{}</code> \n<b>Adder Name:</b> {}".
-                              format(CHAT_NAMe, chat.id, '\n\n<b>Creator:</b> <code>' + creator + '</code>' if creator is not None else '', chat.get_members_count(), user.id, mention_html(user.id, html.escape(user.first_name))),
-                              parse_mode=ParseMode.HTML, 
-                              disable_web_page_preview=True,
-                    )
-                except:
-                    pass
+                bot.send_message(
+                     JOIN_LOGGER,
+                     "#NEW_GROUP\n\n"
+                     "<b>Chat Name:</b> {} \n\n<b>Chat ID:</b> <code>{}</code> {} \n\n<b>Count:</b> {}\n<b>Adder ID:</b> <code>{}</code> \n<b>Adder Name:</b> {}".
+                     format(chet_name, chat.id, ('\n\n<b>Creator:</b> ' + creator) if creator is not None else '', chat.get_members_count(), user.id, mention_html(user.id, html.escape(user.first_name))),
+                     parse_mode=ParseMode.HTML, 
+                     disable_web_page_preview=True,
+                )
+
                 bot.send_message(
                      chat.id,
                      f"You Have Rented {bot.first_name} For Your Chat. *That's Awesome!*" 
