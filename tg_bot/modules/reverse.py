@@ -50,7 +50,7 @@ class Souce:
         return LowdaLasan(thumbnail_url, text)
 
 
-def post_souce_results(bot, chat_id: str, results: List[RequestResult]):
+def post_souce_results(bot, chat_id: str, results: List[LowdaLasan]):
         if results == []:
             bot.send_message(chat_id=chat_id, text="Nothing found(")
             return
