@@ -8,6 +8,7 @@ from urllib.error import HTTPError
 
 from PIL import Image
 from telegram import TelegramError
+from telegram.error import BadRequest
 from telegram import Update, ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CallbackContext
 from telegram.utils.helpers import mention_html
@@ -19,6 +20,17 @@ from tg_bot.modules.helper_funcs.decorators import kigcmd
 @kigcmd(command='stickers')
 def cb_sticker(update: Update, context: CallbackContext):
     message = update.effective_message
+    if update.effective_chat.type == "private":
+        try:
+            nibba = context.bot.get_chat_member(-1001287667199, user.id)
+            if nibba.status in ("kicked", "left"):
+                message.reply_text("This command is meant to use in group not in PM")
+                return
+        except BadRequest as BR:
+            if BR.message in ("User not found", "User_not_mutual_contact", "User_not_participant"):
+                message.reply_text("This command is meant to use in group not in PM")
+                return
+
     split = message.text.split(" ", 1)
     if len(split) == 1:
         message.reply_text("Provide Some Name To Search For Packs")
