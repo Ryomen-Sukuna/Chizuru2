@@ -61,9 +61,8 @@ def chatmode(update, context):
             return ""
 
     else:
-         message.reply_text("Chatbot Status For This Group: <i>{}</i>".
-                format("Enabled" if is_chat else "Disabled"),
-                parse_mode=ParseMode.HTML,
+         message.reply_text("Format: `/chatbot <yes/no - on/off>`",
+                parse_mode=ParseMode.MARKDOWN,
                 timeout=60,
          )
          return ""
