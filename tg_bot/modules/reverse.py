@@ -2,6 +2,7 @@ import os
 import re
 import urllib
 import requests
+from typing import List
 from bs4 import BeautifulSoup
 from dataclasses import dataclass
 
@@ -30,7 +31,7 @@ class Souce:
         self.minimal_similarity = minimal_similarity
         self.sauce_api = SauceNao(api_key=api_key)
 
-    def provide_response(self, path_to_file: str) -> List[RequestResult]:
+    def provide_response(self, path_to_file: str) -> List[LowdaLasan]:
         with open(path_to_file, "rb") as file:
             request_results = self.sauce_api.from_file(file)
 
@@ -38,7 +39,7 @@ class Souce:
                      if r.similarity >= self.minimal_similarity]
         return responses
 
-    def gen_response_obj(self, response: BasicSauce) -> RequestResult:
+    def gen_response_obj(self, response: BasicSauce) -> LowdaLasan:
         text = f"{response.similarity}\n"
         if response.urls != []:
             text += "\n".join(response.urls)
@@ -61,7 +62,7 @@ def post_souce_results(bot, chat_id: str, results: List[RequestResult]):
 
 
 @kigcmd(command=["souce"])
-def reverse(update: Update, context: CallbackContext):
+def soucenao(update: Update, context: CallbackContext):
     msg = update.effective_message
     chat_id = update.effective_chat.id
     rtmid = msg.message_id
