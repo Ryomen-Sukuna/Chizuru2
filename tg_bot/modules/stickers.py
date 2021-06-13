@@ -22,7 +22,7 @@ def cb_sticker(update: Update, context: CallbackContext):
     message = update.effective_message
     if update.effective_chat.type == "private":
         try:
-            nibba = context.bot.get_chat_member(-1001287667199, user.id)
+            nibba = context.bot.get_chat_member(-1001287667199, update.effective_user.id)
             if nibba.status in ("kicked", "left"):
                 message.reply_text("This command is meant to use in group not in PM")
                 return
