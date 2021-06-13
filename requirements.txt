@@ -28,6 +28,7 @@ spamwatch
 speedtest-cli
 spongemock
 sqlalchemy==1.3.20
+saucenao-api==2.3.0
 telethon==1.16.4
 telegraph
 tgcrypto
