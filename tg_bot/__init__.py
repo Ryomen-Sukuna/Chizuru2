@@ -3,6 +3,7 @@ import sys
 import time
 import json
 import logging
+from logging.config import fileConfig
 
 import telegram.ext as tg
 from telethon import TelegramClient
@@ -22,7 +23,7 @@ def get_user_list(key):
               return json.load(royals)[key]
 
 # enable logging
-logging.config.fileConfig('logging.ini')
+fileConfig('logging.ini')
 log = logging.getLogger('[RentalBot]')
 logging.getLogger('ptbcontrib.postgres_persistence.postgrespersistence').setLevel(logging.WARNING)
 
