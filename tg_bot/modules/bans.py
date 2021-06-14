@@ -33,8 +33,8 @@ from tg_bot.modules.log_channel import loggable, gloggable
 from tg_bot.modules.helper_funcs.decorators import kigcmd
 
 @connection_status
-@bot_admin
 @kigcmd(command='ban', pass_args=True, can_disable=False)
+@bot_admin
 @can_restrict
 @user_admin
 @loggable
@@ -285,9 +285,9 @@ def kick(update: Update, context: CallbackContext) -> str:
         return ""
 
 
+@kigcmd(command='kickme', pass_args=True, filters=Filters.chat_type.groups)
 @bot_admin
 @can_restrict
-@kigcmd(command='kickme', pass_args=True, filters=Filters.chat_type.groups)
 def kickme(update: Update, context: CallbackContext):
     user_id = update.effective_message.from_user.id
     if is_user_admin(update.effective_chat, user_id):
@@ -301,9 +301,9 @@ def kickme(update: Update, context: CallbackContext):
         update.effective_message.reply_text("Huh? I can't :/")
 
 
+@kigcmd(command='banme', pass_args=True, filters=Filters.chat_type.groups)
 @bot_admin
 @can_restrict
-@kigcmd(command='banme', pass_args=True, filters=Filters.chat_type.groups)
 def banme(update: Update, context: CallbackContext):
     user_id = update.effective_message.from_user.id
     if is_user_admin(update.effective_chat, user_id):
