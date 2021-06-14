@@ -10,7 +10,7 @@ from tg_bot import (
     dispatcher,
 )
 from cachetools import TTLCache
-from telegram import Chat, ChatMember, ParseMode, Update
+from telegram import Chat, ChatMember, ParseMode, Update, Bot
 from telegram.ext import CallbackContext
 
 # stores admemes in memory for 10 min.
@@ -355,6 +355,63 @@ def user_can_ban(func):
     return user_is_banhammer
 
 
+
+# Workaround for circular import with connection.py
+import tg_bot.modules.sql.connection_sql as sql
+from tg_bot.modules.helper_funcs.alternate import send_message
+
+def connected(bot: Bot, update: Update, chat: Chat, user_id: int, need_admin=True):
+    user = update.effective_user
+
+    if chat.type == chat.PRIVATE and sql.get_connected_chat(user_id):
+
+        conn_id = sql.get_connected_chat(user_id).chat_id
+        getstatusadmin = bot.get_chat_member(
+            conn_id, update.effective_message.from_user.id
+        )
+        isadmin = getstatusadmin.status in ("administrator", "creator")
+        ismember = getstatusadmin.status == "member"
+        isallow = sql.allow_connect_to_chat(conn_id)
+
+        if (
+            (isadmin)
+            or (isallow and ismember)
+            or (user.id in SUDO_USERS)
+            or (user.id in DEV_USERS)
+        ):
+            if need_admin is True:
+                if (
+                    getstatusadmin.status in ("administrator", "creator")
+                    or user_id in SUDO_USERS
+                    or user.id in DEV_USERS
+                ):
+                    return conn_id
+                else:
+                    send_message(
+                        update.effective_message,
+                        "You must be an admin in the connected group!",
+                    )
+            else:
+                return conn_id
+        else:
+            send_message(
+                update.effective_message,
+                "The group changed the connection rights or you are no longer an admin.\nI've disconnected you.",
+            )
+            if update.effective_chat.type == "private":
+                disconnection_status = sql.disconnect(update.effective_message.from_user.id)
+                if disconnection_status:
+                    sql.disconnected_chat = send_message(
+                        update.effective_message, "Disconnected from chat!"
+                    )
+                else:
+                    send_message(update.effective_message, "You're not connected!")
+            else:
+                send_message(update.effective_message, "This command is only available in PM.")
+    else:
+        return False
+
+
 def connection_status(func):
     @wraps(func)
     def connected_status(update: Update, context: CallbackContext, *args, **kwargs):
@@ -381,8 +438,3 @@ def connection_status(func):
 
     return connected_status
 
-
-# Workaround for circular import with connection.py
-from tg_bot.modules import connection
-
-connected = connection.connected
