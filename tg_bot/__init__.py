@@ -39,7 +39,7 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 9:
 from tg_bot.config import Rental as Rent
 
 OWNER_ID = Rent.OWNER_ID
-APP_ID = Rent.APP_ID
+API_ID = Rent.API_ID
 API_HASH = Rent.API_HASH
 DEL_CMDS = Rent.DEL_CMDS
 CUSTOM_CMD = Rent.CUSTOM_CMD
@@ -62,11 +62,11 @@ WALL_API = Rent.WALL_API
 from tg_bot.modules.sql import SESSION
 
 updater = tg.Updater(TOKEN, workers=min(32, os.cpu_count() + 4), request_kwargs={"read_timeout": 10, "connect_timeout": 10}, persistence=PostgresPersistence(SESSION))
-telethn = TelegramClient(MemorySession(), APP_ID, API_HASH)
+telethn = TelegramClient(MemorySession(), API_ID, API_HASH)
 client = telethn
 dispatcher = updater.dispatcher
 
-kp = Client(":memory:", api_id=APP_ID, api_hash=API_HASH, bot_token=TOKEN, workers=min(32, os.cpu_count() + 4))
+kp = Client(":memory:", api_id=API_ID, api_hash=API_HASH, bot_token=TOKEN, workers=min(32, os.cpu_count() + 4))
 apps = []
 apps.append(kp)
 
