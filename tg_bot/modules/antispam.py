@@ -13,7 +13,6 @@ from tg_bot import (
     SUPPORT_USERS,
     SARDEGNA_USERS,
     WHITELIST_USERS,
-    sw,
     dispatcher,
     log,
 )
@@ -410,23 +409,6 @@ def gbanlist(update: Update, context: CallbackContext):
 
 def check_and_ban(update, user_id, should_message=True):
     chat = update.effective_chat  # type: Optional[Chat]
-
-    try:
-        sw_ban = sw.get_ban(int(user_id))
-    except AttributeError:
-        sw_ban = None
-    except (SpamWatchError, Error, UnauthorizedError, NotFoundError, Forbidden, TooManyRequests) as e:
-        log.warning(f" SpamWatch Error: {e}")
-        sw_ban = None
-
-    if sw_ban:
-        update.effective_chat.kick_member(user_id)
-        if should_message:
-            update.effective_message.reply_text(
-                f"This person has been detected as a spammer by @SpamWatch and has been removed!\nReason: <code>{sw_ban.reason}</code>",
-                parse_mode=ParseMode.HTML,
-            )
-        return
 
     if sql.is_user_gbanned(user_id):
         update.effective_chat.kick_member(user_id)
