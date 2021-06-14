@@ -32,8 +32,6 @@ from telegram.ext import CallbackContext, Filters
 from telegram.utils.helpers import mention_html
 from telegram import ParseMode, Update
 
-from spamwatch.errors import SpamWatchError, Error, UnauthorizedError, NotFoundError, Forbidden, TooManyRequests
-
 GBAN_ENFORCE_GROUP = -1
 
 GBAN_ERRORS = {
