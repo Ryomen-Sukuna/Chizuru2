@@ -1,48 +1,25 @@
 
-import importlib
 import re
-import json
-import random
-import traceback
-from typing import Optional, List
+import importlib
 from sys import argv
-import requests
+
 from pyrogram import idle, Client
-from telegram import Update, ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.error import (TelegramError, Unauthorized, BadRequest,
-                            TimedOut, ChatMigrated, NetworkError)
-from telegram.ext import (
-    CallbackContext,
-    CommandHandler,
-    MessageHandler,
-    CallbackQueryHandler,
-    Filters
-)
-from telegram.ext.dispatcher import DispatcherHandlerStop
+from telegram.ext import Filters, CallbackContext
 from telegram.utils.helpers import escape_markdown
-from tg_bot import (
-    dispatcher,
-    updater,
-    TOKEN,
-    WEBHOOK,
-    OWNER_ID,
-    CERT_PATH,
-    PORT,
-    URL,
-    log,
-    ALLOW_EXCL,
-    telethn,
-    kp,
-)
+from telegram.ext.dispatcher import DispatcherHandlerStop
+from telegram import Update, ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram.error import TelegramError, Unauthorized, BadRequest, TimedOut, ChatMigrated, NetworkError
+
+from tg_bot import OWNER_ID, TOKEN, dispatcher, updater, telethn, log, kp
 
 # needed to dynamically load modules
 # NOTE: Module order is not guaranteed, specify that in the config file!
 from tg_bot.modules import ALL_MODULES
-from tg_bot.modules.helper_funcs.chat_status import is_user_admin
-from tg_bot.modules.helper_funcs.misc import paginate_modules
-from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback, kigmsg
-from tg_bot.modules.helper import get_help_btns
 from tg_bot.modules.language import gs
+from tg_bot.modules.helper import get_help_btns
+from tg_bot.modules.helper_funcs.misc import paginate_modules
+from tg_bot.modules.helper_funcs.chat_status import is_user_admin
+from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback, kigmsg
 
 SUPPORT_CHAT = "ElitesOfSupport"
 START_IMG = "https://telegra.ph/file/70139da07d839b2d2c057.jpg"
@@ -613,18 +590,8 @@ def main():
     dispatcher.add_error_handler(error_callback)
     # dispatcher.add_error_handler(error_handler)
 
-    if WEBHOOK:
-        log.info("Using webhooks.")
-        updater.start_webhook(listen="127.0.0.1", port=PORT, url_path=TOKEN)
-
-        if CERT_PATH:
-            updater.bot.set_webhook(url=URL + TOKEN, certificate=open(CERT_PATH, "rb"))
-        else:
-            updater.bot.set_webhook(url=URL + TOKEN)
-
-    else:
-        log.info(f"Using long polling. | BOT: [@{dispatcher.bot.username}]")
-        updater.start_polling(timeout=15, read_latency=4, drop_pending_updates=True)
+    log.info(f"Using long polling. | BOT: [@{dispatcher.bot.username}]")
+    updater.start_polling(timeout=15, read_latency=4, drop_pending_updates=True)
     if len(argv) not in (1, 3, 4):
         telethn.disconnect()
     else:
