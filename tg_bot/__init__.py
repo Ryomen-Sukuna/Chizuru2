@@ -1,17 +1,17 @@
-import logging
 import os
-import sys, json
+import sys
 import time
-import spamwatch
+import json
+import logging
+
 import telegram.ext as tg
 from telethon import TelegramClient
 from telethon.sessions import MemorySession
 from pyrogram import Client, errors
 from pyrogram.errors.exceptions.bad_request_400 import PeerIdInvalid, ChannelInvalid
 from pyrogram.types import Chat, User
-from configparser import ConfigParser
-from rich.logging import RichHandler
 from ptbcontrib.postgres_persistence import PostgresPersistence
+
 
 StartTime = time.time()
 
@@ -22,10 +22,10 @@ def get_user_list(key):
               return json.load(royals)[key]
 
 # enable logging
-FORMAT = "[RentalBot] %(message)s"
-logging.basicConfig(handlers=[RichHandler()], level=logging.INFO, format=FORMAT, datefmt="[%X]")
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
-log = logging.getLogger("rich")
+logging.config.fileConfig('logging.ini')
+log = logging.getLogger('[RentalBot]')
+logging.getLogger('ptbcontrib.postgres_persistence.postgrespersistence').setLevel(logging.WARNING)
+
 
 # if version < 3.9, stop bot.
 if sys.version_info[0] < 3 or sys.version_info[1] < 9:
@@ -35,94 +35,28 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 9:
 	quit(1)
 
 
-class RentalBot:
-    def __init__(self, rent):
-        self.rent = rent
-        self.SYS_ADMIN = self.rent.SYS_ADMIN
-        self.OWNER_ID = self.rent.OWNER_ID
-        self.OWNER_USERNAME = self.rent.OWNER_USERNAME
-        self.APP_ID = self.rent.API_ID
-        self.API_HASH = self.rent.API_HASH
-        self.WEBHOOK = self.rent.WEBHOOK
-        self.URL = self.rent.URL
-        self.CERT_PATH = self.rent.DEL_CMDS
-        self.PORT = self.rent.PORT
-        self.DEL_CMDS = self.rent.DEL_CMDS
-        self.STRICT_GBAN = self.rent.STRICT_GBAN
-        self.ALLOW_EXCL = self.rent.ALLOW_EXCL
-        self.CUSTOM_CMD = self.rent.CUSTOM_CMD
-        self.BAN_STICKER = self.rent.BAN_STICKER
-        self.TOKEN = self.rent.TOKEN
-        self.DB_URI = self.rent.DB_URI
-        self.loadbeta = self.rent.LOAD.split()
-        self.LOAD = list(map(str, self.loadbeta))
-        self.MESSAGE_DUMP = self.rent.MESSAGE_DUMP
-        self.JOIN_LOGGER = self.rent.JOIN_LOGGER
-        self.ERROR_DUMP = self.rent.ERROR_DUMP
-        self.GBAN_LOGS = self.rent.GBAN_LOGS
-        self.no_loadbeta = self.rent.NO_LOAD.split()
-        self.NO_LOAD = list(map(str, self.no_loadbeta))
-        self.SPAMWATCH_API = self.rent.SPAMWATCH_API
-        self.WALL_API = self.rent.WALL_API
-        self.CF_API_KEY =  self.rent.CF_API_KEY
-        self.bot_id = 1736276154 #placeholder
-        self.bot_name = "Chizuru" #placeholder
-        self.bot_username = "ElitesOfBot" #placeholder
-        self.ALLOW_CHATS = False #placeholder
+from tg_bot.config import Rental as Rent
 
-
-    def init_sw(self):
-        if self.SPAMWATCH_API is None:
-            log.warning("SpamWatch API key is missing! Check your config.ini")
-            return None
-        else:
-            try:
-                sw = spamwatch.Client(SPAMWATCH_API)
-                return sw
-            except:
-                sw = None
-                log.warning("Can't connect to SpamWatch!")
-                return sw
-
-
-from tg_bot.config import Rental
-Rent = RentalBot(Rental)
-
-SYS_ADMIN = Rent.SYS_ADMIN
 OWNER_ID = Rent.OWNER_ID
-OWNER_USERNAME = Rent.OWNER_USERNAME
 APP_ID = Rent.APP_ID
 API_HASH = Rent.API_HASH
-WEBHOOK = Rent.WEBHOOK
-URL = Rent.URL
-CERT_PATH = Rent.CERT_PATH
-PORT = Rent.PORT
 DEL_CMDS = Rent.DEL_CMDS
-ALLOW_EXCL = Rent.ALLOW_EXCL
 CUSTOM_CMD = Rent.CUSTOM_CMD
-BAN_STICKER = Rent.BAN_STICKER
 TOKEN = Rent.TOKEN
 DB_URI = Rent.DB_URI
-LOAD = Rent.LOAD
-ALLOW_CHATS = Rent.ALLOW_CHATS
+LOAD = list(map(str, Rent.LOAD.split()))
 MESSAGE_DUMP = Rent.MESSAGE_DUMP
 JOIN_LOGGER = Rent.JOIN_LOGGER
 ERROR_DUMP = Rent.ERROR_DUMP
 GBAN_LOGS = Rent.GBAN_LOGS
-NO_LOAD = Rent.NO_LOAD
+NO_LOAD = list(map(str, Rent.NO_LOAD.split()))
 DEV_USERS = [OWNER_ID] + get_user_list("devs")
 SUDO_USERS = [OWNER_ID] + get_user_list("sudos")
 SUPPORT_USERS = get_user_list("supports")
 SARDEGNA_USERS = get_user_list("sardegnas")
 WHITELIST_USERS = get_user_list("whitelists")
-spamwatch_api = Rent.SPAMWATCH_API
 WALL_API = Rent.WALL_API
-CF_API_KEY = Rent.CF_API_KEY
-INFOPIC = False
-SPB_MODE = False
 
-# SpamWatch
-sw = Rent.init_sw()
 
 from tg_bot.modules.sql import SESSION
 
