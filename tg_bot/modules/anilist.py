@@ -173,7 +173,7 @@ def airing(update: Update, context: CallbackContext):
     response = requests.post(
         url, json={"query": airing_query, "variables": variables}
     ).json().get("data").get("Media")
-    msg = f"*Name*: *{response.get('title').get('romaji')}*(`{response.get('title'.get('native')}`)\n*ID*: `{response.get('id')}`"
+    msg = f"*Name*: *{response.get('title').get('romaji')}*(`{response.get('title').get('native')}`)\n*ID*: `{response.get('id')}`"
     if response.get("nextAiringEpisode"):
         time = response.get("nextAiringEpisode").get("timeUntilAiring") * 1000
         time = t(time)
