@@ -1,9 +1,9 @@
 import time
 import re
 
-from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton, Update, Bot
 from telegram.error import BadRequest, Unauthorized
 from telegram.ext import CommandHandler, CallbackQueryHandler
+from telegram import Bot, Update, ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 
 import tg_bot.modules.sql.connection_sql as sql
 from tg_bot import dispatcher, SUDO_USERS, DEV_USERS
@@ -382,10 +382,10 @@ def connect_button(update, context):
         connect_chat(update, context)
 
 
-from tg_bot.modules.language import gs
 
 def get_help(chat):
-    return gs(chat, "connections_help")
+     from tg_bot.modules.language import gs
+     return gs(chat, "connections_help")
 
 CONNECT_CHAT_HANDLER = CommandHandler("connect", connect_chat, pass_args=True)
 CONNECTION_CHAT_HANDLER = CommandHandler("connection", connection_chat, run_async=True)
