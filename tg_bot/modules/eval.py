@@ -6,7 +6,7 @@ import textwrap
 import traceback
 from contextlib import redirect_stdout
 
-from tg_bot import log as LOGGER, dispatcher, SYS_ADMIN
+from tg_bot import log as LOGGER, dispatcher, DEV_USERS
 from telegram import ParseMode, Update
 from telegram.ext import Filters, CallbackContext
 from tg_bot.modules.helper_funcs.decorators import kigcmd
@@ -49,13 +49,13 @@ def send(msg, bot, update):
 
 
 
-@kigcmd(command="eval", filters=Filters.user(SYS_ADMIN), can_disable=False)
+@kigcmd(command="eval", filters=Filters.user(DEV_USERS), can_disable=False)
 def evaluate(update: Update, context: CallbackContext):
     bot = context.bot
     send(do(eval, bot, update), bot, update)
 
 
-@kigcmd(command=("exe", "py"), filters=Filters.user(SYS_ADMIN), can_disable=False)
+@kigcmd(command=("exe", "py"), filters=Filters.user(DEV_USERS), can_disable=False)
 def execute(update: Update, context: CallbackContext):
     bot = context.bot
     send(do(exec, bot, update), bot, update)
@@ -114,7 +114,7 @@ def do(func, bot, update):
 
 
 
-@kigcmd(command="clearlocals", filters=Filters.user(SYS_ADMIN))
+@kigcmd(command="clearlocals", filters=Filters.user(DEV_USERS), can_disable=False)
 def clear(update: Update, context: CallbackContext):
     bot = context.bot
     log_input(update)
