@@ -3,7 +3,7 @@ from telegram.error import Unauthorized
 from telegram import TelegramError, Update
 from telegram.ext import CallbackContext, CommandHandler
 
-from tg_bot import RentalBot, dispatcher
+from tg_bot import dispatcher
 from tg_bot.modules.helper_funcs.chat_status import dev_plus
 
 
@@ -29,7 +29,6 @@ def leave(update: Update, context: CallbackContext):
 
 
 LEAVE_HANDLER = CommandHandler("leave", leave, run_async=True)
-
 dispatcher.add_handler(LEAVE_HANDLER)
 
 __mod_name__ = "Dev"
