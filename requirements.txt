@@ -9,8 +9,7 @@ future
 geopy
 git+https://github.com/python-telegram-bot/ptbcontrib.git
 gitpython
-gpytranslate
-intellivoid-SPB
+google_trans_new
 markdown2
 multicolorcaptcha
 nltk
@@ -23,9 +22,6 @@ humanize
 pyrogram
 python-telegram-bot==13.5
 requests
-rich
-spamwatch
-speedtest-cli
 spongemock
 sqlalchemy==1.3.20
 telethon==1.16.4
