@@ -172,14 +172,14 @@ def airing(update: Update, context: CallbackContext):
     variables = {"search": search_str[1]}
     response = requests.post(
         url, json={"query": airing_query, "variables": variables}
-    ).json()["data"]["Media"]
-    msg = f"*Name*: *{response['title']['romaji']}*(`{response['title']['native']}`)\n*ID*: `{response['id']}`"
-    if response["nextAiringEpisode"]:
-        time = response["nextAiringEpisode"]["timeUntilAiring"] * 1000
+    ).json().get("data").get("Media")
+    msg = f"*Name*: *{response.get('title').get('romaji')}*(`{response.get('title'.get('native')}`)\n*ID*: `{response.get('id')}`"
+    if response.get("nextAiringEpisode"):
+        time = response.get("nextAiringEpisode").get("timeUntilAiring") * 1000
         time = t(time)
-        msg += f"\n*Episode*: `{response['nextAiringEpisode']['episode']}`\n*Airing In*: `{time}`"
+        msg += f"\n*Episode*: `{response.get('nextAiringEpisode').get('episode')}`\n*Airing In*: `{time}`"
     else:
-        msg += f"\n*Episode*:{response['episodes']}\n*Status*: `N/A`"
+        msg += f"\n*Episode*:{response.get('episodes')}\n*Status*: `N/A`"
     update.effective_message.reply_text(msg, parse_mode=ParseMode.MARKDOWN)
 
 @kigcmd(command="anime")
@@ -199,18 +199,18 @@ def anime(update: Update, context: CallbackContext):
         update.effective_message.reply_text("Anime not found")
         return
     if json:
-        json = json["data"]["Media"]
-        msg = f"*{json['title']['romaji']}*(`{json['title']['native']}`)\n*Type*: {json['format']}\n*Status*: {json['status']}\n*Episodes*: {json.get('episodes', 'N/A')}\n*Duration*: {json.get('duration', 'N/A')} Per Ep.\n*Score*: {json['averageScore']}\n*Genres*: `"
-        for x in json["genres"]:
+        json = json.get("data").get("Media")
+        msg = f"*{json.get('title').get('romaji')}*(`{json.get('title').get('native')}`)\n*Type*: {json.get('format')}\n*Status*: {json.get('status')}\n*Episodes*: {json.get('episodes', 'N/A')}\n*Duration*: {json.get('duration', 'N/A')} Per Ep.\n*Score*: {json.get('averageScore')}\n*Genres*: `"
+        for x in json.get("genres"):
             msg += f"{x}, "
         msg = msg[:-2] + "`\n"
         msg += "*Studios*: `"
-        for x in json["studios"]["nodes"]:
-            msg += f"{x['name']}, "
+        for x in json.get("studios").get("nodes"):
+            msg += f"{x.get('name')}, "
         msg = msg[:-2] + "`\n"
         info = json.get("siteUrl")
         trailer = json.get("trailer", None)
-        anime_id = json["id"]
+        anime_id = json.get("id")
         if trailer:
             trailer_id = trailer.get("id", None)
             site = trailer.get("site", None)
@@ -271,9 +271,9 @@ def character(update: Update, context: CallbackContext):
         update.effective_message.reply_text("Character not found!")
         return
     if json:
-        json = json["data"]["Character"]
+        json = json.get("data").get("Character")
         msg = f"*{json.get('name').get('full')}*(`{json.get('name').get('native')}`)\n"
-        description = f"{json['description']}"
+        description = f"{json.get('description')}"
         site_url = json.get("siteUrl")
         msg += shorten(description, site_url)
         image = json.get("image", None)
@@ -306,12 +306,12 @@ def manga(update: Update, context: CallbackContext):
         update.effective_message.reply_text("Manga not found!")
         return
     if json:
-        json = json["data"]["Media"]
-        title, title_native = json["title"].get("romaji", False), json["title"].get(
+        json = json.get("data").get("Media")
+        title, title_native = json.get("title").get("romaji", False), json.get("title").get(
             "native", False
         )
         start_date, status, score = (
-            json["startDate"].get("year", False),
+            json.get("startDate").get("year", False),
             json.get("status", False),
             json.get("averageScore", False),
         )
@@ -329,7 +329,7 @@ def manga(update: Update, context: CallbackContext):
         for x in json.get("genres", []):
             msg += f"{x}, "
         msg = msg[:-2]
-        info = json["siteUrl"]
+        info = json.get("siteUrl")
         buttons = [[InlineKeyboardButton("More Info", url=info)]]
         image = json.get("bannerImage", False)
         msg += f"_{json.get('description', None)}_"
