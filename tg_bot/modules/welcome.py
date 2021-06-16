@@ -8,18 +8,18 @@ from contextlib import suppress
 from typing import Tuple, Optional
 from multicolorcaptcha import CaptchaGenerator
 
-import tg_bot.modules.sql.welcome_sql as sql
 from tg_bot import log, telethn, dispatcher, OWNER_ID, DEV_USERS, JOIN_LOGGER
-from tg_bot.modules.helper_funcs.chat_status import user_admin, is_user_ban_protected
-from tg_bot.modules.helper_funcs.misc import build_keyboard, revert_buttons
-from tg_bot.modules.helper_funcs.msg_types import get_welcome_type
-from tg_bot.modules.helper_funcs.string_handling import markdown_parser, escape_invalid_curly_brackets
+import tg_bot.modules.sql.welcome_sql as sql
 from tg_bot.modules.sql.antispam_sql import is_user_gbanned
+from tg_bot.modules.helper_funcs.msg_types import get_welcome_type
+from tg_bot.modules.helper_funcs.misc import build_keyboard, revert_buttons
+from tg_bot.modules.helper_funcs.chat_status import user_admin, is_user_ban_protected
+from tg_bot.modules.helper_funcs.string_handling import markdown_parser, escape_invalid_curly_brackets
 
 from telethon import events
 from telegram.error import BadRequest
 from telegram.utils.helpers import escape_markdown, mention_html, mention_markdown
-from telegram.ext import Filters, MessageHandler, CommandHandler, CallbackContext, CallbackQueryHandler
+from telegram.ext import Filters, MessageHandler, CommandHandler, CallbackContext, CallbackQueryHandler, ChatMemberHandler
 from telegram import Update, ParseMode, ChatMember, ChatPermissions, ChatMemberUpdated, InlineKeyboardButton, InlineKeyboardMarkup
 
 VALID_WELCOME_FORMATTERS = [
