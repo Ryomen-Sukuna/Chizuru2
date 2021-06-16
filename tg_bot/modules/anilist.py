@@ -173,16 +173,14 @@ def drama(update: Update, context: CallbackContext):
         )
         return
 
-    res = requests.get(os.environ.get("LINK", "") + search[0])
-    buttons = []
-    data = res.json()['results'].get('dramas')
+    txt = "Results Of <b>{search[0]}</b>:\n"
+    res = requests.get(os.environ.get("LINK", "") + search[0]).json()
+    data = res['results'].get('dramas')
     for x in data:
-       buttons.append([[InlineKeyboardButton(text=x.get('title'), callback_data=f"drama-detail==={user.id}==={x.get('slug')}")]])
-
+       txt += f"\n x['title']"
     message.reply_text(
-       f"Results Of <b>{search[0]}</b>:",
+       txt,
        parse_mode=ParseMode.HTML,
-       reply_markup=InlineKeyboardMarkup(buttons),
     )
 
 
