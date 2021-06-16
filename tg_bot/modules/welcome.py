@@ -4,10 +4,12 @@ import re
 import time
 from functools import partial
 from contextlib import suppress
+from typing import Tuple, Optional
 from io import BytesIO
 import tg_bot.modules.sql.welcome_sql as sql
 from tg_bot import (
     log,
+    telethn
     OWNER_ID,
     DEV_USERS,
     dispatcher,
@@ -26,11 +28,13 @@ from tg_bot.modules.helper_funcs.string_handling import (
 from tg_bot.modules.log_channel import loggable
 from tg_bot.modules.sql.antispam_sql import is_user_gbanned
 from telegram import (
+    Update,
+    ParseMode,
+    ChatMember,
     ChatPermissions,
+    ChatMemberUpdated,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
-    ParseMode,
-    Update,
 )
 from telegram.error import BadRequest
 from telegram.ext import (
@@ -42,6 +46,7 @@ from telegram.ext import (
     run_async,
 )
 from telegram.utils.helpers import escape_markdown, mention_html, mention_markdown
+from telethon import events
 
 VALID_WELCOME_FORMATTERS = [
     "first",
@@ -70,60 +75,88 @@ CAPTCHA_ANS_DICT = {}
 
 from multicolorcaptcha import CaptchaGenerator
 
+
+# cleanservice
+@telethn.on(events.ChatAction)
+async def delete_service(event):
+    clean = sql.clean_service(event.chat_id)
+    if not clean:
+        return
+    await event.delete()
+
+
+def extract_status_change(
+    chat_member_update: ChatMemberUpdated,
+) -> Optional[Tuple[bool, bool]]:
+    """Takes a ChatMemberUpdated instance and extracts whether the 'old_chat_member' was a member
+    of the chat and whether the 'new_chat_member' is a member of the chat. Returns None, if
+    the status didn't change."""
+    status_change = chat_member_update.difference().get("status")
+    old_is_member, new_is_member = chat_member_update.difference().get(
+        "is_member", (None, None)
+    )
+
+    if status_change is None:
+        return None
+
+    old_status, new_status = status_change
+    was_member = (
+        old_status
+        in [
+            ChatMember.MEMBER,
+            ChatMember.CREATOR,
+            ChatMember.ADMINISTRATOR,
+        ]
+        or (old_status == ChatMember.RESTRICTED and old_is_member is True)
+    )
+    is_member = (
+        new_status
+        in [
+            ChatMember.MEMBER,
+            ChatMember.CREATOR,
+            ChatMember.ADMINISTRATOR,
+        ]
+        or (new_status == ChatMember.RESTRICTED and new_is_member is True)
+    )
+
+    return was_member, is_member
+
+
 # do not async
 def send(update, message, keyboard, backup_message):
     chat = update.effective_chat
-    cleanserv = sql.clean_service(chat.id)
-    reply = update.message.message_id
-    # Clean service welcome
-    if cleanserv:
-        try:
-            dispatcher.bot.delete_message(chat.id, update.message.message_id)
-        except BadRequest:
-            pass
-        reply = False
+
     try:
-        msg = update.effective_message.reply_text(
+        msg = chat.send_message(
             message,
             parse_mode=ParseMode.MARKDOWN,
             reply_markup=keyboard,
-            reply_to_message_id=reply,
         )
     except BadRequest as excp:
-        if excp.message == "Reply message not found":
-            msg = update.effective_message.reply_text(
-                message,
-                parse_mode=ParseMode.MARKDOWN,
-                reply_markup=keyboard,
-                quote=False,
-            )
-        elif excp.message == "Button_url_invalid":
-            msg = update.effective_message.reply_text(
+        if excp.message == "Button_url_invalid":
+            msg = chat.send_message(
                 markdown_parser(
                     backup_message + "\nNote: the current message has an invalid url "
                     "in one of its buttons. Please update."
                 ),
                 parse_mode=ParseMode.MARKDOWN,
-                reply_to_message_id=reply,
             )
         elif excp.message == "Unsupported url protocol":
-            msg = update.effective_message.reply_text(
+            msg = chat.send_message(
                 markdown_parser(
                     backup_message + "\nNote: the current message has buttons which "
                     "use url protocols that are unsupported by "
                     "telegram. Please update."
                 ),
                 parse_mode=ParseMode.MARKDOWN,
-                reply_to_message_id=reply,
             )
         elif excp.message == "Wrong url host":
-            msg = update.effective_message.reply_text(
+            msg = chat.send_message(
                 markdown_parser(
                     backup_message + "\nNote: the current message has some bad urls. "
                     "Please update."
                 ),
                 parse_mode=ParseMode.MARKDOWN,
-                reply_to_message_id=reply,
             )
             log.warning(message)
             log.warning(keyboard)
@@ -132,33 +165,34 @@ def send(update, message, keyboard, backup_message):
             dispatcher.bot.leave_chat(chat.id)
             return
         else:
-            msg = update.effective_message.reply_text(
+            msg = chat.send_message(
                 markdown_parser(
                     backup_message + "\nNote: An error occured when sending the "
                     "custom message. Please update."
                 ),
                 parse_mode=ParseMode.MARKDOWN,
-                reply_to_message_id=reply,
             )
             log.exception()
     return msg
 
 
-@loggable
 def new_member(update: Update, context: CallbackContext):
     bot, job_queue = context.bot, context.job_queue
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
+    result = extract_status_change(update.chat_member)
+    if result is None:
+        return
 
+    was_member, is_member = result
     should_welc, cust_welcome, cust_content, welc_type = sql.get_welc_pref(chat.id)
     welc_mutes = sql.welcome_mutes(chat.id)
     human_checks = sql.get_human_checks(user.id, chat.id)
 
-    new_members = update.effective_message.new_chat_members
+    if not was_member and is_member:
 
-    for new_mem in new_members:
-
+        new_mem = update.chat_member.new_chat_member.user
         welcome_log = None
         res = None
         sent = None
@@ -168,17 +202,16 @@ def new_member(update: Update, context: CallbackContext):
 
         if new_mem.id == bot.id and user.id not in DEV_USERS:
           try:
-              tXt = "You Can't Add Me Because, You Are Not Member Of @TheLaughingCoffin!"
               member = bot.get_chat_member(-1001287667199, user.id)
               if member.status in ("kicked", "left"):
                   with suppress(BadRequest):
-                        bot.send_message(chat.id, text=tXt)
+                        chat.send_message("You Can't Add Me Because, You Are Not Member Of @TheLaughingCoffin!")
                   bot.leave_chat(chat.id)
                   return
           except BadRequest as BR:
               if BR.message in ("User not found", "User_not_mutual_contact", "User_not_participant"):
                   with suppress(BadRequest):
-                        bot.send_message(chat.id, text=tXt)
+                        chat.send_message("You Can't Add Me Because, You Are Not Member Of @TheLaughingCoffin!")
                   bot.leave_chat(chat.id)
                   return
 
@@ -187,35 +220,13 @@ def new_member(update: Update, context: CallbackContext):
 
         if should_welc:
 
-            reply = update.message.message_id
-            cleanserv = sql.clean_service(chat.id)
-            # Clean service welcome
-            if cleanserv:
-                try:
-                    dispatcher.bot.delete_message(chat.id, update.message.message_id)
-                except BadRequest:
-                    pass
-                reply = False
-
             # Give the owner a special welcome
             if new_mem.id == OWNER_ID:
-                update.effective_message.reply_text(
-                    "Oh hi, my creator.", reply_to_message_id=reply
-                )
-                welcome_log = (
-                    f"{html.escape(chat.title)}\n"
-                    f"#USER_JOINED\n"
-                    f"Bot Owner just joined the chat"
-                )
-                continue
+                chat.send_message("Oh hi, my creator.")
 
             # Welcome Devs
             elif new_mem.id in DEV_USERS:
-                update.effective_message.reply_text(
-                    "Whoa! An Admin of the @TheLaughingCoffin just joined!",
-                    reply_to_message_id=reply,
-                )
-                continue
+                chat.send_message("Whoa! An Admin of the @TheLaughingCoffin just joined!")
 
             # Welcome yourself
             elif new_mem.id == bot.id:
@@ -236,15 +247,13 @@ def new_member(update: Update, context: CallbackContext):
                      disable_web_page_preview=True,
                 )
 
-                bot.send_message(
-                     chat.id,
+                chat.send_message(
                      f"You Have Rented {bot.first_name} For Your Chat. *That's Awesome!*" 
                      "\nSend [/help](t.me/ElitesOfRobot?start=help) Command In PM To Know About Me More. " 
                      "Join Our Chats For [Discussion](https://t.me/TheLaughingCoffin) & [Support](https://t.me/ElitesOfSupport).", 
                      parse_mode=ParseMode.MARKDOWN, 
                      disable_web_page_preview=True,
                 )
-                continue
 
             else:
                 buttons = sql.get_welc_buttons(chat.id)
@@ -376,7 +385,7 @@ def new_member(update: Update, context: CallbackContext):
                             }
                         )
                     new_join_mem = f"[{escape_markdown(new_mem.first_name)}](tg://user?id={user.id})"
-                    message = msg.reply_text(
+                    message = chat.send_message(
                         f"{new_join_mem}, click the button below to prove you're human.\nYou have 120 seconds.",
                         reply_markup=InlineKeyboardMarkup(
                             [
@@ -389,7 +398,6 @@ def new_member(update: Update, context: CallbackContext):
                             ]
                         ),
                         parse_mode=ParseMode.MARKDOWN,
-                        reply_to_message_id=reply,
                     )
                     bot.restrict_chat_member(
                         chat.id,
@@ -474,10 +482,9 @@ def new_member(update: Update, context: CallbackContext):
                     if to_append:
                         btn.append(to_append)
 
-                    message = msg.reply_photo(fileobj, caption=f'Welcome [{escape_markdown(new_mem.first_name)}](tg://user?id={user.id}). Click the correct button to get unmuted!',
+                    message = chat.send_photo(fileobj, caption=f'Welcome [{escape_markdown(new_mem.first_name)}](tg://user?id={user.id}). Click the correct button to get unmuted!',
                                     reply_markup=InlineKeyboardMarkup(btn),
                                     parse_mode=ParseMode.MARKDOWN,
-                                    reply_to_message_id=reply,
                                 )
                     bot.restrict_chat_member(
                         chat.id,
@@ -521,20 +528,8 @@ def new_member(update: Update, context: CallbackContext):
                 except BadRequest:
                     pass
 
-                if sent:
-                    sql.set_clean_welcome(chat.id, sent.message_id)
-
-        if welcome_log:
-            return welcome_log
-
-        return (
-            f"{html.escape(chat.title)}\n"
-            f"#USER_JOINED\n"
-            f"<b>User</b>: {mention_html(user.id, user.first_name)}\n"
-            f"<b>ID</b>: <code>{user.id}</code>"
-        )
-
-    return ""
+            if sent:
+                sql.set_clean_welcome(chat.id, sent.message_id)
 
 
 def check_not_bot(member, chat_id, message_id, context):
@@ -1192,8 +1187,8 @@ def get_help(chat):
     from tg_bot.modules.language import gs
     return gs(chat, "greetings_help")
 
-NEW_MEM_HANDLER = MessageHandler(
-    Filters.status_update.new_chat_members, new_member, run_async=True
+NEW_MEM_HANDLER = ChatMemberHandler(
+       new_member, ChatMemberHandler.CHAT_MEMBER
 )
 LEFT_MEM_HANDLER = MessageHandler(
     Filters.status_update.left_chat_member, left_member, run_async=True
