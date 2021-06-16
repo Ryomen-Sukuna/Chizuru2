@@ -13,7 +13,7 @@ import requests
 import math
 import time
 import os
-from tg_bot.modules.helper_funcs.decorators import kigcmd
+from .helper_funcs.decorators import kigcmd
 
 def shorten(description, info="anilist.co"):
     msg = ""
@@ -161,27 +161,9 @@ query ($id: Int,$search: String) {
 
 url = "https://graphql.anilist.co"
 
+#========================================================================================================================================================
+#========================================================================================================================================================
 
-@kigcmd(command="drama")
-def drama(update: Update, context: CallbackContext):
-    message = update.effective_message
-    user = update.effective_user
-    search = context.args
-    if not search:
-        message.reply_text(
-            "Tell Drama Name :) (/drama <drama name>)"
-        )
-        return
-
-    txt = "Results Of <b>{search[0]}</b>:\n"
-    res = requests.get(os.environ.get("LINK", "") + search[0]).json()
-    data = res['results'].get('dramas')
-    for x in data:
-       txt += f"\n x['title']"
-    message.reply_text(
-       txt,
-       parse_mode=ParseMode.HTML,
-    )
 
 
 @kigcmd(command="airing")
@@ -205,6 +187,7 @@ def airing(update: Update, context: CallbackContext):
     else:
         msg += f"\n*Episode*:{response.get('episodes')}\n*Status*: `N/A`"
     update.effective_message.reply_text(msg, parse_mode=ParseMode.MARKDOWN)
+
 
 @kigcmd(command="anime")
 def anime(update: Update, context: CallbackContext):
