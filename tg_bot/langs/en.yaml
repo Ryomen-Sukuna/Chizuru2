@@ -19,7 +19,7 @@ pm_start_text: |
 grp_start_text: "Hmm?"
 
 pm_help_text: |
-   *Helpful Commands:*
+   *Commands*:
    ✧ /start: Starts me! You've probably
         already used this.
    ✧ /help: Sends this message; I'll tell
@@ -37,10 +37,12 @@ src_btn: "Source code"
 
 admin_help: |
    • /admins*:* list of admins in the chat
+   • /pinned*:* Get the current pinned message.
 
-   *Admins only:*
+   *Admins only*:
    • /pin*:* silently pins the message replied to - add `'loud'` or `'notify'` to give notifs to users.
    • /unpin*:* unpins the currently pinned message
+   • /unpinall*:* Unpins all pinned messages.
    • /invitelink*:* gets invitelink
    • /fullpromote*:* promotes the user with all administration rights.
    • /promote*:* promotes the user replied to
