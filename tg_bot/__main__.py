@@ -8,7 +8,7 @@ from telegram.ext.dispatcher import DispatcherHandlerStop
 from telegram import Update, ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import TelegramError, Unauthorized, BadRequest, TimedOut, ChatMigrated, NetworkError
 
-from tg_bot import SUPPORT_CHAT, IMPORTED, TOKEN, dispatcher, updater, telethn, log
+from tg_bot import SUPPORT_CHAT, IMPORTED, TOKEN, dispatcher, updater, telethn # , log
 
 # needed to dynamically load modules
 # NOTE: Module order is not guaranteed, specify that in the config file!
@@ -459,7 +459,8 @@ def settings_button(update: Update, context: CallbackContext):
         elif excp.message == "Message can't be deleted":
             pass
         else:
-            log.exception("Exception in settings buttons. %s", str(query.data))
+            # log.exception("Exception in settings buttons. %s", str(query.data))
+            pass
 
 
 @kigcmd(command='settings')
@@ -506,18 +507,18 @@ def migrate_chats(update: Update, context: CallbackContext):
     else:
         return
 
-    log.info("Migrating from %s, to %s", str(old_chat), str(new_chat))
+    # log.info("Migrating from %s, to %s", str(old_chat), str(new_chat))
     for mod in MIGRATEABLE:
         mod.__migrate__(old_chat, new_chat)
 
-    log.info("Successfully migrated!")
+    # log.info("Successfully migrated!")
     raise DispatcherHandlerStop
 
 
 def main():
     dispatcher.add_error_handler(error_callback)
 
-    log.info(f"Using long polling. | BOT: [@{dispatcher.bot.username}]")
+    # log.info(f"Using long polling. | BOT: [@{dispatcher.bot.username}]")
     updater.start_polling(timeout=15, read_latency=2.0, allowed_updates=Update.ALL_TYPES)
     if len(argv) not in (1, 3, 4):
         telethn.disconnect()
@@ -526,6 +527,6 @@ def main():
     updater.idle()
 
 if __name__ == "__main__":
-    log.info("Successfully loaded modules: " + str(ALL_MODULES))
+    # log.info("Successfully loaded modules: " + str(ALL_MODULES))
     telethn.start(bot_token=TOKEN)
     main()
