@@ -37,15 +37,11 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 9:
 from tg_bot.config import Rental as Rent
 API_ID = Rent.API_ID
 API_HASH = Rent.API_HASH
-CUSTOM_CMD = Rent.CUSTOM_CMD
 DB_URI = Rent.DB_URI
-DEL_CMDS = Rent.DEL_CMDS
 ERROR_DUMP = Rent.ERROR_DUMP
 GBAN_LOGS = Rent.GBAN_LOGS
 JOIN_LOGGER = Rent.JOIN_LOGGER
-LOAD = list(map(str, Rent.LOAD.split()))
 MESSAGE_DUMP = Rent.MESSAGE_DUMP
-NO_LOAD = list(map(str, Rent.NO_LOAD.split()))
 TOKEN = Rent.TOKEN
 WALL_API = Rent.WALL_API
 
@@ -65,6 +61,5 @@ telethn = TelegramClient(MemorySession(), API_ID, API_HASH)
 StartTime = time.time()
 
 # Load at end to ensure all prev variables have been set
-if CUSTOM_CMD and len(CUSTOM_CMD) >= 1:
-    from tg_bot.modules.helper_funcs.handlers import CustomCommandHandler
-    tg.CommandHandler = CustomCommandHandler
+from tg_bot.modules.helper_funcs.handlers import CustomCommandHandler
+tg.CommandHandler = CustomCommandHandler
