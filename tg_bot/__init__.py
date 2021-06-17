@@ -5,11 +5,9 @@ import json
 import logging
 from logging.config import fileConfig
 
-from tg_bot.modules.sql import SESSION
 import telegram.ext as tg
 from telethon import TelegramClient
 from telethon.sessions import MemorySession
-from ptbcontrib.postgres_persistence import PostgresPersistence
 
 
 # get Devs & Contributors
@@ -56,7 +54,7 @@ WHITELIST_USERS = get_user_list("whitelists")
 
 
 # setup
-updater = tg.Updater(TOKEN, workers=min(32, os.cpu_count() + 4), request_kwargs={"read_timeout": 10, "connect_timeout": 10}, persistence=PostgresPersistence(SESSION))
+updater = tg.Updater(TOKEN, workers=min(32, os.cpu_count() + 4), request_kwargs={"read_timeout": 10, "connect_timeout": 10})
 dispatcher = updater.dispatcher
 telethn = TelegramClient(MemorySession(), API_ID, API_HASH)
 StartTime = time.time()
