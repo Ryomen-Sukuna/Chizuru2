@@ -1,8 +1,8 @@
 import asyncio
 
 from telethon import events, Button
-from telethon.errors import ChatAdminRequiredError, UserAdminInvalidError
 from telethon.tl.functions.channels import EditBannedRequest
+from telethon.errors import ChatAdminRequiredError, UserAdminInvalidError
 from telethon.tl.types import ChatBannedRights, ChannelParticipantsAdmins
 
 from tg_bot import telethn
@@ -68,7 +68,7 @@ async def demons(event):
         await X.edit("There Are No Demons! \nThis Chat Is Safe For Now!")
 
 
-@client.on(events.CallbackQuery)
+@telethn.on(events.CallbackQuery)
 async def dimonhandler(event):
     if event.data == "demons yes":
         # Here laying the sanity check
