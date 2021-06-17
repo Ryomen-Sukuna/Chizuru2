@@ -19,9 +19,6 @@ from tg_bot.modules.helper_funcs.chat_status import (
 from tg_bot.modules.helper_funcs.extraction import extract_user, extract_user_and_text
 from tg_bot.modules.log_channel import loggable
 from tg_bot.modules.helper_funcs.alternate import send_message
-from tg_bot import kp, get_entity
-from pyrogram import Client, filters
-from pyrogram.types import Chat, User
 from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback
 from tg_bot.modules.helper_funcs.admin_rights import user_can_changeinfo
  
@@ -31,7 +28,6 @@ from tg_bot.modules.helper_funcs.admin_rights import user_can_changeinfo
 @bot_admin
 @can_promote
 @user_admin
-@loggable
 def promote(update: Update, context: CallbackContext) -> str:
     bot = context.bot
     args = context.args
@@ -76,7 +72,6 @@ def promote(update: Update, context: CallbackContext) -> str:
 
     # set same perms as bot - bot can't assign higher perms than itself!
     bot_member = chat.get_member(bot.id)
-
     try:
         bot.promoteChatMember(
             chat.id,
@@ -108,30 +103,8 @@ def promote(update: Update, context: CallbackContext) -> str:
         chat.id,
         f"<b>{mention_html(user_id, user_member.user.first_name or user_id)}</b> was promoted with all rights by <b>{mention_html(message.from_user.id, message.from_user.first_name or message.from_user.id)}</b> in <b>{chat.title}</b>!",
         parse_mode=ParseMode.HTML,
-        reply_markup=InlineKeyboardMarkup(
-                      [
-                        [
-                           InlineKeyboardButton(
-                                 text="Demote", 
-                                 callback_data=f"admim_demote={user_id}"
-                           ),
-                           InlineKeyboardButton(
-                                 text="Admin Cache", 
-                                 callback_data=f"admim_realod={user_id}"
-                           ),
-                        ],
-                      ]
-                ),
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Demote", callback_data=f"admim-demote {user_id}")]]),
     )
-
-    log_message = (
-        f"<b>{html.escape(chat.title)}:</b>\n"
-        f"#FULLPROMOTED\n"
-        f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
-        f"<b>User:</b> {mention_html(user_member.user.id, user_member.user.first_name)}"
-    )
-
-    return log_message
 
 
 @kigcmd(command="promote", pass_args=True, can_disable=False)
@@ -139,7 +112,6 @@ def promote(update: Update, context: CallbackContext) -> str:
 @bot_admin
 @can_promote
 @user_admin
-@loggable
 def promote(update: Update, context: CallbackContext) -> str:
     bot = context.bot
     args = context.args
@@ -216,30 +188,8 @@ def promote(update: Update, context: CallbackContext) -> str:
         chat.id,
         f"<b>{mention_html(user_id, user_member.user.first_name or user_id)}</b> was promoted by <b>{mention_html(message.from_user.id, message.from_user.first_name or message.from_user.id)}</b> in <b>{chat.title}</b>!",
         parse_mode=ParseMode.HTML,
-        reply_markup=InlineKeyboardMarkup(
-                      [
-                        [
-                           InlineKeyboardButton(
-                                 text="Demote", 
-                                 callback_data=f"admim_demote={user_id}"
-                           ),
-                           InlineKeyboardButton(
-                                 text="Admin Cache", 
-                                 callback_data=f"admim_realod={user_id}"
-                           ),
-                        ],
-                      ]
-                ),
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Demote", callback_data=f"admim-demote {user_id}")]]),
     )
-
-    log_message = (
-        f"<b>{html.escape(chat.title)}:</b>\n"
-        f"#PROMOTED\n"
-        f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
-        f"<b>User:</b> {mention_html(user_member.user.id, user_member.user.first_name)}"
-    )
-
-    return log_message
 
 
 @kigcmd(command="demote", can_disable=False)
@@ -247,7 +197,6 @@ def promote(update: Update, context: CallbackContext) -> str:
 @bot_admin
 @can_promote
 @user_admin
-@loggable
 def demote(update: Update, context: CallbackContext) -> str:
     bot = context.bot
     args = context.args
@@ -299,30 +248,9 @@ def demote(update: Update, context: CallbackContext) -> str:
             chat.id,
             f"<b>{mention_html(user_id, user_member.user.first_name or user_id)}</b> was demoted by <b>{mention_html(message.from_user.id, message.from_user.first_name or message.from_user.id)}</b> in <b>{chat.title}</b>!",
             parse_mode=ParseMode.HTML,
-            reply_markup=InlineKeyboardMarkup(
-                      [
-                        [
-                           InlineKeyboardButton(
-                                 text="Promote", 
-                                 callback_data=f"admim_promote={user_id}"
-                           ),
-                           InlineKeyboardButton(
-                                 text="Admin Cache", 
-                                 callback_data=f"admim_realod={user_id}"
-                           ),
-                        ],
-                      ]
-                ),
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Demote", callback_data=f"admim-demote {user_id}")]]),
         )
 
-        log_message = (
-            f"<b>{html.escape(chat.title)}:</b>\n"
-            f"#DEMOTED\n"
-            f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
-            f"<b>User:</b> {mention_html(user_member.user.id, user_member.user.first_name)}"
-        )
-
-        return log_message
     except BadRequest:
         message.reply_text(
             "Could not demote. I might not be admin, or the admin status was appointed by another"
@@ -333,7 +261,7 @@ def demote(update: Update, context: CallbackContext) -> str:
 
 @kigcmd(command=["admincache", "reload"], can_disable=False)
 @user_admin
-def refresh_admin(update, _):
+def refresh_admin(update: Update, _):
     ADMIN_CACHE.pop(update.effective_chat.id)
     update.effective_message.reply_text("Admins cache refreshed!")
 
@@ -407,7 +335,6 @@ def set_title(update: Update, context: CallbackContext):
 @bot_admin
 @can_pin
 @user_admin
-@loggable
 def pin(update: Update, context: CallbackContext) -> str:
     bot = context.bot
     args = context.args
@@ -436,20 +363,12 @@ def pin(update: Update, context: CallbackContext) -> str:
                 pass
             else:
                 raise
-        log_message = (
-            f"<b>{html.escape(chat.title)}:</b>\n"
-            f"#PINNED\n"
-            f"<b>Admin:</b> {mention_html(user.id, html.escape(user.first_name))}"
-        )
-
-        return log_message
 
 
 @kigcmd(command="unpin", can_disable=False)
 @bot_admin
 @can_pin
 @user_admin
-@loggable
 def unpin(update: Update, context: CallbackContext) -> str:
     bot = context.bot
     chat = update.effective_chat
@@ -462,14 +381,6 @@ def unpin(update: Update, context: CallbackContext) -> str:
             pass
         else:
             raise
-
-    log_message = (
-        f"<b>{html.escape(chat.title)}:</b>\n"
-        f"#UNPINNED\n"
-        f"<b>Admin:</b> {mention_html(user.id, html.escape(user.first_name))}"
-    )
-
-    return log_message
 
 
 @kigcmd(command="invitelink")
@@ -500,7 +411,7 @@ def invite(update: Update, context: CallbackContext):
 @kigcmd(command="setgtitle")
 @bot_admin
 @user_admin
-def chattitle(update, context):
+def chattitle(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
     message = update.effective_message
@@ -529,7 +440,7 @@ def chattitle(update, context):
 @kigcmd(command="delgpic")
 @bot_admin
 @user_admin
-def delchatpic(update, context):
+def delchatpic(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
     message = update.effective_message
@@ -585,7 +496,7 @@ def chatpic(update: Update, context: CallbackContext):
 @kigcmd(command="setsticker")
 @bot_admin
 @user_admin
-def gstickerset(update, context):
+def gstickerset(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
     message = update.effective_message
@@ -617,7 +528,7 @@ def gstickerset(update, context):
 @kigcmd(command=["setdescription", "setdesc"])
 @bot_admin
 @user_admin
-def set_desc(update, context):
+def set_desc(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
     message = update.effective_message
@@ -643,76 +554,61 @@ def set_desc(update, context):
 
 
 
-def _generate_sexy(entity, ping):
-    ZWS = "\u200B"
-    text = entity.first_name
-    if entity.last_name:
-        text += f" {entity.last_name}"
-    sexy_text = (
-        "<code>[DELETED]</code>"
-        if entity.is_deleted
-        else html.escape(text or "Empty???")
-    )
-    if not entity.is_deleted:
-        if ping:
-            sexy_text = f'<a href="tg://user?id={entity.id}">{sexy_text}</a>'
-        elif entity.username:
-            sexy_text = f'<a href="https://t.me/{entity.username}">{sexy_text}</a>'
-        elif not ping:
-            sexy_text = sexy_text.replace("@", f"@{ZWS}")
-    if entity.is_bot:
-        sexy_text += " <code>[BOT]</code>"
-    if entity.is_verified:
-        sexy_text += " <code>[VERIFIED]</code>"
-    if entity.is_support:
-        sexy_text += " <code>[SUPPORT]</code>"
-    if entity.is_scam:
-        sexy_text += " <code>[SCAM]</code>"
-    return sexy_text
+@kigcmd(command=["admins"])
+def adminlist(update: Update, context: CallbackContext):
+    chat = update.effective_chat
+    user = update.effective_user
+    bot = context.bot
 
-@kp.on_message(filters.command(["admin", "admins"], prefixes=["/", "!"]))
-async def admins(client, message):
-    ZWS = "\u200B"
-    chat, entity_client = message.chat, client
-    command = message.command
-    command.pop(0)
-    if command:
-        chat = " ".join(command)
-        try:
-            chat = int(chat)
-        except ValueError:
-            pass
-        chat, entity_client = await get_entity(client, chat)
-    text_unping = text_ping = ""
-    async for i in entity_client.iter_chat_members(chat.id, filter="administrators"):
-        text_unping += f"\n[<code>{i.user.id}</code>] {_generate_sexy(i.user, False)}"
-        text_ping += f"\n[<code>{i.user.id}</code>] {_generate_sexy(i.user, True)}"
-        if i.title:
-            text_unping += f' // {html.escape(i.title.replace("@", "@" + ZWS))}'
-            text_ping += f" // {html.escape(i.title)}"
-    reply = await message.reply_text(text_unping, disable_web_page_preview=True)
-    await reply.edit_text(text_ping, disable_web_page_preview=True)
+    if chat.type == "private":
+        send_message(update.effective_message, "This Command Only Works In Groups.")
+        return
+
+    admim = update.effective_message.reply_text("Just A Second...")
+    administrators = bot.getChatAdministrators(chat.id)
+    text = "Admins In *{}*:".format(chat.title)
+
+
+    admins_list = []
+    for admin in administrators:
+        user = admin.user
+        status = admin.status
+        custom_title = admin.custom_title
+
+        if user.first_name == '':
+            name = "💀"
+        else:
+            name = "{}".format(mention_markdown(user.id, escape_markdown(custom_title if custom_title else user.first_name)))
+
+        if status == "creator":
+            text += "\n 👑 Creator :"
+            text += "\n` • `{}\n".format(name)
+
+        text += "\n🔱 Admins :"
+        if status == "administrator":
+            admins_list.append(name)
+             for admin in admins_list:
+                text += "\n` ∘ `{}".format(admin)
+
+    try:
+        admim.edit_text(text, parse_mode=ParseMode.MARKDOWN)
+    except BadRequest:  # if original message is deleted
+        return
 
 
 # Callback Data For Promote / Demote
-@kigcallback(pattern=r"admim_.*")
+@kigcallback(pattern=r"admim-.*")
 def admim_button(update: Update, context: CallbackContext):
     chat = update.effective_chat
     query = update.callback_query
     message = update.effective_message
 
     # Split query_match & user_id 
-    splitter = query.data.split("=")
+    splitter = query.data.split(" ")
     query_match = splitter[0]
     user_id = splitter[1]
-    if query_match == "admim_reload":
-        try:
-            ADMIN_CACHE.pop(chat.id)
-        except:
-            pass
-        query.answer("Admin Cache Refreshed!", show_alert=True)
 
-    elif query_match == "admim_promote":
+    if query_match == "admim-promote":
         member = chat.get_member(int(user_id))
         if member.status == "creator":
            query.answer("This Person Is A Chat Creator! How am I meant to promote him?", show_alert=True)
@@ -748,23 +644,10 @@ def admim_button(update: Update, context: CallbackContext):
                 parse_mode=ParseMode.HTML,
                 disable_web_page_preview=True,
                 timeout=60,
-                reply_markup=InlineKeyboardMarkup(
-                      [
-                        [
-                           InlineKeyboardButton(
-                                 text="Demote", 
-                                 callback_data=f"admim_demote={user_id}"
-                           ),
-                           InlineKeyboardButton(
-                                 text="Admin Cache", 
-                                 callback_data=f"admim_realod={user_id}"
-                           ),
-                        ],
-                      ]
-                ),
+                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Demote", callback_data=f"admim-demote {user_id}")]]),
             )
 
-    elif query_match == "admim_demote":
+    elif query_match == "admim-demote":
         member = chat.get_member(int(user_id))
         if member.status == "creator":
            query.answer("This Person Is A Chat Creator! How am I meant to demote him?", show_alert=True)
@@ -800,20 +683,7 @@ def admim_button(update: Update, context: CallbackContext):
                 parse_mode=ParseMode.HTML,
                 disable_web_page_preview=True,
                 timeout=60,
-                reply_markup=InlineKeyboardMarkup(
-                      [
-                        [
-                           InlineKeyboardButton(
-                                 text="Promote", 
-                                 callback_data=f"admim_promote={user_id}"
-                           ),
-                           InlineKeyboardButton(
-                                 text="Admin Cache", 
-                                 callback_data=f"admim_realod={user_id}"
-                           ),
-                        ],
-                      ]
-                ),
+                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Demote", callback_data=f"admim-promote {user_id}")]]),
             )
 
     context.bot.answer_callback_query(query.id)
@@ -826,4 +696,4 @@ def get_help(chat):
 
 __mod_name__ = "Admin"
 
-__commands__ = ["fullpromote", "invitelink", "setgtitle", "delgpic", "setgpic", "setsticker", "setdescription", "setdesc"]
+__commands__ = ["fullpromote", "invitelink", "admins", "setgtitle", "delgpic", "setgpic", "setsticker", "setdescription", "setdesc"]
