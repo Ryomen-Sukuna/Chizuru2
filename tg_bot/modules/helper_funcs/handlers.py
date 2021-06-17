@@ -9,15 +9,7 @@ from pyrate_limiter import (
     MemoryListBucket,
 )
 
-try:
-    from tg_bot import CUSTOM_CMD
-except:
-    CUSTOM_CMD = False
-
-if CUSTOM_CMD:
-    CMD_STARTERS = CUSTOM_CMD
-else:
-    CMD_STARTERS = ["/", "!"]
+CMD_STARTERS = ["/", "!"]
 
 
 class AntiSpam:
