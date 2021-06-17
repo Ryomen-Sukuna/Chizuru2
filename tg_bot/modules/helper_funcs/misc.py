@@ -1,6 +1,6 @@
 from math import ceil
 from uuid import uuid4
-from tg_bot import IMPORTED
+from tg_bot.__main__ import IMPORTED
 from typing import Dict, List
 
 from telegram.error import TelegramError
