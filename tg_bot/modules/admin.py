@@ -1,10 +1,11 @@
 import os
 import html
 
-from telegram import ParseMode, Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import BadRequest
 from telegram.ext import CallbackContext, Filters
+from telegram.utils.helpers import escape_markdown
 from telegram.utils.helpers import mention_html, mention_markdown
+from telegram import ParseMode, Update, InlineKeyboardMarkup, InlineKeyboardButton
 
 from tg_bot import SUDO_USERS, dispatcher
 from tg_bot.modules.helper_funcs.chat_status import (
