@@ -1,18 +1,18 @@
 from functools import wraps
 
 from tg_bot import (
-    DEL_CMDS,
+    dispatcher,
     DEV_USERS,
     SUDO_USERS,
     SUPPORT_USERS,
     SARDEGNA_USERS,
     WHITELIST_USERS,
-    dispatcher,
 )
 from cachetools import TTLCache
 from telegram import Chat, ChatMember, ParseMode, Update, Bot
 from telegram.ext import CallbackContext
 
+DEL_CMDS = True
 # stores admemes in memory for 10 min.
 ADMIN_CACHE = TTLCache(maxsize=512, ttl=60 * 10)
 
