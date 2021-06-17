@@ -591,7 +591,7 @@ def main():
     # dispatcher.add_error_handler(error_handler)
 
     log.info(f"Using long polling. | BOT: [@{dispatcher.bot.username}]")
-    updater.start_polling(timeout=15, read_latency=4, drop_pending_updates=True)
+    updater.start_polling(timeout=15, read_latency=2.0)
     if len(argv) not in (1, 3, 4):
         telethn.disconnect()
     else:
