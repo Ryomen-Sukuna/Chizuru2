@@ -20,7 +20,7 @@ from tg_bot.modules.disable import DisableAbleCommandHandler
 from tg_bot.modules.helper_funcs.chat_status import user_admin
 from tg_bot.modules.helper_funcs.extraction import extract_text
 from tg_bot.modules.helper_funcs.filters import CustomFilters
-from tg_bot.modules.helper_funcs.misc import build_keyboard_parser
+from tg_bot.modules.helper_funcs.misc import build_keyboard
 from tg_bot.modules.helper_funcs.msg_types import get_filter_type
 from tg_bot.modules.helper_funcs.string_handling import (
     split_quotes,
@@ -309,7 +309,7 @@ def reply_filter(update, context):
             filt = sql.get_filter(chat.id, keyword)
             if filt.reply == "there is should be a new reply":
                 buttons = sql.get_buttons(chat.id, filt.keyword)
-                keyb = build_keyboard_parser(context.bot, chat.id, buttons)
+                keyb = build_keyboard(buttons)
                 keyboard = InlineKeyboardMarkup(keyb)
 
                 VALID_WELCOME_FORMATTERS = [
@@ -459,7 +459,7 @@ def reply_filter(update, context):
                     message.reply_video(filt.reply)
                 elif filt.has_markdown:
                     buttons = sql.get_buttons(chat.id, filt.keyword)
-                    keyb = build_keyboard_parser(context.bot, chat.id, buttons)
+                    keyb = build_keyboard(buttons)
                     keyboard = InlineKeyboardMarkup(keyb)
 
                     try:
