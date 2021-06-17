@@ -59,6 +59,7 @@ updater = tg.Updater(TOKEN, workers=min(32, os.cpu_count() + 4), request_kwargs=
 dispatcher = updater.dispatcher
 telethn = TelegramClient(MemorySession(), API_ID, API_HASH)
 StartTime = time.time()
+IMPORTED = {}
 
 # Load at end to ensure all prev variables have been set
 from tg_bot.modules.helper_funcs.handlers import CustomCommandHandler
