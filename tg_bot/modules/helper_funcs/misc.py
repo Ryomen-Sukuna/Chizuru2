@@ -1,6 +1,5 @@
 from math import ceil
 from uuid import uuid4
-from tg_bot.__main__ import IMPORTED
 from typing import Dict, List
 
 from telegram.error import TelegramError
@@ -155,4 +154,4 @@ def revert_buttons(buttons):
 
 
 def is_module_loaded(name):
-    return name in IMPORTED
+    return True
