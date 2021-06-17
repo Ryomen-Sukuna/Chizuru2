@@ -5,7 +5,7 @@ import json
 import logging
 from logging.config import fileConfig
 
-from .modules.sql import SESSION
+from tg_bot.modules.sql import SESSION
 import telegram.ext as tg
 from telethon import TelegramClient
 from telethon.sessions import MemorySession
