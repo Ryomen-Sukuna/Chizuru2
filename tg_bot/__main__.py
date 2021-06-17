@@ -2,14 +2,13 @@ import re
 import importlib
 from sys import argv
 
-from pyrogram import idle, Client
 from telegram.ext import Filters, CallbackContext
 from telegram.utils.helpers import escape_markdown
 from telegram.ext.dispatcher import DispatcherHandlerStop
 from telegram import Update, ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import TelegramError, Unauthorized, BadRequest, TimedOut, ChatMigrated, NetworkError
 
-from tg_bot import OWNER_ID, TOKEN, dispatcher, updater, telethn, log, kp
+from tg_bot import SUPPORT_CHAT, TOKEN, dispatcher, updater, telethn, log
 
 # needed to dynamically load modules
 # NOTE: Module order is not guaranteed, specify that in the config file!
@@ -20,22 +19,14 @@ from tg_bot.modules.helper_funcs.misc import paginate_modules
 from tg_bot.modules.helper_funcs.chat_status import is_user_admin
 from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback, kigmsg
 
-SUPPORT_CHAT = "ElitesOfSupport"
 START_IMG = "https://telegra.ph/file/70139da07d839b2d2c057.jpg"
-
 buttuns = [
-    [        
-        InlineKeyboardButton(
-              text="About", callback_data="aboutmanu_"
-        ),
-    ],
-    [
-        InlineKeyboardButton(
-              text="Try Inline",
-              switch_inline_query_current_chat="",
-        ),
-    ],
-    
+   [
+      InlineKeyboardButton(text="About", callback_data="aboutmanu_"),
+   ],
+   [
+      InlineKeyboardButton(text="Try Inline", switch_inline_query_current_chat=""),
+   ],
 ]
 
 
@@ -83,16 +74,7 @@ for module_name in ALL_MODULES:
         USER_SETTINGS[imported_module.__mod_name__.lower()] = imported_module
 
 
-# do not async
 def send_help(chat_id, text, keyboard=None):
-    '''#TODO
-
-    Params:
-        chat_id  -
-        text     -
-        keyboard -
-    '''
-
     if not keyboard:
         keyboard = InlineKeyboardMarkup(paginate_modules(0, HELPABLE, "help"))
     dispatcher.bot.send_message(
@@ -102,12 +84,6 @@ def send_help(chat_id, text, keyboard=None):
 
 @kigcmd(command='start', pass_args=True)
 def start(update: Update, context: CallbackContext):
-    '''#TODO
-
-    Params:
-        update: Update           -
-        context: CallbackContext -
-    '''
     chat = update.effective_chat
     args = context.args
     if update.effective_chat.type == "private":
@@ -158,13 +134,6 @@ def start(update: Update, context: CallbackContext):
 
 # for test purposes
 def error_callback(update: Update, context: CallbackContext):
-    '''#TODO
-
-    Params:
-        update  -
-        context -
-    '''
-
     try:
         raise context.error
     except Unauthorized:
@@ -189,13 +158,6 @@ def error_callback(update: Update, context: CallbackContext):
 
 @kigcallback(pattern=r'help_.*')
 def help_button(update: Update, context: CallbackContext):
-    '''#TODO
-
-    Params:
-        update  -
-        context -
-    '''
-
     query = update.callback_query
     mod_match = re.match(r"help_module\((.+?)\)", query.data)
     prev_match = re.match(r"help_prev\((.+?)\)", query.data)
@@ -334,13 +296,6 @@ def about_callback(update: Update, context: CallbackContext):
 
 @kigcmd(command='help')
 def get_help(update: Update, context: CallbackContext):
-    '''#TODO
-
-    Params:
-        update  -
-        context -
-    '''
-
     chat = update.effective_chat  # type: Optional[Chat]
     args = update.effective_message.text.split(" " or None, 1)
 
@@ -381,14 +336,6 @@ def get_help(update: Update, context: CallbackContext):
 
 
 def send_settings(chat_id, user_id, user=False):
-    '''#TODO
-
-    Params:
-        chat_id -
-        user_id -
-        user    -
-    '''
-
     if user:
         if USER_SETTINGS:
             settings = "\n\n".join(
@@ -428,15 +375,9 @@ def send_settings(chat_id, user_id, user=False):
                 parse_mode=ParseMode.MARKDOWN,
             )
 
+
 @kigcallback(pattern=r"stngs_")
 def settings_button(update: Update, context: CallbackContext):
-    '''#TODO
-
-    Params:
-        update: Update           -
-        context: CallbackContext -
-    '''
-
     query = update.callback_query
     user = update.effective_user
     bot = context.bot
@@ -520,15 +461,9 @@ def settings_button(update: Update, context: CallbackContext):
         else:
             log.exception("Exception in settings buttons. %s", str(query.data))
 
+
 @kigcmd(command='settings')
 def get_settings(update: Update, context: CallbackContext):
-    '''#TODO
-
-    Params:
-        update: Update           -
-        context: CallbackContext -
-    '''
-
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     msg = update.effective_message  # type: Optional[Message]
@@ -558,15 +493,9 @@ def get_settings(update: Update, context: CallbackContext):
     else:
         send_settings(chat.id, user.id, True)
 
+
 @kigmsg((Filters.status_update.migrate))
 def migrate_chats(update: Update, context: CallbackContext):
-    '''#TODO
-
-    Params:
-        update: Update           -
-        context: CallbackContext -
-    '''
-
     msg = update.effective_message  # type: Optional[Message]
     if msg.migrate_to_chat_id:
         old_chat = update.effective_chat.id
@@ -587,7 +516,6 @@ def migrate_chats(update: Update, context: CallbackContext):
 
 def main():
     dispatcher.add_error_handler(error_callback)
-    # dispatcher.add_error_handler(error_handler)
 
     log.info(f"Using long polling. | BOT: [@{dispatcher.bot.username}]")
     updater.start_polling(timeout=15, read_latency=2.0, allowed_updates=Update.ALL_TYPES)
@@ -598,8 +526,6 @@ def main():
     updater.idle()
 
 if __name__ == "__main__":
-    kp.start()
     log.info("Successfully loaded modules: " + str(ALL_MODULES))
     telethn.start(bot_token=TOKEN)
     main()
-    idle()
