@@ -587,8 +587,8 @@ def adminlist(update: Update, context: CallbackContext):
         text += "\n🔱 Admins :"
         if status == "administrator":
             admins_list.append(name)
-             for admin in admins_list:
-                text += "\n` ∘ `{}".format(admin)
+            for admin in admins_list:
+               text += "\n` ∘ `{}".format(admin)
 
     try:
         admim.edit_text(text, parse_mode=ParseMode.MARKDOWN)
