@@ -22,7 +22,6 @@ fileConfig('logging.ini')
 log = logging.getLogger('[RentalBot]')
 logging.getLogger('ptbcontrib.postgres_persistence.postgrespersistence').setLevel(logging.WARNING)
 
-
 # if python version < 3.9, stop bot.
 if sys.version_info[0] < 3 or sys.version_info[1] < 9:
 	log.error(
@@ -46,7 +45,7 @@ WALL_API = Rent.WALL_API
 
 # Devs & Contributors
 OWNER_ID = Rent.OWNER_ID
-DEV_USERS = get_user_list("devs").add(OWNER_ID)
+DEV_USERS = get_user_list("devs")
 SUDO_USERS = get_user_list("sudos")
 SUPPORT_USERS = get_user_list("supports")
 SARDEGNA_USERS = get_user_list("sardegnas")
