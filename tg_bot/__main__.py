@@ -8,7 +8,7 @@ from telegram.ext.dispatcher import DispatcherHandlerStop
 from telegram import Update, ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import TelegramError, Unauthorized, BadRequest, TimedOut, ChatMigrated, NetworkError
 
-from tg_bot import SUPPORT_CHAT, TOKEN, dispatcher, updater, telethn, log
+from tg_bot import SUPPORT_CHAT, IMPORTED, TOKEN, dispatcher, updater, telethn, log
 
 # needed to dynamically load modules
 # NOTE: Module order is not guaranteed, specify that in the config file!
@@ -31,7 +31,7 @@ buttuns = [
 
 
 
-IMPORTED = {}
+IMPORTED = IMPORTED
 MIGRATEABLE = []
 HELPABLE = {}
 STATS = []
