@@ -5,7 +5,7 @@ from telethon.errors import ChatAdminRequiredError, UserAdminInvalidError
 from telethon.tl.functions.channels import EditBannedRequest
 from telethon.tl.types import ChatBannedRights, ChannelParticipantsAdmins
 
-from tg_bot import client
+from tg_bot import telethn
 from tg_bot.modules.helper_funcs.telethn.chatstatus import user_is_admin, can_ban_users
 
 
@@ -56,8 +56,8 @@ async def demons(event):
 
     if demons > 0:
         markup = [
-           [Button.inline("Yes", data="demon_yes")],
-           [Button.inline("No", data="demon_no")],
+           [Button.inline("Yes", data="demons yes")],
+           [Button.inline("No", data="demons no")],
         ]
         demon = f"Found **{demons}** Demon{'s' if demons > 1 else ''} In This Chat!\n\nWould You Like To Hunt {'Them All' if demons > 1 else 'That Demon'} ?"
         await X.edit(
@@ -70,7 +70,7 @@ async def demons(event):
 
 @client.on(events.CallbackQuery)
 async def dimonhandler(event):
-    if event.data == b"demon_yes":
+    if event.data == "demons yes":
         # Here laying the sanity check
         but = await event.get_chat()
         admim = but.admin_rights
@@ -90,9 +90,7 @@ async def dimonhandler(event):
         async for user in event.client.iter_participants(event.chat_id):
             if user.deleted:
                 try:
-                    await event.client(
-                        EditBannedRequest(event.chat_id, user.id, BANNED_RIGHTS)
-                    )
+                    await event.client(EditBannedRequest(event.chat_id, user.id, BANNED_RIGHTS))
                     await asyncio.sleep(1)
                 except ChatAdminRequiredError:
                     await event.edit("I haven't got the necessary rights to do this.")
@@ -111,14 +109,14 @@ async def dimonhandler(event):
 
         await event.edit(demon)
         await event.answer("Demon Hunted!")
-    elif event.data == b"demon_no":
+    elif event.data == "demons no":
           await event.edit("Demom Hunting Task Cancelled!")
           await event.answer("Cancelled!")
 
 
 
 DEMONS = demons, events.NewMessage(pattern="^[!/]demons$")
-client.add_event_handler(*DEMONS)
+telethn.add_event_handler(*DEMONS)
 
 
 __mod_name__ = "Demons"
