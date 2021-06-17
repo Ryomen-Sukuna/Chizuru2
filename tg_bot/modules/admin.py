@@ -332,6 +332,17 @@ def set_title(update: Update, context: CallbackContext):
     )
 
 
+@kigcmd(command="pinned", can_disable=False)
+def pin(update: Update, context: CallbackContext) -> str:
+    bot = context.bot
+    chat = update.effective_chat
+    message = update.effective_message
+
+    pinned = (bot.getChat(chat.id)).pinned_message.message_id
+    link = f"https://t.me/{chat.username or ('c/' + chat.id)}/{pinned}"
+    chat.sendMessage("The pinned message in {chat.title} is <a href={link}>here</a>.", parse_mode=ParseMode.HTML)
+
+
 @kigcmd(command="pin", can_disable=False)
 @bot_admin
 @can_pin
@@ -373,10 +384,28 @@ def pin(update: Update, context: CallbackContext) -> str:
 def unpin(update: Update, context: CallbackContext) -> str:
     bot = context.bot
     chat = update.effective_chat
+    message = update.effective_message.reply_to_message
+
+    try:
+        if message:
+            bot.unpinChatMessage(chat_id=chat.id, message_id=message.message_id)
+        else:
+            bot.unpinChatMessage(chat.id)
+    except:
+        bot.unpinChatMessage(chat.id)
+
+
+@kigcmd(command="unpinall", can_disable=False)
+@bot_admin
+@can_pin
+@user_admin
+def unpin(update: Update, context: CallbackContext) -> str:
+    bot = context.bot
+    chat = update.effective_chat
     user = update.effective_user
 
     try:
-        bot.unpinChatMessage(chat.id)
+        bot.unpinAllChatMessages(chat.id)
     except BadRequest as excp:
         if excp.message == "Chat_not_modified":
             pass
