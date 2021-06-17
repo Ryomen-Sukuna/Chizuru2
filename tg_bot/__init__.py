@@ -46,8 +46,8 @@ WALL_API = Rent.WALL_API
 
 # Devs & Contributors
 OWNER_ID = Rent.OWNER_ID
-DEV_USERS = [OWNER_ID] + get_user_list("devs")
-SUDO_USERS = [OWNER_ID] + get_user_list("sudos")
+DEV_USERS = get_user_list("devs").add(OWNER_ID)
+SUDO_USERS = get_user_list("sudos")
 SUPPORT_USERS = get_user_list("supports")
 SARDEGNA_USERS = get_user_list("sardegnas")
 WHITELIST_USERS = get_user_list("whitelists")
