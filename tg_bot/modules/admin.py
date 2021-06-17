@@ -576,20 +576,18 @@ def adminlist(update: Update, context: CallbackContext):
         status = admin.status
         custom_title = admin.custom_title
 
-        if user.first_name == '':
-            name = "💀"
-        else:
-            name = "{}".format(mention_markdown(user.id, escape_markdown(custom_title if custom_title else user.first_name)))
+        name = mention_markdown(user.id, escape_markdown(custom_title if custom_title else user.first_name)) if not user.first_name == '' else "💀"
 
         if status == "creator":
-            text += "\n 👑 Creator :"
+            text += "\n 👑 Creator:"
             text += "\n` • `{}\n".format(name)
 
-        text += "\n🔱 Admins :"
         if status == "administrator":
             admins_list.append(name)
-            for admin in admins_list:
-               text += "\n` ∘ `{}".format(admin)
+
+    text += "\n🔱 Admins:"
+    for admin in admins_list:
+         text += "\n` ∘ `{}".format(admin)
 
     try:
         admim.edit_text(text, parse_mode=ParseMode.MARKDOWN)
