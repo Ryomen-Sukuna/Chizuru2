@@ -1,6 +1,6 @@
 from math import ceil
 from uuid import uuid4
-from tg_bot import NO_LOAD
+from tg_bot.__main__ import IMPORTED
 from typing import Dict, List
 
 from telegram.error import TelegramError
@@ -154,18 +154,5 @@ def revert_buttons(buttons):
     return res
 
 
-def build_keyboard_parser(bot, chat_id, buttons):
-    keyb = []
-    for btn in buttons:
-        if btn.url == "{rules}":
-            btn.url = "http://t.me/{}?start={}".format(bot.username, chat_id)
-        if btn.same_line and keyb:
-            keyb[-1].append(InlineKeyboardButton(btn.name, url=btn.url))
-        else:
-            keyb.append([InlineKeyboardButton(btn.name, url=btn.url)])
-
-    return keyb
-
-
 def is_module_loaded(name):
-    return name not in NO_LOAD
+    return name in IMPORTED
