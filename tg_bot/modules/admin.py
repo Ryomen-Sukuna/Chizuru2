@@ -29,7 +29,7 @@ from tg_bot.modules.helper_funcs.admin_rights import user_can_changeinfo
 @bot_admin
 @can_promote
 @user_admin
-def promote(update: Update, context: CallbackContext) -> str:
+def fullpromote(update: Update, context: CallbackContext) -> str:
     bot = context.bot
     args = context.args
 
@@ -333,14 +333,14 @@ def set_title(update: Update, context: CallbackContext):
 
 
 @kigcmd(command="pinned", can_disable=False)
-def pin(update: Update, context: CallbackContext) -> str:
+def pinned(update: Update, context: CallbackContext) -> str:
     bot = context.bot
     chat = update.effective_chat
     message = update.effective_message
 
     pinned = (bot.getChat(chat.id)).pinned_message.message_id
     link = f"https://t.me/{chat.username or ('c/' + chat.id)}/{pinned}"
-    chat.sendMessage("The pinned message in {chat.title} is <a href={link}>here</a>.", parse_mode=ParseMode.HTML)
+    chat.sendMessage(f"The pinned message in {chat.title} is <a href={link}>here</a>.", parse_mode=ParseMode.HTML)
 
 
 @kigcmd(command="pin", can_disable=False)
@@ -399,7 +399,7 @@ def unpin(update: Update, context: CallbackContext) -> str:
 @bot_admin
 @can_pin
 @user_admin
-def unpin(update: Update, context: CallbackContext) -> str:
+def unpinall(update: Update, context: CallbackContext) -> str:
     bot = context.bot
     chat = update.effective_chat
     user = update.effective_user
@@ -632,21 +632,29 @@ def admim_button(update: Update, context: CallbackContext):
     message = update.effective_message
 
     # Split query_match & user_id 
-    splitter = query.data.split(" ")
+    splitter = query.data.split()
     query_match = splitter[0]
     user_id = splitter[1]
 
     if query_match == "admim-promote":
+        user = chat.get_member(int(query.from_user.id))
+        if user.status in ["kicked", "left"]:
+            query.answer("You need to join this chat.")
+            return
+        elif user.status not in ["creator", "administrator"]:
+            query.answer("You don't have the necessary rights to do this!", show_alert=True)
+            return
+
         member = chat.get_member(int(user_id))
         if member.status == "creator":
-           query.answer("This Person Is A Chat Creator! How am I meant to promote him?", show_alert=True)
-           return
-        if member.status == "kicked" or member.status == "left":
-           query.answer("This Person Is Not Even A Member In This Chat! How am I meant to promote him?", show_alert=True)
-           return
-        if member.status == "administrator":
-           query.answer("This Person Is Already An Administrator! How am I meant to promote him?", show_alert=True)
-           return
+            query.answer("This Person Is A Chat Creator! How am I meant to promote him?", show_alert=True)
+            return
+        elif member.status == "kicked" or member.status == "left":
+            query.answer("This Person Is Not Even A Member In This Chat! How am I meant to promote him?", show_alert=True)
+            return
+        elif member.status == "administrator":
+            query.answer("This Person Is Already An Administrator! How am I meant to promote him?", show_alert=True)
+            return
         if member.status != "administrator":
             # set same perms as bot - bot can't assign higher perms than itself!
             bot = chat.get_member(context.bot.id)
@@ -666,9 +674,9 @@ def admim_button(update: Update, context: CallbackContext):
                 message.reply_text(f"failed to promote: \n{br.message}")
                 return
 
-            query.answer("Promoted Successfully!", show_alert=True)
+            query.answer(f"{member.user.first_name} Promoted Successfully!", show_alert=True)
             query.message.edit_text(
-                text=f"<b>{mention_html(user_id, member.user.first_name or user_id)}</b> was promoted by <b>{mention_html(query.from_user.id, query.from_user.first_name or query.from_user.id)}</b> in <b>{chat.title}</b>!",
+                text=f"<b>{mention_html(user_id, html.escape(member.user.first_name) or user_id)}</b> was promoted by <b>{mention_html(query.from_user.id, html.escape(query.from_user.first_name) or query.from_user.id)}</b> in <b>{html.escape(chat.title)}</b>!",
                 parse_mode=ParseMode.HTML,
                 disable_web_page_preview=True,
                 timeout=60,
@@ -676,16 +684,24 @@ def admim_button(update: Update, context: CallbackContext):
             )
 
     elif query_match == "admim-demote":
+        user = chat.get_member(int(query.from_user.id))
+        if user.status in ["kicked", "left"]:
+            query.answer("You need to join this chat.")
+            return
+        elif user.status not in ["creator", "administrator"]:
+            query.answer("You don't have the necessary rights to do this!", show_alert=True)
+            return
+
         member = chat.get_member(int(user_id))
         if member.status == "creator":
-           query.answer("This Person Is A Chat Creator! How am I meant to demote him?", show_alert=True)
-           return
-        if member.status == "kicked" or member.status == "left":
-           query.answer("This Person Is Not Even A Member In This Chat! How am I meant to demote him?", show_alert=True)
-           return
-        if member.status != "administrator":
-           query.answer("This Person Is Not Even An Administrator! How am I meant to demote him?", show_alert=True)
-           return
+            query.answer("This Person Is A Chat Creator! How am I meant to demote him?", show_alert=True)
+            return
+        elif member.status == "kicked" or member.status == "left":
+            query.answer("This Person Is Not Even A Member In This Chat! How am I meant to demote him?", show_alert=True)
+            return
+        elif member.status != "administrator":
+            query.answer("This Person Is Not Even An Administrator! How am I meant to demote him?", show_alert=True)
+            return
         if member.status == "administrator":
             try:
                 context.bot.promoteChatMember(
@@ -705,9 +721,9 @@ def admim_button(update: Update, context: CallbackContext):
                 message.reply_text(f"failed to demote: \n{br.message}")
                 return
 
-            query.answer("Demoted Successfully!", show_alert=True)
+            query.answer(f"{member.user.first_name} Demoted Successfully!", show_alert=True)
             query.message.edit_text(
-                text=f"<b>{mention_html(user_id, member.user.first_name or user_id)}</b> was demoted by <b>{mention_html(query.from_user.id, query.from_user.first_name or query.from_user.id)}</b> in <b>{chat.title}</b>!",
+                text=f"<b>{mention_html(user_id, html.escape(member.user.first_name) or user_id)}</b> was demoted by <b>{mention_html(query.from_user.id, html.escape(query.from_user.first_name) or query.from_user.id)}</b> in <b>{html.escape(chat.title)}</b>!",
                 parse_mode=ParseMode.HTML,
                 disable_web_page_preview=True,
                 timeout=60,
