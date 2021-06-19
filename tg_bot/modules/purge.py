@@ -77,7 +77,8 @@ async def purge_to(event):
         if messages:
             await event.client.delete_messages(event.chat_id, messages)
 
-    await event.respond("**Purged Completed!**")
+        await event.respond("**Purged Completed!**")
+
     except MessageDeleteForbiddenError:
         PURGE.pop(event.chat_id)
         text = "Failed to delete messages.\n"
