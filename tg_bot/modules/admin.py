@@ -595,7 +595,7 @@ def adminlist(update: Update, context: CallbackContext):
 
     admim = update.effective_message.reply_text("Just A Second...")
     administrators = bot.getChatAdministrators(chat.id)
-    text = "Admins In <b>{}</b>:\n".format(chat.title)
+    text = "<b>{}</b>:\n".format(chat.title)
 
 
     admins_list = []
@@ -607,12 +607,12 @@ def adminlist(update: Update, context: CallbackContext):
         name = mention_html(user.id, html.escape(custom_title if custom_title else user.first_name)) if not user.first_name == '' else "💀"
 
         if status == "creator":
-            text += f"\n👑 <b>{name}</b>\n"
+            text += f"\n<b>{name}</b> 👑\n"
 
         if status == "administrator":
             admins_list.append(name)
 
-    text += "\n🔱 <b>Admins</b>:"
+    text += "\n• <b>Administrators</b>:"
     for admin in admins_list:
          text += "\n ∘ {}".format(admin)
 
