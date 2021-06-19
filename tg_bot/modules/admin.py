@@ -731,5 +731,9 @@ def admim_button(update: Update, context: CallbackContext):
     context.bot.answer_callback_query(query.id)
 
 
+def get_help(chat):
+    from tg_bot.modules.language import gs
+    return gs(chat, "admin_help")
+
 __mod_name__ = "Admin"
 __commands__ = ["fullpromote", "invitelink", "admins", "setgtitle", "delgpic", "setgpic", "setsticker", "setdescription", "setdesc"]
