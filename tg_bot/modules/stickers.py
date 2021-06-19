@@ -3,13 +3,11 @@ import requests
 from io import BytesIO
 from html import escape
 from bs4 import BeautifulSoup
-import urllib.request as urllib
-from urllib.error import HTTPError
 
 from PIL import Image
 from telegram import TelegramError
 from telegram.error import BadRequest
-from telegram import Update, ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 from telegram.utils.helpers import mention_html
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
@@ -20,24 +18,13 @@ from tg_bot.modules.helper_funcs.decorators import kigcmd
 @kigcmd(command='stickers')
 def cb_sticker(update: Update, context: CallbackContext):
     message = update.effective_message
-    if update.effective_chat.type == "private":
-        try:
-            nibba = context.bot.get_chat_member(-1001287667199, update.effective_user.id)
-            if nibba.status in ("kicked", "left"):
-                message.reply_text("This command is meant to use in group not in PM")
-                return
-        except BadRequest as BR:
-            if BR.message in ("User not found", "User_not_mutual_contact", "User_not_participant"):
-                message.reply_text("This command is meant to use in group not in PM")
-                return
-
     split = message.text.split(" ", 1)
     if len(split) == 1:
         message.reply_text("Provide Some Name To Search For Packs")
         return
 
-    comboturl = f"https://combot.org/telegram/stickers?q={split[1]}"
-    headers = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0"}
+    comboturl = f'https://combot.org/telegram/stickers?q={split[1]}'
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0'}
     text = requests.get(comboturl, headers=headers).text
 
     soup = BeautifulSoup(text, "lxml")
@@ -49,14 +36,13 @@ def cb_sticker(update: Update, context: CallbackContext):
         return
 
     Packs = {}
-    Stickers = f"Stickers for <b>{split[1]}</b>:\n"
+    Stickers = f"Result for <b>{split[1]}</b>:\n"
 
     for result, title in zip(results, titles):
-         link = result["href"]
-         Packs[f"{link}"] = title
+         Packs[result.get('href')] = title.get_text()
 
     for link, title in Packs.items():
-         Stickers += f"\n• <a href='{link}'>{title.get_text()}</a>"
+         Stickers += f"\n• <a href='{link}'>{escape(title)}</a>"
 
     if not Stickers.endswith("</b>:\n"):
         message.reply_text(
@@ -70,22 +56,16 @@ def cb_sticker(update: Update, context: CallbackContext):
 
 
 @kigcmd(command='stickerid')
-def stickerid(update: Update, context: CallbackContext):
+def stickerid(update: Update, _):
     msg = update.effective_message
     if msg.reply_to_message and msg.reply_to_message.sticker:
         update.effective_message.reply_text(
-            "Hello "
-            + f"{mention_html(msg.from_user.id, msg.from_user.first_name)}"
-            + ", The sticker id you are replying is :\n <code>"
-            + escape(msg.reply_to_message.sticker.file_id)
-            + "</code>",
+            f"<code>{escape(msg.reply_to_message.sticker.file_id)}</code>"
             parse_mode=ParseMode.HTML,
         )
     else:
         update.effective_message.reply_text(
-            "Hello "
-            + f"{mention_html(msg.from_user.id, msg.from_user.first_name)}"
-            + ", Please reply to sticker message to get id sticker",
+            "Reply to sticker to get id of sticker",
             parse_mode=ParseMode.HTML,
         )
 
@@ -133,12 +113,11 @@ def kang(update: Update, context: CallbackContext):
     sticker_data = None
 
     # The kang syntax is as follows:
-    # /kang 🤔 <as reply to document>
-    # /kang http://whatever.com/sticker.png 🤔
-    # It can be animated or not.
+    #   - /kang 🤔 <as reply to document>
+    #           (It can be animated or not)
 
     # first check if we're syntactically correct.
-    if not msg.reply_to_message and not args:
+    if not msg.reply_to_message:
         # this is quite a bit more difficult, we need to get all their packs managed by us.
         packs = ""
         # start with finding non-animated packs.
@@ -195,7 +174,7 @@ def kang(update: Update, context: CallbackContext):
         return
 
     # User sent /kang in reply to a message
-    if msg.reply_to_message:
+    else:
         if msg.reply_to_message.sticker:
             is_animated = msg.reply_to_message.sticker.is_animated
             file_id = msg.reply_to_message.sticker.file_id
@@ -219,38 +198,6 @@ def kang(update: Update, context: CallbackContext):
         sticker_data = kang_file.download(out=BytesIO())
         # move to the front of the buffer.
         sticker_data.seek(0)
-    else: # user sent /kang with url
-        url = args[0]
-        # set the emoji if they specify it.
-        if len(args) >= 2:
-            sticker_emoji = args[1]
-        # open the URL, downlaod the image and write to
-        # a buffer object we can use elsewhere.
-        sticker_data = BytesIO()
-        try:
-            resp = urllib.urlopen(url)
-
-            # check the mime-type first, you can't kang a .html file.
-            mime = resp.getheader('Content-Type')
-            if mime not in ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/x-tgsticker']:
-                msg.reply_text("I can only kang images m8.")
-                return
-
-            # check if it's an animated sticker type
-            if mime == "application/x-tgsticker":
-                is_animated = True
-            # write our sticker data to a buffer object
-            sticker_data.write(resp.read())
-            # move to the front of the buffer.
-            sticker_data.seek(0)
-        except ValueError:
-            # If they gave an invalid URL
-            msg.reply_text("Yea, that's not a URL I can download from.")
-            return
-        except HTTPError as e:
-            # if we're not allowed there for some reason
-            msg.reply_text(f"Error downloading the file: {e.code} {e.msg}")
-            return
 
     packnum = 0
     packname_found = False
@@ -397,15 +344,7 @@ def makepack_internal(
         elif e.message in ("Peer_id_invalid", "bot was blocked by the user"):
             msg.reply_text(
                 "Contact me in PM first.",
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton(
-                                text="Start", url=f"t.me/{context.bot.username}"
-                            )
-                        ]
-                    ]
-                ),
+                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Start", url=f"t.me/{context.bot.username}")]]),
             )
             return
         elif e.message == "Internal Server Error: created sticker set not found (500)":
@@ -420,4 +359,4 @@ def makepack_internal(
             reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="View", url=f"t.me/addstickers/{packname}")]]),
         )
     else:
-        msg.reply_text("Failed to create sticker pack. Possibly due to blek mejik.")
+        msg.reply_text("Failed to create sticker pack. Possibly due to blek mejik. 🌚")
