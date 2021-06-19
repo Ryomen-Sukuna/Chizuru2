@@ -51,9 +51,11 @@ CAPTCHA_ANS_DICT = {}
 @telethn.on(events.ChatAction)
 async def delete_service(event):
     clean = sql.clean_service(event.chat_id)
-    if not clean:
-        return
-    await event.delete()
+    if clean:
+        try:
+            await event.delete()
+        except:
+            return
 
 
 def extract_status_change(
@@ -394,7 +396,7 @@ def new_member(update: Update, context: CallbackContext):
                     generator = CaptchaGenerator(CAPCTHA_SIZE_NUM)
 
                     # Generate a captcha image
-                    captcha = generator.gen_captcha_image(difficult_level=3)
+                    captcha = generator.gen_captcha_image(difficult_level=4, multicolor=True)
                     # Get information
                     image = captcha["image"]
                     characters = captcha["characters"]
