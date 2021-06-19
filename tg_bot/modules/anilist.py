@@ -1,24 +1,20 @@
-# module to get anime info by t.me/DragSama // find him on github :  https://github.com/DragSama // he's my doraemon btw.
-from telegram.ext import CommandHandler, CallbackContext
-from telegram import (
-    Message,
-    Chat,
-    User,
-    ParseMode,
-    Update,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton,
-)
 import requests
 import math
 import time
 import os
+
 from .helper_funcs.decorators import kigcmd
+from telegram.ext import CallbackContext
+from telegram import Update, ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
+
+
+#========================================================================================================================================================
+#========================================================================================================================================================
 
 def shorten(description, info="anilist.co"):
     msg = ""
     if len(description) > 700:
-        description = description[0:500] + "...."
+        description = description[0:600] + "...."
         msg += f"\n*Description*: _{description}_[Read More]({info})"
     else:
         msg += f"\n*Description*:_{description}_"
@@ -262,7 +258,7 @@ def anime(update: Update, context: CallbackContext):
                 reply_markup=InlineKeyboardMarkup(buttons),
             )
 
-@kigcmd(command="character")
+@kigcmd(command=["character", "char"])
 def character(update: Update, context: CallbackContext):
     message = update.effective_message
     search = message.text.split(" ", 1)
@@ -362,11 +358,6 @@ def manga(update: Update, context: CallbackContext):
                 reply_markup=InlineKeyboardMarkup(buttons),
             )
 
-
-
-def get_help(chat):
-    from tg_bot.modules.language import gs
-    return gs(chat, "anilist_help")
 
 __mod_name__ = "Anime"
 __commands__ = ["anime", "manga", "airing", "character"]
