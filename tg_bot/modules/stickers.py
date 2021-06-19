@@ -57,17 +57,15 @@ def cb_sticker(update: Update, context: CallbackContext):
 
 @kigcmd(command='stickerid')
 def stickerid(update: Update, _):
-    msg = update.effective_message
-    if msg.reply_to_message and msg.reply_to_message.sticker:
-        update.effective_message.reply_text(
-            f"<code>{escape(msg.reply_to_message.sticker.file_id)}</code>"
+    message = update.effective_message
+    reply = message.reply_to_message
+    if reply and reply.sticker:
+        message.reply_text(
+            f"<code>{escape(msg.reply_to_message.sticker.file_id)}</code>",
             parse_mode=ParseMode.HTML,
         )
     else:
-        update.effective_message.reply_text(
-            "Reply to sticker to get id of sticker",
-            parse_mode=ParseMode.HTML,
-        )
+        message.reply_text("Reply to sticker to get id of sticker")
 
 
 @kigcmd(command='getsticker')
