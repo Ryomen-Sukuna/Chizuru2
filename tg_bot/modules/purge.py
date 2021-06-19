@@ -125,10 +125,11 @@ async def purge_messages(event):
             await event.client.delete_messages(event.chat_id, messages)
 
         text = "**Purged Completed!**"
-        if len(reason) > 1:
+        if len(reason) > 1 and not reason[1].isdigit():
             text += "\n\n**Purged Reason:** \n" + reason[1]
 
-        await event.client.send_message(event.chat_id, text)
+        if not event.text.startswith("/s")
+            await event.client.send_message(event.chat_id, text)
 
     except MessageDeleteForbiddenError:
         text = "Failed to delete messages.\n"
