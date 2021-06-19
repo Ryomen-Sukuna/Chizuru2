@@ -2,9 +2,8 @@ import os
 import html
 
 from telegram.error import BadRequest
+from telegram.utils.helpers import mention_html
 from telegram.ext import CallbackContext, Filters
-from telegram.utils.helpers import escape_markdown
-from telegram.utils.helpers import mention_html, mention_markdown
 from telegram import ParseMode, Update, InlineKeyboardMarkup, InlineKeyboardButton
 
 from tg_bot import SUDO_USERS, dispatcher
@@ -596,7 +595,7 @@ def adminlist(update: Update, context: CallbackContext):
 
     admim = update.effective_message.reply_text("Just A Second...")
     administrators = bot.getChatAdministrators(chat.id)
-    text = "Admins In *{}*:".format(chat.title)
+    text = "Admins In <b>{}</b>:\n".format(chat.title)
 
 
     admins_list = []
@@ -605,21 +604,20 @@ def adminlist(update: Update, context: CallbackContext):
         status = admin.status
         custom_title = admin.custom_title
 
-        name = mention_markdown(user.id, escape_markdown(custom_title if custom_title else user.first_name)) if not user.first_name == '' else "💀"
+        name = mention_html(user.id, html.escape(custom_title if custom_title else user.first_name)) if not user.first_name == '' else "💀"
 
         if status == "creator":
-            text += "\n 👑 Creator:"
-            text += "\n` • `{}\n".format(name)
+            text += f"\n👑 <b>{name}</b>\n"
 
         if status == "administrator":
             admins_list.append(name)
 
-    text += "\n🔱 Admins:"
+    text += "\n🔱 <b>Admins</b>:"
     for admin in admins_list:
-         text += "\n` ∘ `{}".format(admin)
+         text += "\n ∘ {}".format(admin)
 
     try:
-        admim.edit_text(text, parse_mode=ParseMode.MARKDOWN)
+        admim.edit_text(text, parse_mode=ParseMode.HTML)
     except BadRequest:  # if original message is deleted
         return
 
@@ -733,11 +731,5 @@ def admim_button(update: Update, context: CallbackContext):
     context.bot.answer_callback_query(query.id)
 
 
-
-def get_help(chat):
-    from tg_bot.modules.language import gs
-    return gs(chat, "admin_help")
-
 __mod_name__ = "Admin"
-
 __commands__ = ["fullpromote", "invitelink", "admins", "setgtitle", "delgpic", "setgpic", "setsticker", "setdescription", "setdesc"]
