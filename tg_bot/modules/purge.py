@@ -77,6 +77,7 @@ async def purge_to(event):
         if messages:
             await event.client.delete_messages(event.chat_id, messages)
 
+    await event.respond("**Purged Completed!**")
     except MessageDeleteForbiddenError:
         PURGE.pop(event.chat_id)
         text = "Failed to delete messages.\n"
@@ -171,7 +172,7 @@ def get_help(chat):
 
 PURGE_FROM_HANDLER = purge_from, events.NewMessage(pattern=r"^[!/]purgefrom$")
 PURGE_TO_HANDLER = purge_to, events.NewMessage(pattern=r"^[!/]purgeto$")
-PURGE_HANDLER = purge_messages, events.NewMessage(pattern=r"^[!/](s)purge$")
+PURGE_HANDLER = purge_messages, events.NewMessage(pattern=r"^[!/](purge|spurge)($| (.*))")
 DEL_HANDLER = delete_messages, events.NewMessage(pattern=r"^[!/](del|delete)$")
 
 telethn.add_event_handler(*PURGE_FROM_HANDLER)
