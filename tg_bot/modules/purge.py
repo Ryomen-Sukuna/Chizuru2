@@ -24,6 +24,7 @@ async def purge_from(event):
     reply = await event.get_reply_message()
     if not reply:
         await event.reply("Reply to a message to let me know what to delete.")
+        return
 
     PURGE[event.chat_id] = event.reply_to_msg_id
     await event.respond(
