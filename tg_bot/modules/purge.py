@@ -170,8 +170,8 @@ def get_help(chat):
 
 
 PURGE_FROM_HANDLER = purge_from, events.NewMessage(pattern=r"^[!/]purgefrom$")
-PURGE_TO_HANDLER = purge_to, events.NewMessage(pattern=r"^[!/]purgefrom$")
-PURGE_HANDLER = purge_messages, events.NewMessage(pattern=r"^[!/](s)purge(?: |$)(.*)")
+PURGE_TO_HANDLER = purge_to, events.NewMessage(pattern=r"^[!/]purgeto$")
+PURGE_HANDLER = purge_messages, events.NewMessage(pattern=r"^[!/](s)purge$")
 DEL_HANDLER = delete_messages, events.NewMessage(pattern=r"^[!/](del|delete)$")
 
 telethn.add_event_handler(*PURGE_FROM_HANDLER)
