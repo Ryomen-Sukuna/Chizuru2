@@ -51,7 +51,7 @@ def paginate_modules(page_n: int,
                                    callback_data="{}_module({})".format(
                                        prefix, x.__mod_name__.lower()
                                    ))
-                for x in module_dict.keys()
+                for x in module_dict.values()
         ])
     else:
         modules = sorted([
@@ -59,7 +59,7 @@ def paginate_modules(page_n: int,
                                    callback_data="{}_module({},{})".format(
                                        prefix, chat, x.__mod_name__.lower()
                                    ))
-                for x in module_dict.keys()
+                for x in module_dict.values()
         ])
 
     pairs = []
