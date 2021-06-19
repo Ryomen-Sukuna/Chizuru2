@@ -85,10 +85,10 @@ def get_help_btns(name):
 
      if str(name) == "Admin":
             buttuns = [
-                [InlineKeyboardButton(text="Bans", callback_data="subhelp_bans"),
+                [InlineKeyboardButton(text="Bans", callback_data="subhelp_ban"),
                 InlineKeyboardButton(text="Mute", callback_data="subhelp_mute")],
                 [InlineKeyboardButton(text="Pin", callback_data="subhelp_pin"),
-                InlineKeyboardButton(text="Warnings", callback_data="subhelp_warns")],
+                InlineKeyboardButton(text="Warns", callback_data="subhelp_warn")],
                 [InlineKeyboardButton(text="Back", callback_data="help_back")],
             ]
 
@@ -322,6 +322,61 @@ def subhelp_button(update: Update, context: CallbackContext):
     chat = update.effective_chat
     query = update.callback_query
 
+    # Sub - Buttons For ADMIN Help
+    if query.data == "subhelp_back3":
+        query.message.edit_text(
+                text="Here is the help for the *Admin* module:\n" + gs(chat, "admin_help"),
+                reply_markup=InlineKeyboardMarkup(
+                        get_help_btns("Admin")
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True,
+                timeout=60, 
+            )
+    elif query.data == "subhelp_ban":
+        query.message.edit_text(
+                text="Here is the help for the *Bans* module:\n" + gs(chat, "bans_help"),
+                reply_markup=InlineKeyboardMarkup(
+                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back3"),]]
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True,
+                timeout=60, 
+            )
+
+    elif query.data == "subhelp_mute":
+        query.message.edit_text(
+                text="Here is the help for the *Mute* module:\n" + gs(chat, "muting_help"),
+                reply_markup=InlineKeyboardMarkup(
+                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back3"),]]
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True,
+                timeout=60, 
+            )
+
+    elif query.data == "subhelp_pin":
+        query.message.edit_text(
+                text="Here is the help for the *Pin* module:\n" + gs(chat, "pin_help"),
+                reply_markup=InlineKeyboardMarkup(
+                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back3"),]]
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True,
+                timeout=60, 
+            )
+
+    elif query.data == "subhelp_warn":
+        query.message.edit_text(
+                text="Here is the help for the *Warns* module:\n" + gs(chat, "warns_help"),
+                reply_markup=InlineKeyboardMarkup(
+                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back3"),]]
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True,
+                timeout=60, 
+            )
+
     # Sub - Buttons For FUN Help
     if query.data == "subhelp_back":
         query.message.edit_text(
@@ -344,9 +399,9 @@ def subhelp_button(update: Update, context: CallbackContext):
                 timeout=60, 
             )
 
-    elif query.data == "subhelp_chatbot":
+    elif query.data == "subhelp_anime":
         query.message.edit_text(
-                text="Here is the help for the *Chatbot* module:\n" + gs(chat, "chatbot_help"),
+                text="Here is the help for the *Anime* module:\n" + gs(chat, "anilist_help"),
                 reply_markup=InlineKeyboardMarkup(
                         [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
                 ),
@@ -445,16 +500,7 @@ def get_help(update: Update, context: CallbackContext):
 
         update.effective_message.reply_text(
             "Contact me in PM for help!",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text="Help",
-                            url="t.me/{}?start=help".format(context.bot.username),
-                        )
-                    ]
-                ]
-            ),
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Help", url="t.me/{}?start=help".format(context.bot.username))]]),
         )
         return
 
@@ -537,16 +583,7 @@ def settings_button(update: Update, context: CallbackContext):
             query.message.reply_text(
                 text=text,
                 parse_mode=ParseMode.MARKDOWN,
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton(
-                                text="Back",
-                                callback_data="stngs_back({})".format(chat_id),
-                            )
-                        ]
-                    ]
-                ),
+                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Back", callback_data="stngs_back({})".format(chat_id))]]),
             )
 
         elif prev_match:
@@ -615,18 +652,7 @@ def get_settings(update: Update, context: CallbackContext):
             text = "Click here to get this chat's settings, as well as yours."
             msg.reply_text(
                 text,
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton(
-                                text="Settings",
-                                url="t.me/{}?start=stngs_{}".format(
-                                    context.bot.username, chat.id
-                                ),
-                            )
-                        ]
-                    ]
-                ),
+                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Settings", url="t.me/{}?start=stngs_{}".format(context.bot.username, chat.id))]]),
             )
         else:
             text = "Click here to check your settings."
