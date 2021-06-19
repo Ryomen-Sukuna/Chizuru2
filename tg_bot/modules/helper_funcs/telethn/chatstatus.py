@@ -39,17 +39,17 @@ async def user_is_admin(user_id: int, message):
     return False
 
 
-async def is_user_admin(user_id: int, chat_id):
+async def is_user_admin(user_id: int, message):
     if user_id in SUDO_USERS:
         return True
 
     try:
-        participant = await tbot(GetParticipantRequest(chat_id, user_id))
+        participant = await tbot(GetParticipantRequest(message.chat_id, user_id))
         return isinstance(participant.participant,
                           (ChannelParticipantAdmin, ChannelParticipantCreator))
     except TypeError:
         async for user in tbot.iter_participants(
-                chat_id, filter=ChannelParticipantsAdmins):
+                message.chat_id, filter=ChannelParticipantsAdmins):
             if user_id == user.id:
                 return True
     return False
