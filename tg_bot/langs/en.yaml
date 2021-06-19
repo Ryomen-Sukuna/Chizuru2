@@ -95,6 +95,7 @@ approve_help: |
      Sometimes, you might trust a user not to send unwanted content.
      Maybe not enough to make them admin, but you might be ok with locks, blacklists, and antiflood not applying to them.
      That's what approvals are for - approve of trustworthy users to allow them to send
+
      *Admin commands*:
      • /approval*:* Check a user's approval status in current chat.
      • /approve*:* Approve of a user. Locks, blacklists, and antiflood won't apply to them anymore.
@@ -213,10 +214,6 @@ fun_help: |
 
 
 sticker_help: |
-     Here Is The Help For The Stickers Module: 
-
-     Stickers made easy with stickers module!
-
      • /stickers: Find stickers for given term on combot sticker catalogue 
 
      • /addsticker: Reply to a sticker to add it to your pack.
@@ -235,7 +232,6 @@ antispam_help: |
      *Note:* Users can appeal gbans or report spammers at @ElitesOfSupport
 
 gtranslate_help: |
-     Use this module to translate stuff... duh!
      *Commands:*
      • /tl (or /tr): as a reply to a message, translates it to English.
      • /tl <lang>: translates to <lang>
