@@ -82,16 +82,26 @@ def send_help(chat_id, text, keyboard=None):
 
 def get_help_btns(name):
      buttuns = None
-     if str(name) == "Fun":
+
+     if str(name) == "Admin":
+            buttuns = [
+                [InlineKeyboardButton(text="Bans", callback_data="subhelp_bans"),
+                InlineKeyboardButton(text="Mute", callback_data="subhelp_mute")],
+                [InlineKeyboardButton(text="Pin", callback_data="subhelp_pin"),
+                InlineKeyboardButton(text="Warnings", callback_data="subhelp_warns")],
+                [InlineKeyboardButton(text="Back", callback_data="help_back")],
+            ]
+
+     elif str(name) == "Fun":
             buttuns = [
                 [InlineKeyboardButton(text="AFK", callback_data="subhelp_afk"),
-                InlineKeyboardButton(text="Chatbot", callback_data="subhelp_chatbot")],
+                InlineKeyboardButton(text="Anime", callback_data="subhelp_anime")],
                 [InlineKeyboardButton(text="Sticker", callback_data="subhelp_stick"),
                 InlineKeyboardButton(text="Translation", callback_data="subhelp_tr")],
                 [InlineKeyboardButton(text="Back", callback_data="help_back")],
             ]
 
-     if str(name) == "Greetings":
+     elif str(name) == "Greetings":
             buttuns = [
                 [InlineKeyboardButton(text="Formatting", callback_data="subhelp_wel_format")],
                 [InlineKeyboardButton(text="Back", callback_data="help_back")],
@@ -187,11 +197,8 @@ def help_button(update: Update, context: CallbackContext):
         if mod_match:
             module = mod_match.group(1)
             text = "Here is the help for the *{}* module:\n".format(HELPABLE[module].__mod_name__) + HELPABLE[module].get_help(chat.id)
-            try:
-                x = get_help_btns(HELPABLE[module].__mod_name__)
-                if x is None:
-                    x = [[InlineKeyboardButton(text="Back", callback_data="help_back")]]
-            except:
+            x = get_help_btns(HELPABLE[module].__mod_name__)
+            if x is None:
                 x = [[InlineKeyboardButton(text="Back", callback_data="help_back")]]
 
             query.message.edit_text(
