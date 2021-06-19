@@ -396,7 +396,7 @@ def new_member(update: Update, context: CallbackContext):
                     generator = CaptchaGenerator(CAPCTHA_SIZE_NUM)
 
                     # Generate a captcha image
-                    captcha = generator.gen_captcha_image(difficult_level=4, multicolor=True)
+                    captcha = generator.gen_captcha_image(difficult_level=2, multicolor=True)
                     # Get information
                     image = captcha["image"]
                     characters = captcha["characters"]
