@@ -325,7 +325,7 @@ def subhelp_button(update: Update, context: CallbackContext):
     # Sub - Buttons For ADMIN Help
     if query.data == "subhelp_back3":
         query.message.edit_text(
-                text="Here is the help for the *Admin* module:\n" + gs(chat, "admin_help"),
+                text=gs(chat, "admin_help"),
                 reply_markup=InlineKeyboardMarkup(
                         get_help_btns("Admin")
                 ),
@@ -335,7 +335,7 @@ def subhelp_button(update: Update, context: CallbackContext):
             )
     elif query.data == "subhelp_ban":
         query.message.edit_text(
-                text="Here is the help for the *Bans* module:\n" + gs(chat, "bans_help"),
+                text=gs(chat, "bans_help"),
                 reply_markup=InlineKeyboardMarkup(
                         [[InlineKeyboardButton(text="Back", callback_data="subhelp_back3"),]]
                 ),
@@ -346,7 +346,7 @@ def subhelp_button(update: Update, context: CallbackContext):
 
     elif query.data == "subhelp_mute":
         query.message.edit_text(
-                text="Here is the help for the *Mute* module:\n" + gs(chat, "muting_help"),
+                text=gs(chat, "muting_help"),
                 reply_markup=InlineKeyboardMarkup(
                         [[InlineKeyboardButton(text="Back", callback_data="subhelp_back3"),]]
                 ),
@@ -357,7 +357,7 @@ def subhelp_button(update: Update, context: CallbackContext):
 
     elif query.data == "subhelp_pin":
         query.message.edit_text(
-                text="Here is the help for the *Pin* module:\n" + gs(chat, "pin_help"),
+                text=gs(chat, "pin_help"),
                 reply_markup=InlineKeyboardMarkup(
                         [[InlineKeyboardButton(text="Back", callback_data="subhelp_back3"),]]
                 ),
@@ -368,7 +368,7 @@ def subhelp_button(update: Update, context: CallbackContext):
 
     elif query.data == "subhelp_warn":
         query.message.edit_text(
-                text="Here is the help for the *Warns* module:\n" + gs(chat, "warns_help"),
+                text=gs(chat, "warns_help"),
                 reply_markup=InlineKeyboardMarkup(
                         [[InlineKeyboardButton(text="Back", callback_data="subhelp_back3"),]]
                 ),
@@ -380,7 +380,7 @@ def subhelp_button(update: Update, context: CallbackContext):
     # Sub - Buttons For FUN Help
     if query.data == "subhelp_back":
         query.message.edit_text(
-                text="Here is the help for the *Fun* module:\n" + gs(chat, "fun_help"),
+                text=gs(chat, "fun_help"),
                 reply_markup=InlineKeyboardMarkup(
                         get_help_btns("Fun")
                 ),
@@ -390,7 +390,7 @@ def subhelp_button(update: Update, context: CallbackContext):
             )
     elif query.data == "subhelp_afk":
         query.message.edit_text(
-                text="Here is the help for the *AFK* module:\n" + gs(chat, "afk_help"),
+                text=gs(chat, "afk_help"),
                 reply_markup=InlineKeyboardMarkup(
                         [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
                 ),
@@ -401,7 +401,7 @@ def subhelp_button(update: Update, context: CallbackContext):
 
     elif query.data == "subhelp_anime":
         query.message.edit_text(
-                text="Here is the help for the *Anime* module:\n" + gs(chat, "anilist_help"),
+                text=gs(chat, "anilist_help"),
                 reply_markup=InlineKeyboardMarkup(
                         [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
                 ),
@@ -412,7 +412,7 @@ def subhelp_button(update: Update, context: CallbackContext):
 
     elif query.data == "subhelp_stick":
         query.message.edit_text(
-                text="Here is the help for the *Stickers* module:\n" + gs(chat, "sticker_help"),
+                text=gs(chat, "sticker_help"),
                 reply_markup=InlineKeyboardMarkup(
                         [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
                 ),
@@ -423,7 +423,7 @@ def subhelp_button(update: Update, context: CallbackContext):
 
     elif query.data == "subhelp_tr":
         query.message.edit_text(
-                text="Here is the help for the *Translation* module:\n" + gs(chat, "gtranslate_help"),
+                text=gs(chat, "gtranslate_help"),
                 reply_markup=InlineKeyboardMarkup(
                         [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
                 ),
@@ -435,7 +435,7 @@ def subhelp_button(update: Update, context: CallbackContext):
     # Sub - Buttons For GREETINGS Help
     elif query.data == "subhelp_back2":
         query.message.edit_text(
-                text="Here is the help for the *Greetings* module:\n" + gs(chat, "greetings_help"),
+                text=gs(chat, "greetings_help"),
                 reply_markup=InlineKeyboardMarkup(
                         get_help_btns("Greetings")
                 ),
