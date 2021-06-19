@@ -37,12 +37,8 @@ src_btn: "Source code"
 
 admin_help: |
    • /admins*:* list of admins in the chat
-   • /pinned*:* Get the current pinned message.
 
    *Admins only*:
-   • /pin*:* silently pins the message replied to - add `'loud'` or `'notify'` to give notifs to users.
-   • /unpin*:* unpins the currently pinned message
-   • /unpinall*:* Unpins all pinned messages.
    • /invitelink*:* gets invitelink
    • /fullpromote*:* promotes the user with all administration rights.
    • /promote*:* promotes the user replied to
@@ -69,12 +65,14 @@ afk_help: |
    When marked as AFK, any mentions will be replied to with a message to say you're not available!
 
 anilist_help: |
-    *AniList*
-    Get information about anime, manga or characters with the help of this module! All data is fetched from [AniList](anilist.co).
-    *Available commands:*
+    Get information about anime, manga or characters!
+    All data is fetched from [AniList](anilist.co).
+
+    *User Command*:
+     • /airing <anime>: returns anime airing info.
      • /anime <anime>: returns information about the anime.
-     • /character <character>: returns information about the character.
      • /manga <manga>: returns information about the manga.
+     • /character <character>: returns information about the character.
 
 antiflood_help: |
     Antiflood allows you to take action on users that send more than x messages in a row. Exceeding the set flood
@@ -110,6 +108,11 @@ backup_help: |
      • /import*:* Import the settings in the replied to data file.
 
 bans_help: |
+    Some people need to be publicly banned; spammers, annoyances, or just trolls.
+
+    This module allows you to do that easily, by exposing some common actions, so everyone will see!
+
+    *User Command*:
     • /kickme*:* kicks the user who issued the command
     • /banme*:* ban the user who issued the command
 
@@ -120,7 +123,7 @@ bans_help: |
     • /kick <userhandle>*:* kick a user out of the group, (via handle, or reply)
 
 blacklist_help: |
-    *CMD*:
+    *User Command*:
      • /blacklist*:* View the current blacklisted words.
 
     *Admin only*:
@@ -154,7 +157,7 @@ cust_filters_help: |
     • /stop <filter keyword>*:* Stop that filter.
 
     *Chat creator only:*
-    • /removeallfilters*:* Remove all chat filters at once.
+    • /stopall*:* Remove all chat filters at once.
 
     *Tip*: 
     Filters also support markdown formatters like: {first}, {last} etc.. and buttons.
@@ -328,8 +331,20 @@ notes_help: |
          `buttonurl:` section, as such: `[somelink](buttonurl:example.com)`. Check `/markdownhelp` for more info.
        • /save <notename>*:* save the replied message as a note with name notename
        • /clear <notename>*:* clear note with this name
-       • /removeallnotes*:* removes all notes from the group
+       • /clearall*:* removes all notes from the group
        *Note:* Note names are case-insensitive, and they are automatically converted to lowercase before getting saved.
+
+pin_help: |
+   All the pin related commands can be found here; keep your chat up to date on the latest news with a simple pinned message!
+
+   *User commands*:
+   • /pinned*:* Get the current pinned message.
+
+   *Admins only*:
+   • /pin*:* silently pins the message replied to - add `'loud'` or `'notify'` to give notifs to users.
+   • /unpin*:* unpins the currently pinned message
+   • /unpinall*:* Unpins all pinned messages.
+
 
 purge_help: |
        *Admin only*:
