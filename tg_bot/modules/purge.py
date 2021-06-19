@@ -84,7 +84,7 @@ async def purge_to(event):
 
     except Exception as e:
         PURGE.pop(event.chat_id)
-        text = "Failed to purge:" + e.message
+        text = "Failed to purge:" + e
         await event.respond(text)
 
 # Message Purge
