@@ -249,8 +249,5 @@ def temp_mute(update: Update, context: CallbackContext) -> str:
 
     return ""
 
-def get_help(chat):
-     from tg_bot.modules.language import gs
-     return gs(chat, "muting_help")
 
 __mod_name__ = "Muting"
