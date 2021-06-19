@@ -8,7 +8,7 @@ from contextlib import suppress
 from typing import Tuple, Optional
 from multicolorcaptcha import CaptchaGenerator
 
-from tg_bot import log, telethn, dispatcher, OWNER_ID, DEV_USERS, JOIN_LOGGER
+from tg_bot import log, dispatcher, OWNER_ID, DEV_USERS, JOIN_LOGGER
 import tg_bot.modules.sql.welcome_sql as sql
 from tg_bot.modules.sql.antispam_sql import is_user_gbanned
 from tg_bot.modules.helper_funcs.msg_types import get_welcome_type
@@ -16,7 +16,6 @@ from tg_bot.modules.helper_funcs.misc import build_keyboard, revert_buttons
 from tg_bot.modules.helper_funcs.chat_status import user_admin, is_user_ban_protected
 from tg_bot.modules.helper_funcs.string_handling import markdown_parser, escape_invalid_curly_brackets
 
-from telethon import events
 from telegram.error import BadRequest
 from telegram.utils.helpers import escape_markdown, mention_html, mention_markdown
 from telegram.ext import Filters, MessageHandler, CommandHandler, CallbackContext, CallbackQueryHandler, ChatMemberHandler
@@ -44,18 +43,6 @@ ENUM_FUNC_MAP = {
 }
 VERIFIED_USER_WAITLIST = {}
 CAPTCHA_ANS_DICT = {}
-
-
-
-# cleanservice
-@telethn.on(events.ChatAction)
-async def delete_service(event):
-    clean = sql.clean_service(event.chat_id)
-    if clean:
-        try:
-            await event.delete()
-        except:
-            return
 
 
 def extract_status_change(
@@ -98,15 +85,23 @@ def extract_status_change(
 # do not async
 def send(update, message, keyboard, backup_message):
     chat = update.effective_chat
+    reply = update.message.message_id
 
     try:
         msg = chat.send_message(
             message,
             parse_mode=ParseMode.MARKDOWN,
+            reply_to_message_id=reply,
             reply_markup=keyboard,
         )
     except BadRequest as excp:
-        if excp.message == "Button_url_invalid":
+        if excp.message == "Reply message not found":
+            msg = chat.send_message(
+                message,
+                parse_mode=ParseMode.MARKDOWN,
+                reply_markup=keyboard,
+            )
+        elif excp.message == "Button_url_invalid":
             msg = chat.send_message(
                 markdown_parser(
                     backup_message + "\nNote: the current message has an invalid url "
@@ -145,6 +140,17 @@ def send(update, message, keyboard, backup_message):
                 parse_mode=ParseMode.MARKDOWN,
             )
             log.exception()
+
+    cleanserv = sql.clean_service(chat.id)
+    if cleanserv:
+        try:
+            dispatcher.bot.delete_message(chat.id, update.message.message_id)
+        except BadRequest:
+            pass
+
+    dispatcher.job_queue.run_once(
+        partial(auto_clean_wel, chat.id, update.effective_message.message_id), 300, name="cleanwelcome",
+    )
     return msg
 
 
@@ -455,7 +461,7 @@ def new_member(update: Update, context: CallbackContext):
                     message = chat.send_photo(fileobj, caption=f'Welcome [{escape_markdown(new_mem.first_name)}](tg://user?id={user.id}). Click the correct button to get unmuted!',
                                     reply_markup=InlineKeyboardMarkup(btn),
                                     parse_mode=ParseMode.MARKDOWN,
-                                )
+                              )
                     bot.restrict_chat_member(
                         chat.id,
                         new_mem.id,
@@ -500,7 +506,13 @@ def new_member(update: Update, context: CallbackContext):
                 sql.set_clean_welcome(chat.id, sent.message_id)
 
 
-def check_not_bot(member, chat_id, message_id, context):
+def auto_clean_wel(chat_id:int, message_id: int, context: CallbackContext):
+     try:
+         context.bot.delete_message(chat_id, message_id)
+     except BadRequest:
+         pass
+
+def check_not_bot(member, chat_id: int, message_id: int, context: CallbackContext):
     bot = context.bot
     member_dict = VERIFIED_USER_WAITLIST.pop((chat_id, member.id))
     member_status = member_dict.get("status")
