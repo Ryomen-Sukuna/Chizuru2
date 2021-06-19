@@ -343,9 +343,23 @@ pin_help: |
 
 
 purge_help: |
-       *Admin only*:
-        • /del: deletes the message you replied to
-        • /purge: deletes all messages between this and the replied to message.
+   Need to delete lots of messages? That's what purges are for!
+
+   *Admin commands*:
+   - /purge: Delete all messages from the replied to message, to the current message.
+   - /purge <X>: Delete the following X messages after the replied to message.
+   - /spurge: Same as purge, but doesnt send the final confirmation message.
+   - /del or /delete: Deletes the replied to message.
+   - /purgefrom: Reply to a message to mark the message as where to purge from - this should be used followed by a /purgeto.
+    - /purgeto: Delete all messages between the replied to message, and the message marked by the latest /purgefrom.
+
+   *Examples*:
+   - Delete all messages from the replied to message, until now.
+   -> `/purge`
+   - Mark the first message to purge from (as a reply).
+   -> `/purgefrom`
+   - Mark the message to purge to (as a reply). All messages between the previously marked /purgefrom and the newly marked /purgeto will be deleted.
+   -> `/purgeto`
 
 reports_help: |
         • /report <reason>*:* reply to a message to report it to admins.
@@ -430,8 +444,8 @@ greetings_help: |
 
        *Other*:
        • /welcomemutehelp*:* gives information about welcome mutes.
-       • /cleanwelcome <on/off>*:* On new member, try to delete the previous welcome message to avoid spamming the chat.
-       • /cleanservice <on/off*:* deletes telegrams welcome/left service messages.
+       • /cleanwelcome <on/off>*:* Delete old welcome messages. When a new person joins, or after 5 minutes, the previous message will get deleted.
+       • /cleanservice <on/off*:* Delete all service messages. Those are the annoying 'x joined the group' notifications you see when people join.
        _Example:_
        user joined chat, user left chat.
 
