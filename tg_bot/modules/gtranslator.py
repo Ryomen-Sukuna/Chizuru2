@@ -3,6 +3,7 @@ from google_trans_new import LANGUAGES, google_translator
 
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
+from telegram.utils.helpers import escape_markdown
 from tg_bot.modules.helper_funcs.decorators import kigcmd
 
 __mod_name__ = "Translator"
@@ -13,7 +14,7 @@ def totranslate(update: Update, context: CallbackContext):
     problem_lang_code = []
     for key in LANGUAGES:
         if "-" in key:
-            problem_lang_code.append(key)
+          problem_lang_code.append(key)
 
     try:
         if message.reply_to_message:
@@ -65,13 +66,13 @@ def totranslate(update: Update, context: CallbackContext):
             detection = trl.detect(text)
             trans_str = trl.translate(text, lang_tgt=dest_lang)
             return message.reply_text(
-                f"Translated from `{detection[0]}` to `{dest_lang}`:\n`{trans_str}`",
+                f"Translated from `{detection[0]}` to `{dest_lang}`:\n`{escape_markdown(trans_str)}`",
                 parse_mode=ParseMode.MARKDOWN,
             )
         else:
             trans_str = trl.translate(text, lang_tgt=dest_lang, lang_src=source_lang)
             message.reply_text(
-                f"Translated from `{source_lang}` to `{dest_lang}`:\n`{trans_str}`",
+                f"Translated from `{source_lang}` to `{dest_lang}`:\n`{escape_markdown(trans_str)}`",
                 parse_mode=ParseMode.MARKDOWN,
             )
 
@@ -81,7 +82,7 @@ def totranslate(update: Update, context: CallbackContext):
             "Example: `/tr en-hi` to translate from English to Hindi\n"
             "Or use: `/tr hi` for automatic detection and translating it into Hindi.\n"
             "See [List of Language Codes](https://telegra.ph/Lang-Codes-03-19-3) for a list of language codes.",
-            parse_mode="markdown",
+            parse_mode=ParseMode.MARKDOWN,
             disable_web_page_preview=True,
         )
     except ValueError:
