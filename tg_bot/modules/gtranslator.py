@@ -1,87 +1,51 @@
-from emoji import UNICODE_EMOJI
-from google_trans_new import LANGUAGES, google_translator
+import html
+from gpytranslate import SyncTranslator
 
-from telegram import ParseMode, Update
+from telegram import Update, ParseMode, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
-from telegram.utils.helpers import escape_markdown
+
 from tg_bot.modules.helper_funcs.decorators import kigcmd
 
+
+
 __mod_name__ = "Translator"
+trans = SyncTranslator()
+
 
 @kigcmd(command=['tr', 'tl'])
-def totranslate(update: Update, context: CallbackContext):
+def translate(update: Update, context: CallbackContext) -> None:
     message = update.effective_message
-    problem_lang_code = []
-    for key in LANGUAGES:
-        if "-" in key:
-          problem_lang_code.append(key)
-
+    reply_msg = message.reply_to_message
+    if not reply_msg:
+        message.reply_text("Reply to a message to translate it!")
+        return
+    if reply_msg.caption:
+        to_translate = reply_msg.caption
+    elif reply_msg.text:
+        to_translate = reply_msg.text
     try:
-        if message.reply_to_message:
-            args = update.effective_message.text.split(None, 1)
-            if message.reply_to_message.text:
-                text = message.reply_to_message.text
-            elif message.reply_to_message.caption:
-                text = message.reply_to_message.caption
-
-            try:
-                source_lang = args[1].split(None, 1)[0]
-            except (IndexError, AttributeError):
-                source_lang = "en"
-
+        args = message.text.split()[1].lower()
+        if "//" in args:
+            source = args.split("//")[0]
+            dest = args.split("//")[1]
         else:
-            args = update.effective_message.text.split(None, 2)
-            text = args[2]
-            source_lang = args[1]
+            source = trans.detect(to_translate)
+            dest = args
+    except IndexError:
+        source = trans.detect(to_translate)
+        dest = 'en'
+    translation = trans(to_translate,
+                        sourcelang=source, 
+                        targetlang=dest)
+    reply = f"Translated from <i>{source}</i> to <i>{dest}</i>:\n<code>{html.escape(translation.text)}</code>"
 
-        if source_lang.count("-") == 2:
-            for lang in problem_lang_code:
-                if lang in source_lang:
-                    if source_lang.startswith(lang):
-                        dest_lang = source_lang.rsplit("-", 1)[1]
-                        source_lang = source_lang.rsplit("-", 1)[0]
-                    else:
-                        dest_lang = source_lang.split("-", 1)[1]
-                        source_lang = source_lang.split("-", 1)[0]
-        elif source_lang.count("-") == 1:
-            for lang in problem_lang_code:
-                if lang in source_lang:
-                    dest_lang = source_lang
-                    source_lang = None
-                    break
-            if dest_lang is None:
-                dest_lang = source_lang.split("-")[1]
-                source_lang = source_lang.split("-")[0]
-        else:
-            dest_lang = source_lang
-            source_lang = None
+    message.reply_text(reply, parse_mode=ParseMode.HTML)
 
-        exclude_list = UNICODE_EMOJI.keys()
-        for emoji in exclude_list:
-            if emoji in text:
-                text = text.replace(emoji, "")
 
-        trl = google_translator()
-        if source_lang is None:
-            detection = trl.detect(text)
-            trans_str = trl.translate(text, lang_tgt=dest_lang)
-            message.reply_text(
-                f"Translated from `{detection[0]}` to `{dest_lang}`:\n`{escape_markdown(trans_str)}`",
-                parse_mode=ParseMode.MARKDOWN,
-            )
-        else:
-            trans_str = trl.translate(text, lang_tgt=dest_lang, lang_src=source_lang)
-            message.reply_text(
-                f"Translated from `{source_lang}` to `{dest_lang}`:\n`{escape_markdown(trans_str)}`",
-                parse_mode=ParseMode.MARKDOWN,
-            )
-
-    except (IndexError, ValueError):
-        update.effective_message.reply_text(
-            "Reply to messages or write messages from other languages ​​for translating into the intended language\n\n"
-            "Example: `/tr en-hi` to translate from English to Hindi\n"
-            "Or use: `/tr hi` for automatic detection and translating it into Hindi.\n"
-            "See [List of Language Codes](https://telegra.ph/Lang-Codes-03-19-3) for a list of language codes.",
-            parse_mode=ParseMode.MARKDOWN,
-            disable_web_page_preview=True,
-        )
+@kigcmd(command='langs')
+def languages(update: Update, context: CallbackContext) -> None:
+    update.effective_message.reply_text(
+        "Click on the button below to see the list of supported language codes.",
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Language codes", url="https://telegra.ph/Lang-Codes-03-19-3")]]),
+        disable_web_page_preview=True,
+    )
