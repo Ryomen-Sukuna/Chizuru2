@@ -86,5 +86,3 @@ def totranslate(update: Update, context: CallbackContext):
         )
     except ValueError:
         update.effective_message.reply_text("The intended language is not found!")
-    else:
-        return
