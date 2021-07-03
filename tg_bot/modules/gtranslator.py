@@ -65,7 +65,7 @@ def totranslate(update: Update, context: CallbackContext):
         if source_lang is None:
             detection = trl.detect(text)
             trans_str = trl.translate(text, lang_tgt=dest_lang)
-            return message.reply_text(
+            message.reply_text(
                 f"Translated from `{detection[0]}` to `{dest_lang}`:\n`{escape_markdown(trans_str)}`",
                 parse_mode=ParseMode.MARKDOWN,
             )
@@ -76,7 +76,7 @@ def totranslate(update: Update, context: CallbackContext):
                 parse_mode=ParseMode.MARKDOWN,
             )
 
-    except IndexError:
+    except (IndexError, ValueError):
         update.effective_message.reply_text(
             "Reply to messages or write messages from other languages ​​for translating into the intended language\n\n"
             "Example: `/tr en-hi` to translate from English to Hindi\n"
@@ -85,5 +85,3 @@ def totranslate(update: Update, context: CallbackContext):
             parse_mode=ParseMode.MARKDOWN,
             disable_web_page_preview=True,
         )
-    except ValueError:
-        update.effective_message.reply_text("The intended language is not found!")
