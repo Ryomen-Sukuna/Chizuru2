@@ -15,6 +15,7 @@ class Config(object):
         # RECOMMENDED
         DB_URI = os.environ.get('DB_URI', "")
         WALL_API = os.environ.get('WALL_API', None)
+        DRAMA_URL = os.environ.get('DRAMA_URL', None)
 
 
 # RentalBot
