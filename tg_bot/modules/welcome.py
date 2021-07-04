@@ -956,7 +956,7 @@ dispatcher.add_handler(WELCOME_MUTE_HELP)
 dispatcher.add_handler(CAPTCHA_BUTTON_VERIFY_HANDLER)
 
 __mod_name__ = "Greetings"
-__commands__ = ["welcome", "setwelcome", "welcomemute", welcomemute"]
+__commands__ = ["welcome", "setwelcome", "welcomemute", "welcomemute"]
 __handlers__ = [
     NEW_MEM_HANDLER,
     WELC_PREF_HANDLER,
