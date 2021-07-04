@@ -22,7 +22,7 @@ def drama(update: Update, context: CallbackContext):
     message = update.effective_message
     search = message.text.split(" ", 1)
     if len(search) == 1:
-        message.reply_text('Format: <code>/drama < query ></code>', parse_mode='HTML')
+        message.reply_text('Format: `/drama <query>`', parse_mode=ParseMode.MARKDOWN)
         return
 
     Dramas = {}
