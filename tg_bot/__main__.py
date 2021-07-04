@@ -95,7 +95,8 @@ def get_help_btns(name):
      elif str(name) == "Fun":
             buttuns = [
                 [InlineKeyboardButton(text="AFK", callback_data="subhelp_afk"),
-                InlineKeyboardButton(text="Anime", callback_data="subhelp_anime")],
+                InlineKeyboardButton(text="Anime", callback_data="subhelp_anime"),
+                InlineKeyboardButton(text="Drama", callback_data="subhelp_drama")],
                 [InlineKeyboardButton(text="Sticker", callback_data="subhelp_stick"),
                 InlineKeyboardButton(text="Translation", callback_data="subhelp_tr")],
                 [InlineKeyboardButton(text="Back", callback_data="help_back")],
@@ -402,6 +403,17 @@ def subhelp_button(update: Update, context: CallbackContext):
     elif query.data == "subhelp_anime":
         query.message.edit_text(
                 text=gs(chat, "anilist_help"),
+                reply_markup=InlineKeyboardMarkup(
+                        [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True,
+                timeout=60, 
+            )
+
+    elif query.data == "subhelp_drama":
+        query.message.edit_text(
+                text=gs(chat, "drama_help"),
                 reply_markup=InlineKeyboardMarkup(
                         [[InlineKeyboardButton(text="Back", callback_data="subhelp_back"),]]
                 ),
