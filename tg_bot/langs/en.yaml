@@ -164,6 +164,12 @@ cust_filters_help: |
     Filters also support markdown formatters like: {first}, {last} etc.. and buttons.
     Check /formatting to know more!
 
+drama_help: |
+    Get information about K-Drama or C-Drama!
+
+    *Commands:*
+    - /drama `<drama>`: returns information about the drama(s).
+
 disable_help: |
     Not everyone wants every feature that the bot offers. Some commands are best
     left unused; to avoid spam and abuse.
