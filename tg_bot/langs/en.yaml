@@ -442,12 +442,6 @@ greetings_help: |
        • /setwelcome <sometext>*:* set a custom welcome message. If used replying to media, uses that media.
        • /resetwelcome*:* reset to the default welcome message.
 
-       *Goodbye*:
-       • /goodbye <on/off>*:* enable/disable goodbye messages.
-       • /goodbye*:* shows current goodbye settings.
-       • /setgoodbye <sometext>*:* set a custom goodbye message. If used replying to media, uses that media.
-       • /resetgoodbye*:* reset to the default goodbye message.
-
        *Other*:
        • /welcomemutehelp*:* gives information about welcome mutes.
        • /cleanwelcome <on/off>*:* Delete old welcome messages. When a new person joins, or after 5 minutes, the previous message will get deleted.
