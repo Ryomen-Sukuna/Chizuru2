@@ -31,7 +31,7 @@ async def purge_from(event):
     )
     print(reply)
     await event.client.delete_messages(event.chat_id, (await event.get_reply_message()).id)
-    PURGE[event.chat_id] = [event.reply_to_msg_id, reply.message.id]
+    PURGE[event.chat_id] = [event.reply_to_msg_id, reply.id]
 
 # Purge To
 async def purge_to(event):
