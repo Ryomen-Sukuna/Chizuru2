@@ -10,12 +10,12 @@ async def purge_from(event):
     if event.fwd_from or event.from_id is None:
         return
 
-    if (not await is_user_admin(
-                user_id=event.sender_id,
-                message=event,
-            )
-            and event.from_id not == 1087968824
-       ):
+    if ( not await is_user_admin(
+                 user_id=event.sender_id,
+                 message=event,
+             )
+             and event.from_id not == 1087968824
+     ):
         await event.reply("Only Admins are allowed to use this command")
         return
 
@@ -39,12 +39,12 @@ async def purge_to(event):
     if event.fwd_from or event.from_id is None:
         return
 
-    if (not await is_user_admin(
-                user_id=event.sender_id,
-                message=event,
-            )
-            and event.from_id not == 1087968824
-       ):
+    if ( not await is_user_admin(
+                 user_id=event.sender_id,
+                 message=event,
+             )
+             and event.from_id not == 1087968824
+     ):
         await event.reply("Only Admins are allowed to use this command")
         return
 
@@ -103,12 +103,12 @@ async def purge_messages(event):
     if event.fwd_from or event.from_id is None:
         return
 
-    if (not await is_user_admin(
-                user_id=event.sender_id,
-                message=event,
-            )
-            and event.from_id not == 1087968824
-       ):
+    if ( not await is_user_admin(
+                 user_id=event.sender_id,
+                 message=event,
+             )
+             and event.from_id not == 1087968824
+     ):
         await event.reply("Only Admins are allowed to use this command")
         return
 
@@ -155,12 +155,12 @@ async def delete_messages(event):
     if event.fwd_from or event.from_id is None:
         return
 
-    if (not await is_user_admin(
-                user_id=event.sender_id,
-                message=event,
-            )
-            and event.from_id not == 1087968824
-       ):
+    if ( not await is_user_admin(
+                 user_id=event.sender_id,
+                 message=event,
+             )
+             and event.from_id not == 1087968824
+     ):
         await event.reply("Only Admins are allowed to use this command")
         return
 
