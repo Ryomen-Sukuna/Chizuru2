@@ -26,10 +26,10 @@ async def purge_from(event):
         await event.reply("Reply to a message to let me know what to delete.")
         return
 
-    PURGE[event.chat_id] = event.reply_to_msg_id
-    await event.respond(
+    reply = await event.reply(
             "This Message marked for deletion. Reply to another message with /purgeto to delete all messages in between.",
     )
+    PURGE[event.chat_id] = [event.reply_to_msg_id, reply.message.id]
 
 # Purge To
 async def purge_to(event):
@@ -52,6 +52,7 @@ async def purge_to(event):
         return
 
     if not await can_delete_messages(message=event):
+        await event.client.delete_messages(event.chat_id, purge_from[1])
         PURGE.pop(event.chat_id)
         await event.reply("I can't delete messages in this chat! Give me admin and message deleting rights first.")
         return
@@ -68,7 +69,7 @@ async def purge_to(event):
     try:
         await event.client.delete_messages(event.chat_id, event.message.id)
         messages.append(event.reply_to_msg_id)
-        for message in range(purge_to, purge_from - 1, -1):
+        for message in range(purge_to, purge_from[0] - 1, -1):
              messages.append(message)
              if len(messages) == 100:
                  await event.client.delete_messages(event.chat_id, messages)
@@ -80,11 +81,13 @@ async def purge_to(event):
         await event.respond("**Purged Completed!**")
 
     except MessageDeleteForbiddenError:
+        await event.client.delete_messages(event.chat_id, purge_from[1])
         PURGE.pop(event.chat_id)
         text = "Failed to delete messages.\n"
         text += "Messages maybe too old or I'm not admin! or dont have delete rights!"
 
     except Exception as e:
+        await event.client.delete_messages(event.chat_id, purge_from[1])
         PURGE.pop(event.chat_id)
         text = "Failed to purge:" + e
         await event.respond(text)
