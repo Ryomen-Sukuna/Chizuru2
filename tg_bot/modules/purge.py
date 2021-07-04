@@ -30,6 +30,7 @@ async def purge_from(event):
             "This Message marked for deletion. Reply to another message with /purgeto to delete all messages in between.",
     )
     print(reply)
+    await event.client.delete_messages(event.chat_id, (await event.get_reply_message()).id)
     PURGE[event.chat_id] = [event.reply_to_msg_id, reply.message.id]
 
 # Purge To
