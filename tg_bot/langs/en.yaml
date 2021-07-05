@@ -84,7 +84,7 @@ antiflood_help: |
     • *Admins Commands:*
     • /setflood `<int/'no'/'off'>`: enables or disables flood control
     • /setfloodmode `<action>` `<value>`: Action to perform when user have exceeded flood limit. ban/kick/mute/tmute/tban
-   _Example:_ `/setflood 10`
+    _Example:_ `/setflood 10`
     • *Note:*
      ∘ _Value must be filled for tban and tmute!!_
        It can be:
