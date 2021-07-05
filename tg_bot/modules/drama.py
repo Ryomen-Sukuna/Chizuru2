@@ -30,7 +30,7 @@ def drama(update: Update, context: CallbackContext):
     try:
        res = get(f'{url}/search/q/{search[1]}').json()
     except JSONDecodeError as J:
-        message.reply_text(f"No Results Found!\n <i>{escape(J)}</i>", parse_mode=ParseMode.HTML)
+        message.reply_text(f"No Results Found!\n {J}")
         return
 
     data = res['results'].get('dramas')
@@ -77,7 +77,7 @@ def drama_button(update: Update, context: CallbackContext):
         try:
             res = get(f'{url}/id/{slug}').json()
         except JSONDecodeError as J:
-            message.reply_text(f"No Results Found!\n<i>{escape(J)}</i>", parse_mode=ParseMode.HTML)
+            message.reply_text(f"No Results Found!\n {J}")
             return
 
         type = res['data']['details'].get('type')
@@ -132,7 +132,7 @@ def casts_button(update: Update, context: CallbackContext):
         try:
             res = get(f'{url}/id/{slug}/cast').json()
         except JSONDecodeError as J:
-            message.reply_text(f"No Results Found!\n<i>{escape(J)}</i>", parse_mode=ParseMode.HTML)
+            message.reply_text(f"No Results Found!\n {J}")
             return
 
         title = res['data'].get('title')
