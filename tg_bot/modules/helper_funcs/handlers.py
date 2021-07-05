@@ -9,7 +9,10 @@ from pyrate_limiter import (
     MemoryListBucket,
 )
 
-CMD_STARTERS = ["/", "!"]
+try:
+    from tg_bot import CUSTOM_CMD as CMD_STARTERS
+except:
+    CMD_STARTERS = ["/", "!"]
 
 
 class AntiSpam:
@@ -63,36 +66,37 @@ class CustomCommandHandler(tg.CommandHandler):
             )
 
     def check_update(self, update):
-        if isinstance(update, Update) and update.effective_message:
-            message = update.effective_message
+        if not isinstance(update, Update) or not update.effective_message:
+            return
+        message = update.effective_message
 
-            try:
-                user_id = update.effective_user.id
-            except:
-                user_id = None
+        try:
+            user_id = update.effective_user.id
+        except:
+            user_id = None
 
-            if message.text and len(message.text) > 1:
-                fst_word = message.text.split(None, 1)[0]
-                if len(fst_word) > 1 and any(
-                    fst_word.startswith(start) for start in CMD_STARTERS
+        if message.text and len(message.text) > 1:
+            fst_word = message.text.split(None, 1)[0]
+            if len(fst_word) > 1 and any(
+                fst_word.startswith(start) for start in CMD_STARTERS
+            ):
+                args = message.text.split()[1:]
+                command = fst_word[1:].split("@")
+                command.append(
+                    message.bot.username
+                )  # in case the command was sent without a username
+
+                if not (
+                    command[0].lower() in self.command
+                    and command[1].lower() == message.bot.username.lower()
                 ):
-                    args = message.text.split()[1:]
-                    command = fst_word[1:].split("@")
-                    command.append(
-                        message.bot.username
-                    )  # in case the command was sent without a username
+                    return None
 
-                    if not (
-                        command[0].lower() in self.command
-                        and command[1].lower() == message.bot.username.lower()
-                    ):
-                        return None
+                if SpamChecker.check_user(user_id):
+                    return None
 
-                    if SpamChecker.check_user(user_id):
-                        return None
-
-                    filter_result = self.filters(update)
-                    if filter_result:
-                        return args, filter_result
-                    else:
-                        return False
+                filter_result = self.filters(update)
+                if filter_result:
+                    return args, filter_result
+                else:
+                    return False
