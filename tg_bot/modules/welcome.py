@@ -85,7 +85,10 @@ def extract_status_change(
 # do not async
 def send(update, message, keyboard, backup_message):
     chat = update.effective_chat
-    reply = update.message.message_id
+    try:
+        reply = update.message.message_id
+    except:
+        reply = False
 
     try:
         msg = chat.send_message(
@@ -108,6 +111,7 @@ def send(update, message, keyboard, backup_message):
                     "in one of its buttons. Please update."
                 ),
                 parse_mode=ParseMode.MARKDOWN,
+                reply_to_message_id=reply,
             )
         elif excp.message == "Unsupported url protocol":
             msg = chat.send_message(
@@ -117,6 +121,7 @@ def send(update, message, keyboard, backup_message):
                     "telegram. Please update."
                 ),
                 parse_mode=ParseMode.MARKDOWN,
+                reply_to_message_id=reply,
             )
         elif excp.message == "Wrong url host":
             msg = chat.send_message(
@@ -124,6 +129,7 @@ def send(update, message, keyboard, backup_message):
                     backup_message + "\nNote: the current message has some bad urls. *Please update*."
                 ),
                 parse_mode=ParseMode.MARKDOWN,
+                reply_to_message_id=reply,
             )
             log.warning(message)
             log.warning(keyboard)
