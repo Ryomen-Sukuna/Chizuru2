@@ -7,10 +7,12 @@ from typing import List, Optional
 
 import tg_bot.modules.sql.notes_sql as sql
 from tg_bot import log, dispatcher, SUDO_USERS
-from tg_bot.modules.helper_funcs.chat_status import user_admin, connection_status
-from tg_bot.modules.helper_funcs.misc import build_keyboard, revert_buttons
 from tg_bot.modules.helper_funcs.msg_types import get_note_type
+from tg_bot.modules.helper_funcs.handlers import MessageHandlerChecker
+from tg_bot.modules.helper_funcs.misc import build_keyboard, revert_buttons
+from tg_bot.modules.helper_funcs.chat_status import user_admin, connection_status
 from tg_bot.modules.helper_funcs.string_handling import escape_invalid_curly_brackets
+
 from telegram import (
     MAX_MESSAGE_LENGTH,
     InlineKeyboardMarkup,
@@ -71,39 +73,40 @@ def get_similar_note(chat_id, note_name):
     return None
 
 # Do not async
-@connection_status
 def get(update, context, notename, show_none=True, no_format=False):
     bot = context.bot
-    chat_id = update.effective_chat.id
-    note = sql.get_note(chat_id, notename)
+    chat_id = update.effective_message.chat.id
+    note_chat_id = update.effective_chat.id
+    note = sql.get_note(note_chat_id, notename)
     message = update.effective_message  # type: Optional[Message]
 
     if note:
+        if MessageHandlerChecker.check_user(update.effective_user.id):
+            return
         # If we're replying to a message, reply to that message (unless it's an error)
         if message.reply_to_message:
             reply_id = message.reply_to_message.message_id
         else:
             reply_id = message.message_id
-
         if note.is_reply:
             if JOIN_LOGGER:
                 try:
                     bot.forward_message(
-                        chat_id=chat_id, from_chat_id=JOIN_LOGGER, message_id=note.value
+                        chat_id=chat_id, from_chat_id=JOIN_LOGGER, message_id=note.value,
                     )
                 except BadRequest as excp:
                     if excp.message == "Message to forward not found":
                         message.reply_text(
                             "This message seems to have been lost - I'll remove it "
-                            "from your notes list."
+                            "from your notes list.",
                         )
-                        sql.rm_note(chat_id, notename)
+                        sql.rm_note(note_chat_id, notename)
                     else:
                         raise
             else:
                 try:
                     bot.forward_message(
-                        chat_id=chat_id, from_chat_id=chat_id, message_id=note.value
+                        chat_id=chat_id, from_chat_id=chat_id, message_id=note.value,
                     )
                 except BadRequest as excp:
                     if excp.message == "Message to forward not found":
@@ -111,9 +114,9 @@ def get(update, context, notename, show_none=True, no_format=False):
                             "Looks like the original sender of this note has deleted "
                             "their message - sorry! Get your bot admin to start using a "
                             "message dump to avoid this. I'll remove this note from "
-                            "your saved notes."
+                            "your saved notes.",
                         )
-                        sql.rm_note(chat_id, notename)
+                        sql.rm_note(note_chat_id, notename)
                     else:
                         raise
         else:
@@ -127,7 +130,7 @@ def get(update, context, notename, show_none=True, no_format=False):
                 "mention",
             ]
             valid_format = escape_invalid_curly_brackets(
-                note.value, VALID_NOTE_FORMATTERS
+                note.value, VALID_NOTE_FORMATTERS,
             )
             if valid_format:
                 if not no_format:
@@ -144,27 +147,27 @@ def get(update, context, notename, show_none=True, no_format=False):
                 text = text.format(
                     first=escape_markdown(message.from_user.first_name),
                     last=escape_markdown(
-                        message.from_user.last_name or message.from_user.first_name
+                        message.from_user.last_name or message.from_user.first_name,
                     ),
                     fullname=escape_markdown(
                         " ".join(
                             [message.from_user.first_name, message.from_user.last_name]
                             if message.from_user.last_name
-                            else [message.from_user.first_name]
-                        )
+                            else [message.from_user.first_name],
+                        ),
                     ),
                     username="@" + message.from_user.username
                     if message.from_user.username
                     else mention_markdown(
-                        message.from_user.id, message.from_user.first_name
+                        message.from_user.id, message.from_user.first_name,
                     ),
                     mention=mention_markdown(
-                        message.from_user.id, message.from_user.first_name
+                        message.from_user.id, message.from_user.first_name,
                     ),
                     chatname=escape_markdown(
                         message.chat.title
                         if message.chat.type != "private"
-                        else message.from_user.first_name
+                        else message.from_user.first_name,
                     ),
                     id=message.from_user.id,
                 )
@@ -173,7 +176,7 @@ def get(update, context, notename, show_none=True, no_format=False):
 
             keyb = []
             parseMode = ParseMode.MARKDOWN
-            buttons = sql.get_buttons(chat_id, notename)
+            buttons = sql.get_buttons(note_chat_id, notename)
             if no_format:
                 parseMode = None
                 text += revert_buttons(buttons)
@@ -228,7 +231,7 @@ def get(update, context, notename, show_none=True, no_format=False):
                         "This note could not be sent, as it is incorrectly formatted."
                     )
                     log.exception(
-                        "Could not parse message #%s in chat %s", notename, str(chat_id)
+                        "Could not parse message #%s in chat %s", notename, str(note_chat_id)
                     )
                     log.warning("Message was: %s", str(note.value))
         return
@@ -239,8 +242,8 @@ def get(update, context, notename, show_none=True, no_format=False):
           message.reply_text(txt, parse_mode=ParseMode.HTML)
 
 
-@connection_status
 @kigcmd(command="get")
+@connection_status
 def cmd_get(update: Update, context: CallbackContext):
     bot, args = context.bot, context.args
     if len(args) >= 2 and args[1].lower() == "noformat":
@@ -251,8 +254,8 @@ def cmd_get(update: Update, context: CallbackContext):
         update.effective_message.reply_text("Get rekt")
 
 
-@connection_status
 @kigmsg((Filters.regex(r"^#[^\s]+")), group=-14)
+@connection_status
 def hash_get(update: Update, context: CallbackContext):
     message = update.effective_message.text
     fst_word = message.split()[0]
@@ -260,8 +263,8 @@ def hash_get(update: Update, context: CallbackContext):
     get(update, context, no_hash, show_none=False)
 
 
-@connection_status
 @kigmsg((Filters.regex(r"^/\d+$")), group=-16)
+@connection_status
 def slash_get(update: Update, context: CallbackContext):
     message, chat_id = update.effective_message.text, update.effective_chat.id
     no_slash = message[1:]
@@ -407,8 +410,8 @@ def clearall_btn(update: Update, context: CallbackContext):
             query.answer("You need to be admin to do this.")
 
 
-@connection_status
 @kigcmd(command=["notes", "saved"])
+@connection_status
 def list_notes(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
     note_list = sql.get_all_chat_notes(chat_id)
