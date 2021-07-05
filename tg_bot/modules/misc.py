@@ -32,8 +32,8 @@ from tg_bot.modules.helper_funcs.chat_status import user_admin, sudo_plus
 from tg_bot.modules.helper_funcs.extraction import extract_user
 import tg_bot.modules.sql.users_sql as sql
 from tg_bot.modules.language import gs
-from tg_bot.modules.helper_funcs.decorators import kigcmd
 from tg_bot.modules.helper_funcs.get_time import get_time
+from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback
 
 @kigcmd(command='id', pass_args=True)
 def id(update: Update, context: CallbackContext):
@@ -274,7 +274,7 @@ stats_str = '''
 @sudo_plus
 def stats(update, context):
     uptime = datetime.datetime.fromtimestamp(boot_time()).strftime("%Y-%m-%d %H:%M:%S")
-    botuptime = get_readable_time((time.time() - StartTime))
+    botuptime = get_time((time.time() - StartTime))
     status = "*╒═══「 System statistics: 」*\n\n"
     status += "*• System Start time:* " + str(uptime) + "\n"
     uname = platform.uname()
@@ -301,7 +301,7 @@ def stats(update, context):
         update.effective_message.reply_text(status +
             "\n*Bot statistics*:\n"
             + "\n".join([mod.__stats__() for mod in STATS]) +
-            "\n\n╘══「 by [Dank-del](github.com/Dank-del) 」\n",
+            "\n\n╘══「 by [Laughing Coffin](t.me/TheLaughingCoffin) 」\n",
         parse_mode=ParseMode.MARKDOWN, reply_markup=InlineKeyboardMarkup(kb), disable_web_page_preview=True)
     except BaseException:
         update.effective_message.reply_text(
