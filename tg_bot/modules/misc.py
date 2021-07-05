@@ -1,11 +1,19 @@
+import os
+import re
 import html
 import time
 import requests
 import datetime
+import platform
+from io import BytesIO
+from typing import List
 from bs4 import BeautifulSoup
+from subprocess import Popen, PIPE
+from platform import python_version
+from psutil import cpu_percent, virtual_memory, disk_usage, boot_time
 
 from telegram.error import BadRequest
-from telegram import Update, MessageEntity, ParseMode
+from telegram import Update, MessageEntity, ParseMode, __version__ as ptbver
 from telegram.utils.helpers import mention_html, escape_markdown
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Filters, CallbackContext
@@ -26,6 +34,58 @@ import tg_bot.modules.sql.users_sql as sql
 from tg_bot.modules.language import gs
 from tg_bot.modules.helper_funcs.decorators import kigcmd
 from tg_bot.modules.helper_funcs.get_time import get_time
+
+@kigcmd(command='id', pass_args=True)
+def id(update: Update, context: CallbackContext):
+    bot, args = context.bot, context.args
+    message = update.effective_message
+    chat = update.effective_chat
+    msg = update.effective_message
+    user_id = extract_user(msg, args)
+
+    txt = ""
+    ID = msg.reply_text("Just A Sec...")
+    if user_id:
+
+        if msg.reply_to_message:
+
+            if msg.reply_to_message.forward_from:
+              user1 = message.reply_to_message.from_user
+              user2 = message.reply_to_message.forward_from
+
+              txt += (
+                  f"<b>Chat ID:</b> <code>{chat.id}</code>\n\n"
+                   "<b>Forward-From ID:</b>\n"
+                  f"• {html.escape(user2.first_name)} - (<code>{user2.id}</code>).\n"
+                   "<b>Your ID:</b>\n"
+                  f"• {html.escape(user1.first_name)} - (<code>{user1.id}</code>)."
+              )
+
+            if msg.reply_to_message.animation:
+                txt += "\nGIF-ID: <code>{msg.reply_to_message.animation.file_id}</code>"
+            elif msg.reply_to_message.sticker:
+                txt += "\nSTIKER-ID: <code>{msg.reply_to_message.sticker.file_id}</code>"
+            elif msg.reply_to_message.photo:
+                txt += "\nPHOTO-ID: <code>{msg.reply_to_message.photo[-1].file_id}</code>"
+            elif msg.reply_to_message.document:
+                txt += "\nDOCUMENT-ID: <code>{msg.reply_to_message.document.file_id}</code>"
+
+        else:
+            user = bot.get_chat(user_id)
+            txt += (
+                f"<b>Chat ID:</b> <code>{chat.id}</code>\n\n"
+                f"{html.escape(user.first_name)} - (<code>{user.id}</code>)."
+            )
+
+    else:
+        if chat.type == "private":
+            txt += f"Your id is <code>{chat.id}</code>."
+        else:
+            txt += (
+                f"<b>Chat ID:</b> <code>{chat.id}</code>.\n\n"
+                f"<b>Your ID:</b> <code>{message.from_user.id}</code>."
+            )
+    ID.edit_text(txt, parse_mode=ParseMode.HTML)
 
 
 @kigcmd(command='gifid')
@@ -208,18 +268,79 @@ def formatting(update: Update, context: CallbackContext):
         )
 
 
-@kigcmd(command='ping')
+stats_str = '''
+'''
+@kigcmd(command='stats', can_disable=False)
 @sudo_plus
+def stats(update, context):
+    uptime = datetime.datetime.fromtimestamp(boot_time()).strftime("%Y-%m-%d %H:%M:%S")
+    botuptime = get_readable_time((time.time() - StartTime))
+    status = "*╒═══「 System statistics: 」*\n\n"
+    status += "*• System Start time:* " + str(uptime) + "\n"
+    uname = platform.uname()
+    status += "*• System:* " + str(uname.system) + "\n"
+    status += "*• Node name:* " + escape_markdown(str(uname.node)) + "\n"
+    status += "*• Release:* " + escape_markdown(str(uname.release)) + "\n"
+    status += "*• Machine:* " + escape_markdown(str(uname.machine)) + "\n"
+
+    mem = virtual_memory()
+    cpu = cpu_percent()
+    disk = disk_usage("/")
+    status += "*• CPU:* " + str(cpu) + " %\n"
+    status += "*• RAM:* " + str(mem[2]) + " %\n"
+    status += "*• Storage:* " + str(disk[3]) + " %\n\n"
+    status += "*• Python version:* " + python_version() + "\n"
+    status += "*• python-telegram-bot:* " + str(ptbver) + "\n"
+    status += "*• Uptime:* " + str(botuptime) + "\n"
+    kb = [
+       [
+         InlineKeyboardButton('Ping', callback_data='ping_bot')
+       ]
+    ]
+    try:
+        update.effective_message.reply_text(status +
+            "\n*Bot statistics*:\n"
+            + "\n".join([mod.__stats__() for mod in STATS]) +
+            "\n\n╘══「 by [Dank-del](github.com/Dank-del) 」\n",
+        parse_mode=ParseMode.MARKDOWN, reply_markup=InlineKeyboardMarkup(kb), disable_web_page_preview=True)
+    except BaseException:
+        update.effective_message.reply_text(
+            (
+                (
+                    (
+                        "\n*Bot statistics*:\n"
+                        + "\n".join(mod.__stats__() for mod in STATS)
+                    )
+                )
+                + "\n\n╘══「 by [Laughing Coffin](t.me/TheLaughingCoffin) 」\n"
+            ),
+            parse_mode=ParseMode.MARKDOWN,
+            reply_markup=InlineKeyboardMarkup(kb),
+            disable_web_page_preview=True,
+        )
+
+@kigcmd(command='ping')
 def ping(update: Update, _):
-    msg = update.effective_message
     start_time = time.time()
-    message = msg.reply_text("Pinging...")
+    message = update.effective_message.reply_text("Pinging...")
     end_time = time.time()
+
     ping_time = round((end_time - start_time) * 1000, 3)
     message.edit_text(
         "*Pong!!!*\n`{}ms`".format(ping_time),
         parse_mode=ParseMode.MARKDOWN,
     )
+
+
+@kigcallback(pattern=r'^ping_bot')
+def pingCallback(update: Update, context: CallbackContext):
+    start_time = time.time()
+    requests.get('https://api.telegram.org')
+    end_time = time.time()
+
+    ping_time = round((end_time - start_time) * 1000, 3)
+    update.callback_query.answer('Pong! {}ms'.format(ping_time))
+
 
 
 def get_help(chat):
