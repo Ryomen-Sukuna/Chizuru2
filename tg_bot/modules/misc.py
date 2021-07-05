@@ -25,9 +25,10 @@ from tg_bot import (
     SUDO_USERS,
     SUPPORT_USERS,
     WHITELIST_USERS,
-    StartTime
+    StartTime,
 )
 from tg_bot.__main__ import STATS, TOKEN
+from tg_bot.modules.sql import SESSION
 from tg_bot.modules.helper_funcs.chat_status import user_admin, sudo_plus
 from tg_bot.modules.helper_funcs.extraction import extract_user
 import tg_bot.modules.sql.users_sql as sql
@@ -270,28 +271,29 @@ def formatting(update: Update, context: CallbackContext):
 
 stats_str = '''
 '''
-@kigcmd(command='stats', can_disable=False)
+@kigcmd(command='stats', can_disable=True)
 @sudo_plus
 def stats(update, context):
+    db_size = SESSION.execute("SELECT pg_size_pretty(pg_database_size(current_database()))").scalar_one_or_none()
     uptime = datetime.datetime.fromtimestamp(boot_time()).strftime("%Y-%m-%d %H:%M:%S")
     botuptime = get_time((time.time() - StartTime))
     status = "*╒═══「 System statistics: 」*\n\n"
-    status += "*• System Start time:* " + str(uptime) + "\n"
+    status += "*• Start time:* " + str(uptime) + "\n"
     uname = platform.uname()
     status += "*• System:* " + str(uname.system) + "\n"
-    status += "*• Node name:* " + escape_markdown(str(uname.node)) + "\n"
     status += "*• Release:* " + escape_markdown(str(uname.release)) + "\n"
     status += "*• Machine:* " + escape_markdown(str(uname.machine)) + "\n"
 
     mem = virtual_memory()
     cpu = cpu_percent()
     disk = disk_usage("/")
-    status += "*• CPU:* " + str(cpu) + " %\n"
-    status += "*• RAM:* " + str(mem[2]) + " %\n"
-    status += "*• Storage:* " + str(disk[3]) + " %\n\n"
-    status += "*• Python version:* " + python_version() + "\n"
-    status += "*• python-telegram-bot:* " + str(ptbver) + "\n"
+    status += "*• CPU:* " + str(cpu) + "%\n"
+    status += "*• RAM:* " + str(mem[2]) + "%\n"
+    status += "*• Storage:* " + str(disk[3]) + "%\n"
+    status += "*• Database:* " + str(db_size) + "\n"
     status += "*• Uptime:* " + str(botuptime) + "\n"
+    status += "*• Python:* " + python_version() + "\n"
+    status += "*• PTB:* " + str(ptbver) + "\n"
     kb = [
        [
          InlineKeyboardButton('Ping', callback_data='ping_bot')
@@ -299,7 +301,7 @@ def stats(update, context):
     ]
     try:
         update.effective_message.reply_text(status +
-            "\n*Bot statistics*:\n"
+            "\n*Bot Statistics*:\n"
             + "\n".join([mod.__stats__() for mod in STATS]) +
             "\n\n╘══「 by [Laughing Coffin](t.me/TheLaughingCoffin) 」\n",
         parse_mode=ParseMode.MARKDOWN, reply_markup=InlineKeyboardMarkup(kb), disable_web_page_preview=True)
@@ -323,9 +325,7 @@ def stats(update, context):
 def ping(update: Update, _):
     start_time = time.time()
     message = update.effective_message.reply_text("Pinging...")
-    end_time = time.time()
-
-    ping_time = round((end_time - start_time) * 1000, 3)
+    ping_time = round((time.time() - start_time) * 1000, 3)
     message.edit_text(
         "*Pong!!!*\n`{}ms`".format(ping_time),
         parse_mode=ParseMode.MARKDOWN,
@@ -333,12 +333,10 @@ def ping(update: Update, _):
 
 
 @kigcallback(pattern=r'^ping_bot')
-def pingCallback(update: Update, context: CallbackContext):
+def pingCallback(update: Update, _):
     start_time = time.time()
     requests.get('https://api.telegram.org')
-    end_time = time.time()
-
-    ping_time = round((end_time - start_time) * 1000, 3)
+    ping_time = round((time.time() - start_time) * 1000, 3)
     update.callback_query.answer('Pong! {}ms'.format(ping_time))
 
 
