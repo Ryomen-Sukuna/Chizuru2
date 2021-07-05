@@ -11,7 +11,7 @@ from tg_bot.modules.helper_funcs.chat_status import dev_plus
 def leave(update: Update, context: CallbackContext):
     bot, args = context.bot, context.args
 
-    if args and len(args) > 5:
+    if args and len(args[0]) > 5:
         chat_id = str(args[0])
         try:
             bot.leave_chat(int(chat_id))
