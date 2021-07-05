@@ -128,13 +128,13 @@ def pat(update: Update, context: CallbackContext):
             if "@" in msg and len(msg) > 5:
                 context.bot.send_animation(
                     chat_id,
-                    pat['link'],
+                    pat.get('link'),
                     caption=msg,
                 )
             else:
                 context.bot.send_animation(
                     chat_id,
-                    pat['link'],
+                    pat.get('link'),
                     reply_to_message_id=msg_id,
                 )
         except BadRequest:
@@ -149,7 +149,7 @@ def hug(update: Update, context: CallbackContext):
         else update.effective_message.reply_text
     )
     hug = requests.get('https://some-random-api.ml/animu/hug').json()
-    reply_animation(hug['link'])
+    reply_animation(hug.get('link'))
 
 
 @kigcmd(command='decide')
@@ -164,7 +164,7 @@ def yesnowtf(update: Update, context: CallbackContext):
         res = res.json()
     try:
         context.bot.send_animation(
-            chat.id, animation=res["image"], caption=str(res["answer"]).upper()
+            chat.id, animation=res.get("image"), caption=str(res.get("answer")).upper()
         )
     except BadRequest:
         return
