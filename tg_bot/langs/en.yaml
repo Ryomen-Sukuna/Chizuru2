@@ -36,21 +36,21 @@ updates_channel_link_btn: "Updates"
 src_btn: "Source code"
 
 admin_help: |
-   • /admins*:* list of admins in the chat
+   • /admins: list of admins in the chat
 
-   *Admins only*:
-   • /invitelink*:* gets invitelink
-   • /fullpromote*:* promotes the user with all administration rights.
-   • /promote*:* promotes the user replied to
-   • /demote*:* demotes the user replied to
+   *Admins commands:*
+   • /invitelink: gets invitelink
+   • /fullpromote: promotes the user with all administration rights.
+   • /promote: promotes the user replied to
+   • /demote: demotes the user replied to
    • /settitle <title here>*:* sets a custom title for an admin that the bot promoted
-   • /setgpic*:* As a reply to file or photo to set group profile pic!
-   • /delgpic*:* Same as above but to remove group profile pic.
-   • /setgtitle <newtitle>*:* Sets new chat title in your group.
-   • /setsticker*:* As a reply to some sticker to set it as group sticker set!
-   • /setdescription or /setdes <description>*:* Sets new chat description in group.
-   • /demons*:* list all the demons (Deleted Accounts) in a chat.
-   • /admincache or /reload*:* Refresh chat admins.
+   • /setgpic: As a reply to file or photo to set group profile pic!
+   • /delgpic: Same as above but to remove group profile pic.
+   • /setgtitle `<newtitle>`: Sets new chat title in your group.
+   • /setsticker: As a reply to some sticker to set it as group sticker set!
+   • /setdescription or /setdes `<description>`: Sets new chat description in group.
+   • /demons: list all the demons (Deleted Accounts) in a chat.
+   • /admincache or /reload: Refresh chat admins.
 
    *Note*: To set group sticker set chat must needs to have min 100 members.
 
@@ -68,21 +68,23 @@ anilist_help: |
     Get information about anime, manga or characters!
     All data is fetched from [AniList](anilist.co).
 
-    *User Command*:
-     • /airing <anime>: returns anime airing info.
-     • /anime <anime>: returns information about the anime.
-     • /manga <manga>: returns information about the manga.
-     • /character <character>: returns information about the character.
+    *User Commands:*
+     • /airing `<anime>`: returns anime airing info.
+     • /anime `<anime>`: returns information about the anime.
+     • /manga `<manga>`: returns information about the manga.
+     • /character `<character>`: returns information about the character.
 
 antiflood_help: |
     Antiflood allows you to take action on users that send more than x messages in a row. Exceeding the set flood
     will result in restricting that user.
-     This will mute users if they send more than 10 messages in a row, bots are ignored.
-     • /flood*:* Get the current flood control setting
-    • *Admins only:*
-     • /setflood <int/'no'/'off'>*:* enables or disables flood control
-     _Example:_ `/setflood 10`
-     • /setfloodmode <ban/kick/mute/tban/tmute> <value>*:* Action to perform when user have exceeded flood limit. ban/kick/mute/tmute/tban
+    This will mute users if they send more than 10 messages in a row, bots are ignored.
+
+    *Commands:*
+    • /flood*:* Get the current flood control setting
+    • *Admins Commands:*
+    • /setflood `<int/'no'/'off'>`: enables or disables flood control
+    • /setfloodmode `<action>` `<value>`: Action to perform when user have exceeded flood limit. ban/kick/mute/tmute/tban
+   _Example:_ `/setflood 10`
     • *Note:*
      ∘ _Value must be filled for tban and tmute!!_
        It can be:
@@ -96,15 +98,15 @@ approve_help: |
      Maybe not enough to make them admin, but you might be ok with locks, blacklists, and antiflood not applying to them.
      That's what approvals are for - approve of trustworthy users to allow them to send
 
-     *Admin commands*:
-     • /approval*:* Check a user's approval status in current chat.
-     • /approve*:* Approve of a user. Locks, blacklists, and antiflood won't apply to them anymore.
-     • /unapprove*:* Unapprove of a user. They will now be subject to locks, blacklists, and antiflood again.
-     • /approved*:* List all approved users.
-     • /unapproveall*:* Unapprove *ALL* users in a chat. This cannot be undone.
+     *Admin Commands:*
+     • /approval: Check a user's approval status in current chat.
+     • /approve: Approve of a user. Locks, blacklists, and antiflood won't apply to them anymore.
+     • /unapprove: Unapprove of a user. They will now be subject to locks, blacklists, and antiflood again.
+     • /approved: List all approved users.
+     • /unapproveall: Unapprove *ALL* users in a chat. This cannot be undone.
 
 backup_help: |
-    *Admin only*:
+    *Admin Commands:*
      • /export*:* Generate a file containing all your chat data.
      • /import*:* Import the settings in the replied to data file.
 
@@ -113,15 +115,15 @@ bans_help: |
 
     This module allows you to do that easily, by exposing some common actions, so everyone will see!
 
-    *User Command*:
-    • /kickme*:* kicks the user who issued the command
-    • /banme*:* ban the user who issued the command
+    *User Commands:*
+    • /kickme: kicks the user who issued the command
+    • /banme: ban the user who issued the command
 
-     *Admin only*:
-    • /ban <userhandle>*:* bans a user. (via handle, or reply)
-    • /tban <userhandle> x(m/h/d)*:* bans a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
-    • /unban <userhandle>*:* unbans a user. (via handle, or reply)
-    • /kick <userhandle>*:* kick a user out of the group, (via handle, or reply)
+     *Admin Comments:*
+    • /ban `<userhandle>`: bans a user. (via handle, or reply)
+    • /tban `<userhandle>` `x(m/h/d)`: bans a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
+    • /unban `<userhandle>`: unbans a user. (via handle, or reply)
+    • /kick `<userhandle>`: kick a user out of the group, (via handle, or reply)
 
 blacklist_help: |
     *User Command*:
