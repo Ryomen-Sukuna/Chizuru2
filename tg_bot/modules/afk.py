@@ -1,6 +1,6 @@
-import time
 import random
 import humanize
+from time import sleep
 from datetime import datetime
 
 from telegram import Update, MessageEntity, ParseMode
@@ -22,7 +22,10 @@ def afk(update: Update, context: CallbackContext):
     if not user:  # ignore channels
         return
 
-    if user.id in [777000, 1087968824]:
+    if user.id in [
+              777000,
+          1087968824,
+       ]:
         return
 
     notice = ""
@@ -59,8 +62,9 @@ def no_longer_afk(update: Update, context: CallbackContext):
     if res: 
         try:
             options = [
-                "{} Is Now Un-AFK!",
+                "{} Is Ready To Fight!",
                 "{} Is Back Online!",
+                "{} Is Here!",
             ]
             reply_msg = random.choice(options)
             message.reply_text(
@@ -139,14 +143,10 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
             return
 
         if user.reason:
+            reason = user.reason
             if "%%%" in user.reason:
                 split = user.reason.split("%%%")
-                if all(split):
-                    reason = random.choice(split)
-                else:
-                    reason = user.reason
-            else:
-                reason = user.reason
+                reason = random.choice(split) if all(split) else user.reason
 
             textmsg += f"\n\n*Says It's Because Of*:\n{reason}"
             try:
@@ -155,7 +155,7 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
                 pass
 
         try:
-            time.sleep(30)
+            sleep(30)
             DND.delete()
         except:
             return
@@ -167,5 +167,4 @@ def __gdpr__(user_id):
 
 
 __mod_name__ = "AFK"
-
-__commands__ = ["afk"]
+__commands__ = ["afk", "dnd"]
