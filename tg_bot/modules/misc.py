@@ -28,7 +28,6 @@ from tg_bot import (
     StartTime,
 )
 from tg_bot.__main__ import STATS, TOKEN
-from tg_bot.modules.sql import SESSION
 from tg_bot.modules.helper_funcs.chat_status import user_admin, sudo_plus
 from tg_bot.modules.helper_funcs.extraction import extract_user
 import tg_bot.modules.sql.users_sql as sql
@@ -273,8 +272,7 @@ stats_str = '''
 '''
 @kigcmd(command='stats', can_disable=True)
 @sudo_plus
-def stats(update, context):
-    db_size = SESSION.execute("SELECT pg_size_pretty(pg_database_size(current_database()))").scalar_one_or_none()
+def stats(update: Update, context: CallbackContext):
     uptime = datetime.datetime.fromtimestamp(boot_time()).strftime("%Y-%m-%d %H:%M:%S")
     botuptime = get_time((time.time() - StartTime))
     status = "*╒═══「 System statistics: 」*\n\n"
@@ -290,7 +288,6 @@ def stats(update, context):
     status += "*• CPU:* " + str(cpu) + "%\n"
     status += "*• RAM:* " + str(mem[2]) + "%\n"
     status += "*• Storage:* " + str(disk[3]) + "%\n"
-    status += "*• Database:* " + str(db_size) + "\n"
     status += "*• Uptime:* " + str(botuptime) + "\n"
     status += "*• Python:* " + python_version() + "\n"
     status += "*• PTB:* " + str(ptbver) + "\n"
