@@ -14,7 +14,7 @@ from tg_bot.modules.users import get_user_id
 from tg_bot.modules.helper_funcs.decorators import kigcmd, kigmsg
 
 
-# @kigcmd(command=["afk", "dnd"], group=7)
+@kigcmd(command=["afk", "dnd"], group=7)
 def afk(update: Update, context: CallbackContext):
     args = update.effective_message.text.split(None, 1)
     user = update.effective_user
@@ -47,7 +47,7 @@ def afk(update: Update, context: CallbackContext):
         return
 
 
-# @kigmsg((Filters.all & Filters.chat_type.groups), friendly='afk', group=7)
+@kigmsg((Filters.all & Filters.chat_type.groups), friendly='afk', group=7)
 def no_longer_afk(update: Update, context: CallbackContext):
     user = update.effective_user
     message = update.effective_message
@@ -74,7 +74,7 @@ def no_longer_afk(update: Update, context: CallbackContext):
             return
 
 
-# @kigmsg((Filters.all & ~Filters.update.edited_message & Filters.chat_type.groups), friendly='afk', group=8)
+@kigmsg((Filters.all & ~Filters.update.edited_message & Filters.chat_type.groups), friendly='afk', group=8)
 def reply_afk(update: Update, context: CallbackContext):
     bot = context.bot
     message = update.effective_message
@@ -134,11 +134,11 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
         since_afk = humanize.naturaldelta(datetime.now() - user.time)
         textmsg = f"{fname} Is AFK Since {since_afk}!"
 
-      #  try:
-            # if user.messageid != (None, ""):
-            #    context.bot.delete_message(int(user.messageid.split(' ', 1)[0]), int(user.messageid.split(' ', 1)[1]))
-      #  except:
-      #      pass
+        try:
+            if user.messageid != (None, ""):
+                context.bot.delete_message(int(user.messageid.split(' ', 1)[0]), int(user.messageid.split(' ', 1)[1]))
+        except:
+            pass
         try:
             DND = update.effective_message.reply_text(
                       textmsg,
