@@ -17,7 +17,7 @@ class AFK(BASE):
     def __init__(self, user_id: int, reason: str = "", messageid: str = '', is_afk: bool = True):
         self.user_id = user_id
         self.reason = reason
-        self.messageid = messageid
+        # self.messageid = messageid
         self.is_afk = is_afk
         self.time = datetime.now()
 
@@ -66,7 +66,7 @@ def update_afk(user_id, chat_id, message_id):
         SESSION.commit()
 
 
-def rm_afk(user_id):
+def rm_afk(user_id) -> bool:
     with INSERTION_LOCK:
         curr = SESSION.query(AFK).get(user_id)
         if curr:
@@ -94,6 +94,13 @@ def toggle_afk(user_id, reason=""):
         SESSION.commit()
 
 
+def __unload_afk_users():
+    try:
+        all_afk = SESSION.query(AFK).all()
+        SESSION.delete(SESSION.query(AFK).get(user.user_id)) for user in all_afk if user.is_afk
+    finally:
+        SESSION.commit()
+
 def __load_afk_users():
     global AFK_USERS
     try:
@@ -105,4 +112,5 @@ def __load_afk_users():
         SESSION.close()
 
 
+__unload_afk_users()
 __load_afk_users()
