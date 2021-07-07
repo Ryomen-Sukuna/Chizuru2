@@ -97,7 +97,9 @@ def toggle_afk(user_id, reason=""):
 def __unload_afk_users():
     try:
         all_afk = SESSION.query(AFK).all()
-        SESSION.delete(SESSION.query(AFK).get(user.user_id)) for user in all_afk if user.is_afk
+        for user in all_afk:
+           curr = SESSION.query(AFK).get(user.user_id)
+           SESSION.delete(curr)
     finally:
         SESSION.commit()
 
