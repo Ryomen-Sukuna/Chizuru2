@@ -103,16 +103,15 @@ def __unload_afk_users():
     finally:
         SESSION.commit()
 
-def __load_afk_users():
-    global AFK_USERS
-    try:
-        all_afk = SESSION.query(AFK).all()
-        AFK_USERS = {
-            user.user_id: {"reason": user.reason, "time": user.time, "messageid": ''} for user in all_afk if user.is_afk
-        }
-    finally:
-        SESSION.close()
+#def __load_afk_users():
+#    global AFK_USERS
+#    try:
+#        all_afk = SESSION.query(AFK).all()
+#        AFK_USERS = {
+#            user.user_id: {"reason": user.reason, "time": user.time, "messageid": ''} for user in all_afk if user.is_afk
+#        }
+#    finally:
+#        SESSION.close()
 
 
 __unload_afk_users()
-__load_afk_users()
