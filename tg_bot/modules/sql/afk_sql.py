@@ -12,10 +12,12 @@ class AFK(BASE):
     is_afk = Column(Boolean)
     reason = Column(UnicodeText)
     time = Column(DateTime)
+    messageid = Column(UnicodeText)
 
-    def __init__(self, user_id: int, reason: str = "", is_afk: bool = True):
+    def __init__(self, user_id: int, reason: str = "", messageid: str = '', is_afk: bool = True):
         self.user_id = user_id
         self.reason = reason
+        self.messageid = messageid
         self.is_afk = is_afk
         self.time = datetime.now()
 
@@ -44,11 +46,21 @@ def set_afk(user_id, reason=""):
     with INSERTION_LOCK:
         curr = SESSION.query(AFK).get(user_id)
         if not curr:
-            curr = AFK(user_id, reason, True)
+            curr = AFK(user_id, reason, "", True)
         else:
             curr.is_afk = True
 
-        AFK_USERS[user_id] = {"reason": reason, "time": curr.time}
+        AFK_USERS[user_id] = {"reason": reason, "time": curr.time, "messageid": ""}
+
+        SESSION.add(curr)
+        SESSION.commit()
+
+
+def update_afk(user_id, chat_id, message_id):
+    with INSERTION_LOCK:
+        curr = SESSION.query(AFK).get(user_id)
+        curr.is_afk = True
+        AFK_USERS[user_id] = {"reason": curr.reason, "time": curr.time, "messageid": f"{chat_id} {message_id}"}
 
         SESSION.add(curr)
         SESSION.commit()
