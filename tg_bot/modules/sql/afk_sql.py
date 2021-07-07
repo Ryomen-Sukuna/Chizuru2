@@ -46,7 +46,7 @@ def set_afk(user_id, reason=""):
     with INSERTION_LOCK:
         curr = SESSION.query(AFK).get(user_id)
         if not curr:
-            curr = AFK(user_id, reason, "", True)
+            curr = AFK(user_id, reason, '', True)
         else:
             curr.is_afk = True
 
@@ -85,7 +85,7 @@ def toggle_afk(user_id, reason=""):
     with INSERTION_LOCK:
         curr = SESSION.query(AFK).get(user_id)
         if not curr:
-            curr = AFK(user_id, reason, True)
+            curr = AFK(user_id, reason, '', True)
         elif curr.is_afk:
             curr.is_afk = False
         elif not curr.is_afk:
@@ -99,7 +99,7 @@ def __load_afk_users():
     try:
         all_afk = SESSION.query(AFK).all()
         AFK_USERS = {
-            user.user_id: {"reason": user.reason, "time": user.time, "messageid": user.messageid} for user in all_afk if user.is_afk
+            user.user_id: {"reason": user.reason, "time": user.time, "messageid": user.messageid or ''} for user in all_afk if user.is_afk
         }
     finally:
         SESSION.close()
