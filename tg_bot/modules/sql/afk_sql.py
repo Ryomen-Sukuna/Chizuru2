@@ -6,7 +6,7 @@ from sqlalchemy import Boolean, Column, Integer, UnicodeText, DateTime
 
 
 class AFK(BASE):
-    __tablename__ = "afk_users"
+    __tablename__ = "dnd_users"
 
     user_id = Column(Integer, primary_key=True)
     is_afk = Column(Boolean)
