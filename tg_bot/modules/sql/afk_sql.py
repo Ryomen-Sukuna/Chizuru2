@@ -12,9 +12,9 @@ class AFK(BASE):
     is_afk = Column(Boolean)
     reason = Column(UnicodeText)
     time = Column(DateTime)
-    messageid = Column(UnicodeText)
+    # messageid = Column(UnicodeText)
 
-    def __init__(self, user_id: int, reason: str = "", messageid: str = '', is_afk: bool = True):
+    def __init__(self, user_id: int, reason: str = "", is_afk: bool = True):
         self.user_id = user_id
         self.reason = reason
         # self.messageid = messageid
@@ -46,7 +46,7 @@ def set_afk(user_id, reason=""):
     with INSERTION_LOCK:
         curr = SESSION.query(AFK).get(user_id)
         if not curr:
-            curr = AFK(user_id, reason, '', True)
+            curr = AFK(user_id, reason, True)
         else:
             curr.is_afk = True
 
@@ -85,7 +85,7 @@ def toggle_afk(user_id, reason=""):
     with INSERTION_LOCK:
         curr = SESSION.query(AFK).get(user_id)
         if not curr:
-            curr = AFK(user_id, reason, '', True)
+            curr = AFK(user_id, reason, True)
         elif curr.is_afk:
             curr.is_afk = False
         elif not curr.is_afk:
