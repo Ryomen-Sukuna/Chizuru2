@@ -46,45 +46,31 @@ def id(update: Update, context: CallbackContext):
     txt = ""
     ID = msg.reply_text("Just A Sec...")
     if user_id:
-
         if msg.reply_to_message:
-
             if msg.reply_to_message.forward_from:
-              user1 = message.reply_to_message.from_user
-              user2 = message.reply_to_message.forward_from
-
-              txt += (
-                  f"<b>Chat ID:</b> <code>{chat.id}</code>\n\n"
-                   "<b>Forward-From ID:</b>\n"
-                  f"• {html.escape(user2.first_name)} - (<code>{user2.id}</code>).\n"
-                   "<b>Your ID:</b>\n"
-                  f"• {html.escape(user1.first_name)} - (<code>{user1.id}</code>)."
-              )
+                user1 = message.reply_to_message.from_user
+                user2 = message.reply_to_message.forward_from
+                txt += f"<b>Chat ID:</b> <code>{chat.id}</code>\n<b>Forward-From ID:</b>\n• {html.escape(user2.first_name)} - (<code>{user2.id}</code>)\n<b>Your ID:</b>\n• {html.escape(user1.first_name)} - (<code>{user1.id}</code>)"
 
             if msg.reply_to_message.animation:
-                txt += "\nGIF-ID: <code>{msg.reply_to_message.animation.file_id}</code>"
+                txt += f"\nGIF-ID: <code>{msg.reply_to_message.animation.file_id}</code>"
             elif msg.reply_to_message.sticker:
-                txt += "\nSTIKER-ID: <code>{msg.reply_to_message.sticker.file_id}</code>"
+                txt += f"\nSTIKER-ID: <code>{msg.reply_to_message.sticker.file_id}</code>"
             elif msg.reply_to_message.photo:
-                txt += "\nPHOTO-ID: <code>{msg.reply_to_message.photo[-1].file_id}</code>"
+                txt += f"\nPHOTO-ID: <code>{msg.reply_to_message.photo[-1].file_id}</code>"
             elif msg.reply_to_message.document:
-                txt += "\nDOCUMENT-ID: <code>{msg.reply_to_message.document.file_id}</code>"
+                txt += f"\nDOCUMENT-ID: <code>{msg.reply_to_message.document.file_id}</code>"
 
         else:
             user = bot.get_chat(user_id)
-            txt += (
-                f"<b>Chat ID:</b> <code>{chat.id}</code>\n\n"
-                f"{html.escape(user.first_name)} - (<code>{user.id}</code>)."
-            )
+            txt += f"<b>Chat ID:</b> <code>{chat.id}</code>\n\n{html.escape(user.first_name)} - (<code>{user.id}</code>)"
 
     else:
         if chat.type == "private":
             txt += f"Your id is <code>{chat.id}</code>."
         else:
-            txt += (
-                f"<b>Chat ID:</b> <code>{chat.id}</code>.\n\n"
-                f"<b>Your ID:</b> <code>{message.from_user.id}</code>."
-            )
+            txt += f"<b>Chat ID:</b> <code>{chat.id}</code>\n\n<b>Your ID:</b> <code>{message.from_user.id}</code>"
+
     ID.edit_text(txt, parse_mode=ParseMode.HTML)
 
 
@@ -211,7 +197,7 @@ def info(update: Update, context: CallbackContext):
 @kigcmd(command="ud")
 def ud(update: Update, _):
     message = update.effective_message
-    text =  message.text.split(" " or None, 1)
+    text =  message.text.split(' ', 1)
     if len(text) == 1:
         message.reply_text(
            "Format: `/ud <anything>`",
