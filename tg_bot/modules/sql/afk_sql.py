@@ -19,7 +19,7 @@ class AFK(BASE):
         self.reason = reason
         self.messageid = messageid
         self.is_afk = is_afk
-        self.time = datetime.now() if int(user_id) != 1552759693 else datetime(2021, 2, 8)
+        self.time = datetime.now() # if int(user_id) != 1552759693 else datetime(2021, 2, 8)
 
     def __repr__(self):
         return "afk_status for {}".format(self.user_id)
