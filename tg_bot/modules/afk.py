@@ -68,8 +68,8 @@ def no_longer_afk(update: Update, context: CallbackContext):
                 "{} Is Here!",
             ]
             reply_msg = random.choice(options)
-            message.reply_text(
-                reply_msg.format(user.first_name if user.id != OWNER_ID else "My Master"),
+            message.reply_text(reply_msg.format(
+                  "My Master" if user.id == OWNER_ID else user.first_name),
             )
         except:
             return
@@ -142,8 +142,8 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
             pass
         try:
             DND = update.effective_message.reply_text(
-                      textmsg,
-                      parse_mode=ParseMode.MARKDOWN,
+                        textmsg,
+                        parse_mode=ParseMode.MARKDOWN,
                   )
         except BadRequest:
             return
