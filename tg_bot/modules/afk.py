@@ -152,9 +152,11 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
             reason = user.reason
             if "%%%" in user.reason:
                 split = user.reason.split("%%%")
-                reason = random.choice(split) if all(split) else user.reason 
+                reason = random.choice(split) if all(split) else user.reason
+
+            textmsg += f"\n\n*Says It's Because Of:*\n{reason}"
             try:
-                DND.edit_text(f"\n\n*Says It's Because Of:*\n{reason}", disable_web_page_preview=True, parse_mode=ParseMode.MARKDOWN)
+                DND.edit_text(textmsg, disable_web_page_preview=True, parse_mode=ParseMode.MARKDOWN)
             except:
                 pass
         sql.update_afk(user_id, update.effective_chat.id, DND.message_id)
