@@ -40,9 +40,10 @@ def afk(update: Update, context: CallbackContext):
     sql.set_afk(user.id, reason)
     fname = user.first_name if user.id != OWNER_ID else "My Master"
     try:
-        update.effective_message.reply_text(
-            "{} Is Now Away!{}".format(fname, notice),
-        )
+        R = update.effective_message.reply_text(
+                 "{} Is Now Away!{}".format(fname, notice),
+            )
+        sql.update_afk(user.id, update.effective_chat.id, R.message_id)
     except BadRequest:
         return
 
