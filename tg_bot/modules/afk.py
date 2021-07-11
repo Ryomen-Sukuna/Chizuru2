@@ -135,11 +135,11 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
         textmsg = f"{fname} Is AFK Since {since_afk}!"
 
         print(user.messageid)
-        # try:
-        # if user.messageid != (None, ""):
-        #     context.bot.delete_message(int(user.messageid.split(' ', 1)[0]), int(user.messageid.split(' ', 1)[1]))
-        # except:
-        #     pass
+        try:
+            if user.messageid != (None, ""):
+                context.bot.delete_message(int(user.messageid.split(' ', 1)[0]), int(user.messageid.split(' ', 1)[1]))
+        except:
+            pass
         try:
             DND = update.effective_message.reply_text(
                       textmsg,
