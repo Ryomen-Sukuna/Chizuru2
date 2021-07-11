@@ -62,7 +62,7 @@ def no_longer_afk(update: Update, context: CallbackContext):
     if res: 
         try:
             options = [
-                "{} Is Ready To Fight!",
+                # "{} Is Ready To Fight!",
                 "{} Is Back Online!",
                 "{} Is Here!",
             ]
