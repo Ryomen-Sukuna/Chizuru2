@@ -135,7 +135,6 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
         since_afk = humanize.naturaldelta(datetime.now() - user.time)
         textmsg = f"{fname} Is AFK Since {since_afk}!"
 
-        print(user.messageid)
         try:
             if user.messageid != (None, ""):
                 context.bot.delete_message(int(user.messageid.split(' ', 1)[0]), int(user.messageid.split(' ', 1)[1]))
@@ -153,11 +152,9 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
             reason = user.reason
             if "%%%" in user.reason:
                 split = user.reason.split("%%%")
-                reason = random.choice(split) if all(split) else user.reason
-
-            textmsg += f"\n\n*Says It's Because Of*:\n{reason}"
+                reason = random.choice(split) if all(split) else user.reason 
             try:
-                DND.edit_text(textmsg, disable_web_page_preview=True, parse_mode=ParseMode.MARKDOWN)
+                DND.edit_text(f"\n\n*Says It's Because Of:*\n{reason}", disable_web_page_preview=True, parse_mode=ParseMode.MARKDOWN)
             except:
                 pass
         sql.update_afk(user_id, update.effective_chat.id, DND.message_id)
