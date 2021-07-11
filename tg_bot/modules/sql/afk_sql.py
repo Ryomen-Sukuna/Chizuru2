@@ -60,7 +60,7 @@ def update_afk(user_id, chat_id, message_id):
     with INSERTION_LOCK:
         curr = SESSION.query(AFK).get(user_id)
         curr.is_afk = True
-        curr.messageid = message_id
+        curr.messageid = f'{chat_id} {message_id}'
         AFK_USERS[user_id] = {"reason": curr.reason, "time": curr.time, "messageid": f"{chat_id} {message_id}"}
 
         SESSION.add(curr)
