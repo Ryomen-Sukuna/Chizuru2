@@ -47,7 +47,7 @@ def afk(update: Update, context: CallbackContext):
         return
 
 
-@kigmsg((Filters.all (~Filters.update.edited_message & ~Filters.status_update & ~Filters.venue) & Filters.chat_type.groups), friendly='afk', group=7)
+@kigmsg((Filters.all & (~Filters.update.edited_message & ~Filters.status_update & ~Filters.venue) & Filters.chat_type.groups), friendly='afk', group=7)
 def no_longer_afk(update: Update, context: CallbackContext):
     user = update.effective_user
     message = update.effective_message
