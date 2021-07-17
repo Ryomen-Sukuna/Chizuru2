@@ -735,5 +735,6 @@ def get_help(chat):
     from tg_bot.modules.language import gs
     return gs(chat, "admin_help")
 
+
 __mod_name__ = "Admin"
 __commands__ = ["fullpromote", "invitelink", "admins", "setgtitle", "delgpic", "setgpic", "setsticker", "setdescription", "setdesc"]
