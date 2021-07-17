@@ -147,7 +147,7 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
                 split = reason.split("%%%")
                 reason = random.choice(split) if all(split) else reason
 
-            textmsg += f"\n\n*Says It's Because:*\n{reason}"
+            textmsg += f"\n\n*Reason:*\n{reason}"
             try:
                 DND.edit_text(textmsg, disable_web_page_preview=True, parse_mode=ParseMode.MARKDOWN)
             except:
@@ -156,8 +156,9 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
         try:
             if user.messageid != (None, ""):
                 context.bot.delete_message(int(user.messageid.split(' ', 1)[0]), int(user.messageid.split(' ', 1)[1]))
-        except:
+        except BadRequest:
             pass
+
         sql.update_afk(user_id, update.effective_chat.id, DND.message_id)
 
 
