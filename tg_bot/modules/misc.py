@@ -47,19 +47,22 @@ def id(update: Update, context: CallbackContext):
     ID = msg.reply_text("Just A Sec...")
     if user_id:
         if msg.reply_to_message:
+            txt += f"<b>Chat ID:</b> <code>{chat.id}</code>\n"
             if msg.reply_to_message.forward_from:
-                user1 = message.reply_to_message.from_user
                 user2 = message.reply_to_message.forward_from
-                txt += f"<b>Chat ID:</b> <code>{chat.id}</code>\n<b>Forward-From ID:</b>\n• {html.escape(user2.first_name)} - (<code>{user2.id}</code>)\n<b>Your ID:</b>\n• {html.escape(user1.first_name)} - (<code>{user1.id}</code>)"
+                txt += f"\n<b>Forward-From ID:</b>\n• {html.escape(user2.first_name)} - (<code>{user2.id}</code>)"
+
+            user1 = message.reply_to_message.from_user
+            txt += "\n<b>Your ID:</b>\n• {html.escape(user1.first_name)} - (<code>{user1.id}</code>)"
 
             if msg.reply_to_message.animation:
-                txt += f"\nGIF-ID: <code>{msg.reply_to_message.animation.file_id}</code>"
+                txt += f"\n\nGIF-ID: <code>{msg.reply_to_message.animation.file_id}</code>"
             elif msg.reply_to_message.sticker:
-                txt += f"\nSTIKER-ID: <code>{msg.reply_to_message.sticker.file_id}</code>"
+                txt += f"\n\nSTIKER-ID: <code>{msg.reply_to_message.sticker.file_id}</code>"
             elif msg.reply_to_message.photo:
-                txt += f"\nPHOTO-ID: <code>{msg.reply_to_message.photo[-1].file_id}</code>"
+                txt += f"\n\nPHOTO-ID: <code>{msg.reply_to_message.photo[-1].file_id}</code>"
             elif msg.reply_to_message.document:
-                txt += f"\nDOCUMENT-ID: <code>{msg.reply_to_message.document.file_id}</code>"
+                txt += f"\n\nDOCUMENT-ID: <code>{msg.reply_to_message.document.file_id}</code>"
 
         else:
             user = bot.get_chat(user_id)
