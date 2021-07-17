@@ -1,6 +1,5 @@
 import random
 import humanize
-from time import sleep
 from datetime import datetime
 
 from telegram import Update, MessageEntity, ParseMode
@@ -55,7 +54,6 @@ def no_longer_afk(update: Update, context: CallbackContext):
 
     if not user:  # ignore channels
         return
-
     if not sql.is_afk(user.id):
         return
 
@@ -133,13 +131,8 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
         user = sql.check_afk_status(user_id)
         fname = "My Master" if int(user_id) == OWNER_ID else f"User *{escape_markdown(fst_name)}*"
         since_afk = humanize.naturaldelta(datetime.now() - user.time)
-        textmsg = f"{fname} Is AFK Since {since_afk}!"
+        textmsg = f"{fname} is AFK since {since_afk} ago!"
 
-        try:
-            if user.messageid != (None, ""):
-                context.bot.delete_message(int(user.messageid.split(' ', 1)[0]), int(user.messageid.split(' ', 1)[1]))
-        except:
-            pass
         try:
             DND = update.effective_message.reply_text(
                         textmsg,
@@ -150,15 +143,21 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
 
         if user.reason:
             reason = user.reason
-            if "%%%" in user.reason:
-                split = user.reason.split("%%%")
-                reason = random.choice(split) if all(split) else user.reason
+            if "%%%" in reason:
+                split = reason.split("%%%")
+                reason = random.choice(split) if all(split) else reason
 
-            textmsg += f"\n\n*Says It's Because Of:*\n{reason}"
+            textmsg += f"\n\n*Says It's Because:*\n{reason}"
             try:
                 DND.edit_text(textmsg, disable_web_page_preview=True, parse_mode=ParseMode.MARKDOWN)
             except:
                 pass
+
+        try:
+            if user.messageid != (None, ""):
+                context.bot.delete_message(int(user.messageid.split(' ', 1)[0]), int(user.messageid.split(' ', 1)[1]))
+        except:
+            pass
         sql.update_afk(user_id, update.effective_chat.id, DND.message_id)
 
 
