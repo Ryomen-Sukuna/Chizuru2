@@ -53,7 +53,7 @@ def id(update: Update, context: CallbackContext):
                 txt += f"\n<b>Forward-From ID:</b>\n• {html.escape(user2.first_name)} - (<code>{user2.id}</code>)"
 
             user1 = message.reply_to_message.from_user
-            txt += "\n<b>Your ID:</b>\n• {html.escape(user1.first_name)} - (<code>{user1.id}</code>)"
+            txt += f"\n<b>Your ID:</b>\n• {html.escape(user1.first_name)} - (<code>{user1.id}</code>)"
 
             if msg.reply_to_message.animation:
                 txt += f"\n\nGIF-ID: <code>{msg.reply_to_message.animation.file_id}</code>"
