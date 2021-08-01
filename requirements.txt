@@ -19,10 +19,10 @@ psycopg2-binary>=2.9
 pyYAML>=5.4.1
 pyrate-limiter>=2.3.4
 python-telegram-bot>=13.6
-pyrogram>=1.2.9
 requests>=2.25.1
 spongemock>=0.3.4
 sqlalchemy==1.3.20
+telethon>=1.23.0
 telegraph>=1.4.1
 tgcrypto>=1.2.2
 tswift>=0.7.0
