@@ -1,4 +1,5 @@
 import asyncio
+from re import compile as check
 
 from telethon import events, Button
 from telethon.tl.functions.channels import EditBannedRequest
@@ -21,16 +22,6 @@ BANNED_RIGHTS = ChatBannedRights(
          send_inline=True,
          embed_links=True,
 )
-UNBAN_RIGHTS = ChatBannedRights(
-        until_date=None,
-        send_messages=None,
-        send_media=None,
-        send_stickers=None,
-        send_gifs=None,
-        send_games=None,
-        send_inline=None,
-        embed_links=None,
-)
 
 
 # Demons
@@ -44,8 +35,8 @@ async def demons(event):
 
     if demons > 0:
         markup = [
-           [Button.inline("Yes", data="demons-yes")],
-           [Button.inline("No", data="demons-no")],
+           [Button.inline("Yes", data="demons yes")],
+           [Button.inline("No", data="demons no")],
         ]
         demon = f"Found **{demons}** Demon{'s' if demons > 1 else ''} In This Chat!\n\nWould You Like To Hunt {'Them All' if demons > 1 else 'That Demon'} ?"
         await X.edit(
@@ -56,9 +47,9 @@ async def demons(event):
         await X.edit("There Are No Demons!\nThis Chat Is Safe For Now!")
 
 
-@telethn.on(events.CallbackQuery)
+@telethn.on(events.CallbackQuery(data=check(r"demons (yes|no)")))
 async def dimonhandler(event):
-    if event.data == "demons-yes":
+    if event.data == "demons yes":
         # Here laying the sanity check
         but = await event.get_chat()
         admim = but.admin_rights
@@ -80,13 +71,13 @@ async def dimonhandler(event):
                 try:
                     await event.client(EditBannedRequest(event.chat_id, user.id, BANNED_RIGHTS))
                     await asyncio.sleep(1)
-                except ChatAdminRequiredError:
-                    await event.edit("I haven't got the necessary rights to do this.")
-                    return
                 except UserAdminInvalidError:
                     normy_demons -= 1
                     pro_demons += 1
-                await event.client(EditBannedRequest(event.chat_id, user.id, UNBAN_RIGHTS))
+                except ChatAdminRequiredError:
+                    await event.edit("I haven't got the necessary rights to do this.")
+                    return
+
                 normy_demons += 1
 
         demon = ""
@@ -97,13 +88,13 @@ async def dimonhandler(event):
 
         await event.edit(demon)
         await event.answer("Demon Hunted!")
-    elif event.data == "demons-no":
+    elif event.data == "demons no":
           await event.edit("Demom Hunting Task Cancelled!")
           await event.answer("Cancelled!")
 
 
 
-DEMONS = demons, events.NewMessage(pattern="^[!/]demons($|[@e|@E][l|L][i|I][t|T][e|E][s|S][o|O][f|F][r|R][o|O][b|B][o|O][t|T])")
+DEMONS = demons, events.NewMessage(pattern=r"^[!/]demons$")
 telethn.add_event_handler(*DEMONS)
 
 
