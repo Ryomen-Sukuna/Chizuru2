@@ -28,7 +28,7 @@ from tg_bot import (
     StartTime,
 )
 from tg_bot.__main__ import STATS, TOKEN
-from tg_bot.modules.helper_funcs.chat_status import user_admin, sudo_plus
+from tg_bot.modules.helper_funcs.chat_status import user_admin, sudo_plus, dev_plus
 from tg_bot.modules.helper_funcs.extraction import extract_user
 import tg_bot.modules.sql.users_sql as sql
 from tg_bot.modules.language import gs
@@ -260,7 +260,7 @@ def formatting(update: Update, context: CallbackContext):
 stats_str = '''
 '''
 @kigcmd(command='stats', can_disable=True)
-@sudo_plus
+@dev_plus
 def stats(update: Update, context: CallbackContext):
     uptime = datetime.datetime.fromtimestamp(boot_time()).strftime("%Y-%m-%d %H:%M:%S")
     botuptime = get_time((time.time() - StartTime))
