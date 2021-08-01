@@ -56,12 +56,15 @@ def set_afk(user_id, reason=""):
         SESSION.commit()
 
 
-def update_afk(user_id, chat_id, message_id):
+def update_afk(user_id: int, reason: str = None, chat_id: int = None, msg_id: int = None):
     with INSERTION_LOCK:
         curr = SESSION.query(AFK).get(user_id)
         curr.is_afk = True
-        curr.messageid = f'{chat_id} {message_id}'
-        AFK_USERS[user_id] = {"reason": curr.reason, "time": curr.time, "messageid": f"{chat_id} {message_id}"}
+        if reason:
+            curr.reason = reason
+        if chat_id:
+            curr.messageid = f'{chat_id} {msg_id}'
+        AFK_USERS[user_id] = {"reason": reason if reason else curr.reason, "time": curr.time, "messageid": f"{chat_id} {msg_id}" if chat_id else ""}
 
         SESSION.add(curr)
         SESSION.commit()
