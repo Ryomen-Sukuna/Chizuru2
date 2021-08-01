@@ -1,6 +1,6 @@
 import random
 import humanize
-from datetime import datetime
+import datetime
 
 from telegram import Update, MessageEntity, ParseMode
 from telegram.utils.helpers import escape_markdown
@@ -42,7 +42,7 @@ def afk(update: Update, context: CallbackContext):
         R = update.effective_message.reply_text(
                  "{} Is Now Away!{}".format(fname, notice),
             )
-        sql.update_afk(user.id, update.effective_chat.id, R.message_id)
+        sql.update_afk(user.id, chat_id=update.effective_chat.id, msg_id=R.message_id)
     except BadRequest:
         return
 
@@ -130,7 +130,7 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
 
         user = sql.check_afk_status(user_id)
         fname = "My Master" if int(user_id) == OWNER_ID else f"User *{escape_markdown(fst_name)}*"
-        since_afk = humanize.naturaldelta(datetime.now() - user.time)
+        since_afk = humanize.naturaldelta(datetime.datetime.now() - user.time)
         textmsg = f"{fname} is AFK since {since_afk} ago!"
 
         try:
@@ -159,7 +159,7 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
         except BadRequest:
             pass
 
-        sql.update_afk(user_id, update.effective_chat.id, DND.message_id)
+        sql.update_afk(user_id, chat_id=update.effective_chat.id, msg_id=DND.message_id)
 
 
 
