@@ -27,6 +27,26 @@ def afk(update: Update, context: CallbackContext):
        ]:
         return
 
+    if sql.is_afk(user.id):
+        notice = ""
+        if len(args) > 1:
+            reason = args[1]
+            if len(reason) > 100:
+                reason = reason[:100]
+                notice = "\n\nYour afk reason was shortened to 100 characters."
+        else:
+           reason = None
+
+        fname = user.first_name if user.id != OWNER_ID else "My Master"
+        try:
+            R = update.effective_message.reply_text(
+                     "{} Is Now Away!{}".format(fname, notice),
+                )
+            sql.update_afk(user.id, reason=reason, chat_id=update.effective_chat.id, msg_id=R.message_id)
+        except BadRequest:
+            pass
+        return
+
     notice = ""
     if len(args) > 1:
         reason = args[1]
@@ -56,7 +76,7 @@ def no_longer_afk(update: Update, context: CallbackContext):
         return
     if not sql.is_afk(user.id):
         return
-    if message.text.lower() in ['/dnd', '/afk']
+    if (message.text.lower()).startswith('/dnd ') or (message.text.lower()).startswith('/afk ') or (message.text.lower() in ['/dnd', '/afk'])
         return
 
     X = sql.check_afk_status(user.id)
