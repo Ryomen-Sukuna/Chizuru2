@@ -44,7 +44,7 @@ def import_data(update, context):
     # TODO: allow uploading doc with command, not just as reply
     # only work with a doc
     member = chat.get_member(user.id)
-    if member.status != "creator" and user.id not in SUDO_USERS:
+    if member.status != "creator" or user.id not in SUDO_USERS:
         return update.effective_message.reply_text(
             "Only the chat owner can import chat settings.")
     conn = connected(context.bot, update, chat, user.id, need_admin=True)
@@ -890,7 +890,7 @@ def export_data(update, context):
     current_chat_id = update.effective_chat.id
     chat_data = context.chat_data
     member = chat.get_member(user.id)
-    if member.status != "creator" and user.id not in SUDO_USERS:
+    if member.status != "creator" or user.id not in SUDO_USERS:
         return update.effective_message.reply_text(
             "Only the chat owner can export chat settings.")
     conn = connected(context.bot, update, chat, user.id, need_admin=True)
@@ -924,10 +924,10 @@ def export_data(update, context):
             )
             return
         else:
-            if user.id != OWNER_ID:
+            if (user.id not in SUDO_USERS) or (user.id != OWNER_ID):
                 put_chat(chat_id, user.id, new_jam, chat_data)
     else:
-        if user.id != OWNER_ID:
+        if (user.id not in SUDO_USERS) or (user.id != OWNER_ID):
             put_chat(chat_id, user.id, new_jam, chat_data)
 
     # Backup version
