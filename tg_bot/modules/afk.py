@@ -195,6 +195,5 @@ def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: 
 def __gdpr__(user_id):
     sql.rm_afk(user_id)
 
-
 __mod_name__ = "AFK"
 __commands__ = ["afk", "dnd"]
