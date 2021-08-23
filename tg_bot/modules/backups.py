@@ -1137,16 +1137,16 @@ def export_data(update, context):
     }
 
     all_backups = json.dumps(backup, indent=4, cls=SetEncoder)
-    f = open("{}-tg_bot.txt".format(chat_id), "w")
+    f = open("{}.txt".format(chat_id), "w")
     f.write(str(all_backups))
     f.close()
     context.bot.sendChatAction(current_chat_id, "upload_document")
     tgl = time.strftime("%H:%M:%S - %d/%m/%Y", time.localtime(time.time()))
-    try:
-        context.bot.sendDocument(current_chat_id, document=open('{}-tg_bot.txt'.format(chat_id), 'rb'), caption="*Chat Successfully Backedup:*\nName of chat: `{}`\nChat ID: `{}`\nBackup taken on: `{}`".format(chat.title, chat_id, tgl), timeout=360, reply_to_message_id=msg.message_id, parse_mode=ParseMode.MARKDOWN)
-    except BadRequest:
-        pass
-    os.remove("{}-tg_bot.txt".format(chat_id))  # Cleaning file
+    # try:
+    context.bot.sendDocument(current_chat_id, document=open('{}.txt'.format(chat_id), 'rb'), caption="*Chat Successfully Backedup:*\nName of chat: `{}`\nChat ID: `{}`\nBackup taken on: `{}`".format(chat.title, chat_id, tgl), timeout=360, reply_to_message_id=msg.message_id, parse_mode=ParseMode.MARKDOWN)
+    # except BadRequest:
+    #     pass
+    os.remove("{}.txt".format(chat_id))  # Cleaning file
 
 
 # Temporary data
