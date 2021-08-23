@@ -56,6 +56,15 @@ def no_longer_afk(update: Update, context: CallbackContext):
         return
     if not sql.is_afk(user.id):
         return
+    if (message.text.lower()).startswith('/afk ') or (message.text.lower()).startswith('/dnd ')
+        return
+
+    X = sql.check_afk_status(user.id)
+    try:
+        if X.messageid != (None, ""):
+            context.bot.delete_message(int(X.messageid.split(' ', 1)[0]), int(X.messageid.split(' ', 1)[1]))
+    except BadRequest:
+        pass
 
     res = sql.rm_afk(user.id)
     if res: 
