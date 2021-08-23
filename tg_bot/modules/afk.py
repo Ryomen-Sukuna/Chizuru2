@@ -56,7 +56,7 @@ def no_longer_afk(update: Update, context: CallbackContext):
         return
     if not sql.is_afk(user.id):
         return
-    if (message.text.lower()).startswith('/afk ') or (message.text.lower()).startswith('/dnd ')
+    if message.text.lower() in ['/dnd', '/afk']
         return
 
     X = sql.check_afk_status(user.id)
