@@ -918,8 +918,7 @@ def export_data(update, context):
             send_message(
                 update.effective_message,
                 "You can back up data once in 12 hours! You can back up data again on {}".format(
-                    tt
-                ),
+                tt),
                 parse_mode=ParseMode.MARKDOWN,
             )
             return
