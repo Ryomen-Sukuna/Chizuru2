@@ -31,18 +31,18 @@ INSERTION_LOCK = threading.RLock()
 AFK_USERS = {}
 
 
-def is_afk(user_id):
+def is_afk(user_id: int):
     return user_id in AFK_USERS
 
 
-def check_afk_status(user_id):
+def check_afk_status(user_id: int):
     try:
         return SESSION.query(AFK).get(user_id)
     finally:
         SESSION.close()
 
 
-def set_afk(user_id, reason=""):
+def set_afk(user_id: int, reason: str = ""):
     with INSERTION_LOCK:
         curr = SESSION.query(AFK).get(user_id)
         if not curr:
@@ -56,11 +56,11 @@ def set_afk(user_id, reason=""):
         SESSION.commit()
 
 
-def update_afk(user_id: int, reason: str = None, chat_id: int = None, msg_id: int = None):
+def update_afk(user_id: int, reason: str = "" or None, chat_id: int = None, msg_id: int = None):
     with INSERTION_LOCK:
         curr = SESSION.query(AFK).get(user_id)
         curr.is_afk = True
-        if reason:
+        if reason != ("", None):
             curr.reason = reason
         if chat_id:
             curr.messageid = f'{chat_id} {msg_id}'
@@ -85,7 +85,7 @@ def rm_afk(user_id) -> bool:
         return False
 
 
-def toggle_afk(user_id, reason=""):
+def toggle_afk(user_id: int, reason: str = ""):
     with INSERTION_LOCK:
         curr = SESSION.query(AFK).get(user_id)
         if not curr:
