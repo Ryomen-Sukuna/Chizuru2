@@ -1,7 +1,9 @@
 import json, time, os
 from io import BytesIO
+
 from telegram import ParseMode, Message
 from telegram.error import BadRequest
+
 from tg_bot import dispatcher, log as LOGGER, OWNER_ID, SUDO_USERS
 from tg_bot.__main__ import DATA_IMPORT
 from tg_bot.modules.helper_funcs.chat_status import user_admin
@@ -55,14 +57,14 @@ def import_data(update, context):
             send_message(
                 update.effective_message, "Use this command in group, not in my PM!"
             )
-            return ""
+            return
         chat = update.effective_chat
         chat_id = update.effective_chat.id
         chat_name = update.effective_message.chat.title
 
     if msg.reply_to_message and msg.reply_to_message.document:
         filetype = msg.reply_to_message.document.file_name
-        if filetype.split(".")[-1] not in ("backup", "json", "txt"):
+        if filetype.split(".")[-1] not in ["backup", "json", "txt"]:
             return send_message(
                 update.effective_message,
                 "Invalid backup file!",
@@ -902,7 +904,7 @@ def export_data(update, context):
                 update.effective_message,
                 "You can use this command on the group, not on the PM"
             )
-            return ""
+            return
         chat = update.effective_chat
         chat_id = update.effective_chat.id
         chat_name = update.effective_message.chat.title
