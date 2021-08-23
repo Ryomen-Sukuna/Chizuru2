@@ -3,6 +3,7 @@ import sys
 import time
 import json
 import logging
+from typing import List
 from logging.config import fileConfig
 
 import telegram.ext as tg
@@ -11,7 +12,7 @@ from telethon.sessions import MemorySession
 
 
 # get Devs & Contributors
-def get_user_list(key):
+def get_user_list(key) -> List:
       # Import here to evade a circular import
       with open('{}/tg_bot/{}'.format(os.getcwd(), 'elevated_users.json'),
                 'r') as royals:
@@ -47,12 +48,17 @@ DRAMA_URL = Rent.DRAMA_URL
 
 # Devs & Contributors
 OWNER_ID = Rent.OWNER_ID
-DEV_USERS = get_user_list("devs")
-SUDO_USERS = get_user_list("sudos")
-SUPPORT_USERS = get_user_list("supports")
-SARDEGNA_USERS = get_user_list("sardegnas")
-WHITELIST_USERS = get_user_list("whitelists")
+DEVS = get_user_list("devs")
+SUDOS = get_user_list("sudos")
+SUPPORTS = get_user_list("supports")
+SARDEGNAS = get_user_list("sardegnas")
+WHITELISTS = get_user_list("whitelists")
 
+DEV_USERS = DEVS + [OWNER_ID]
+SUDO_USERS = SUDOS + DEVS
+SUPPORT_USERS = SUPPORTS + SUDOS + DEVS
+SARDEGNA_USERS = SARDEGNAS + SUPPORTS + SUDOS + DEVS
+WHITELIST_USERS = WHITELISTS + SARDEGNAS + SUPPORTS + SUDOS + DEVS
 
 # setup
 updater = tg.Updater(TOKEN, workers=min(32, os.cpu_count() + 4), request_kwargs={"read_timeout": 10, "connect_timeout": 10})
