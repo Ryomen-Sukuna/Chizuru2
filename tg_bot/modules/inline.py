@@ -5,6 +5,7 @@ import requests
 from uuid import uuid4
 from typing import List
 from bs4 import BeautifulSoup
+from play_scraper import search as serch
 
 from telegraph import upload_file
 from telegram.error import BadRequest
@@ -224,52 +225,31 @@ def app_query(query: str, update: Update, context: CallbackContext) -> None:
         except IndexError:
             return
 
-        url = "https://play.google.com"
-        page = requests.get(f"{url}/store/search?q={split}&c=apps")
-        soup = BeautifulSoup(page.content, "lxml", from_encoding="utf-8")
-        results = soup.findAll("div", "ZmHEEd")
+        aaps = serch(split)
+        for x in aaps:
+            name = x["title"]
+            desc = x["description"]
+            price = x["price"]
+            dev = x["developer"]
+            icon = x["icon"]
+            url = x["url"]
+            ids = x["app_id"]
 
-        # Preparing Data
-        app_name = results[0].findNext(
-                        'div', 'Vpfmgd').findNext(
-                                   'div', 'WsMG1c nnK0zc').text
+            txt = f"<b>••Aᴘᴘ Nᴀᴍᴇ••</b>: {name}\n"
+            txt += f"<b>••Dᴇᴠᴇʟᴏᴘᴇʀ••:</b> {dev}`\n"
+            txt += f"<b>••Pʀɪᴄᴇ••</b>: {price}`\n\n"
+            txt += f"<b>••Dᴇsᴄʀɪᴘᴛɪᴏɴ••</b>:\n{html.escape(desc)}`"
 
-        app_devs = results[0].findNext(
-                       'div', 'Vpfmgd').findNext(
-                                  'div', 'KoLSrc').text
-
-        app_dev_link = url + results[0].findNext(
-                                  'div', 'Vpfmgd').findNext(
-                                               'a', 'mnKHRc')['href']
-
-        app_rating = results[0].findNext(
-                          'div', 'Vpfmgd').findNext(
-                                     'div', 'pf5lIe').find('div')['aria-label']
-
-        app_link = url + results[0].findNext(
-                              'div', 'Vpfmgd').findNext(
-                                         'div', 'vU6FJ p63iDd').a['href']
-        app_icon = results[0].findNext(
-                        'div', 'Vpfmgd').findNext(
-                                   'div', 'uzcko').img['data-src']
-
-        # Structuring Data
-        data = (
-          f"• <b>{html.escape(app_name)}</b>\n"
-          f"\n∘ <b>Developer</b>: <a href='{html.escape(app_dev_link)}'>{html.escape(app_devs)}</a>"
-          f"\n∘ <b>Rating</b>: {html.escape(app_rating.replace('Rated ', '').replace(' out of ', '/').replace(' stars', '', 1).replace(' stars', '').replace('five', '5'))}" 
-        )
-        kb = InlineKeyboardMarkup([[InlineKeyboardButton(text="Playstore", url=app_link)], [InlineKeyboardButton(text="Search Again", switch_inline_query_current_chat=".app ")]])
-        application.append(
-               InlineQueryResultArticle(
-                       id=str(uuid4()),
-                       thumb_url=app_icon,
-                       title=app_name or split,
-                       input_message_content=InputTextMessageContent(data, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
-                       reply_markup=kb,
-               )
-        )
-
+            kb = InlineKeyboardMarkup([[InlineKeyboardButton(text="Playstore", url=url)], [InlineKeyboardButton(text="Search Again", switch_inline_query_current_chat="app ")]])
+            application.append(
+                   InlineQueryResultArticle(
+                        id=str(uuid4()),
+                        thumb_url=icon,
+                        title=name or split,
+                        input_message_content=InputTextMessageContent(txt, parse_mode=ParseMode.HTML, disable_web_page_preview=True),
+                        reply_markup=kb,
+                   )
+            )
     except Exception as e:
         kb = InlineKeyboardMarkup([[InlineKeyboardButton(text="Search Again", switch_inline_query_current_chat=".app ")]])
         application.append(
