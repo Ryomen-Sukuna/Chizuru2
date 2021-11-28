@@ -48,21 +48,22 @@ DRAMA_URL = Rent.DRAMA_URL
 
 # Devs & Contributors
 OWNER_ID = Rent.OWNER_ID
+EX_OWNER = Rent.EX_OWNER
 DEVS = get_user_list("devs")
 SUDOS = get_user_list("sudos")
 SUPPORTS = get_user_list("supports")
 SARDEGNAS = get_user_list("sardegnas")
 WHITELISTS = get_user_list("whitelists")
 
-DEV_USERS = DEVS + [OWNER_ID]
-SUDO_USERS = SUDOS + DEVS
-SUPPORT_USERS = SUPPORTS + SUDOS + DEVS
-SARDEGNA_USERS = SARDEGNAS + SUPPORTS + SUDOS + DEVS
-WHITELIST_USERS = WHITELISTS + SARDEGNAS + SUPPORTS + SUDOS + DEVS
+DEV_USERS = list(set(DEVS + [OWNER_ID] + [EX_OWNER]))
+SUDO_USERS = list(set(SUDOS + DEV_USERS))
+SUPPORT_USERS = list(set(SUPPORTS + SUDO_USERS))
+SARDEGNA_USERS = list(set(SARDEGNAS + SUPPORT_USERS))
+WHITELIST_USERS = list(set(WHITELISTS + SARDEGNA_USERS))
 
 # setup
 updater = tg.Updater(TOKEN, workers=min(32, os.cpu_count() + 4), request_kwargs={"read_timeout": 10, "connect_timeout": 10})
-dispatcher = updater.dispatcher
+dispatcher = dp = updater.dispatcher
 telethn = TelegramClient(MemorySession(), API_ID, API_HASH)
 StartTime = time.time()
 
