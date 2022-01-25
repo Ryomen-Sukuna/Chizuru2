@@ -44,7 +44,7 @@ def is_user_admin(chat: Chat, user_id: int, member: ChatMember = None) -> bool:
         or user_id in SUDO_USERS
         or user_id in DEV_USERS
         or chat.all_members_are_administrators
-        or user_id in [777000, 1087968824]
+        or user_id in {777000, 1087968824}
     ):  # Count telegram and Group Anonymous as admin
         return True
 
@@ -87,7 +87,7 @@ def is_user_ban_protected(chat: Chat, user_id: int, member: ChatMember = None) -
         or user_id in WHITELIST_USERS
         or user_id in SARDEGNA_USERS
         or chat.all_members_are_administrators
-        or user_id in [777000, 1087968824]
+        or user_id in {777000, 1087968824}
     ):  # Count telegram and Group Anonymous as admin
         return True
 
@@ -110,8 +110,6 @@ def dev_plus(func):
 
         if user.id in DEV_USERS:
             return func(update, context, *args, **kwargs)
-        elif not user:
-            pass
 
     return is_dev_plus_func
 
@@ -125,8 +123,6 @@ def sudo_plus(func):
 
         if user and is_sudo_plus(chat, user.id):
             return func(update, context, *args, **kwargs)
-        elif not user:
-            pass
 
     return is_sudo_plus_func
 
@@ -216,8 +212,6 @@ def user_not_admin(func):
 
         if user and not is_user_admin(chat, user.id):
             return func(update, context, *args, **kwargs)
-        elif not user:
-            pass
 
     return is_not_admin
 
@@ -342,8 +336,9 @@ def user_can_ban(func):
         member = update.effective_chat.get_member(user)
 
         if (
-            not (member.can_restrict_members or member.status == "creator")
-            and not user in SUDO_USERS
+            not member.can_restrict_members
+            and member.status != "creator"
+            and user not in SUDO_USERS
         ):
             update.effective_message.reply_text(
                 "Sorry son, but you're not worthy to wield the banhammer."
@@ -363,78 +358,72 @@ from tg_bot.modules.helper_funcs.alternate import send_message
 def connected(bot: Bot, update: Update, chat: Chat, user_id: int, need_admin=True):
     user = update.effective_user
 
-    if chat.type == chat.PRIVATE and sql.get_connected_chat(user_id):
+    if chat.type != chat.PRIVATE or not sql.get_connected_chat(user_id):
+        return False
+    conn_id = sql.get_connected_chat(user_id).chat_id
+    getstatusadmin = bot.get_chat_member(
+        conn_id, update.effective_message.from_user.id
+    )
+    isadmin = getstatusadmin.status in ("administrator", "creator")
+    ismember = getstatusadmin.status == "member"
+    isallow = sql.allow_connect_to_chat(conn_id)
 
-        conn_id = sql.get_connected_chat(user_id).chat_id
-        getstatusadmin = bot.get_chat_member(
-            conn_id, update.effective_message.from_user.id
-        )
-        isadmin = getstatusadmin.status in ("administrator", "creator")
-        ismember = getstatusadmin.status == "member"
-        isallow = sql.allow_connect_to_chat(conn_id)
-
-        if (
+    if (
             (isadmin)
             or (isallow and ismember)
             or (user.id in SUDO_USERS)
             or (user.id in DEV_USERS)
         ):
-            if need_admin is True:
-                if (
-                    getstatusadmin.status in ("administrator", "creator")
-                    or user_id in SUDO_USERS
-                    or user.id in DEV_USERS
-                ):
-                    return conn_id
-                else:
-                    send_message(
-                        update.effective_message,
-                        "You must be an admin in the connected group!",
-                    )
-            else:
-                return conn_id
+        if need_admin is not True:
+            return conn_id
+        if (
+            getstatusadmin.status in ("administrator", "creator")
+            or user_id in SUDO_USERS
+            or user.id in DEV_USERS
+        ):
+            return conn_id
         else:
             send_message(
                 update.effective_message,
-                "The group changed the connection rights or you are no longer an admin.\nI've disconnected you.",
+                "You must be an admin in the connected group!",
             )
-            if update.effective_chat.type == "private":
-                disconnection_status = sql.disconnect(update.effective_message.from_user.id)
-                if disconnection_status:
-                    sql.disconnected_chat = send_message(
-                        update.effective_message, "Disconnected from chat!"
-                    )
-                else:
-                    send_message(update.effective_message, "You're not connected!")
-            else:
-                send_message(update.effective_message, "This command is only available in PM.")
     else:
-        return False
+        send_message(
+            update.effective_message,
+            "The group changed the connection rights or you are no longer an admin.\nI've disconnected you.",
+        )
+        if update.effective_chat.type == "private":
+            if disconnection_status := sql.disconnect(
+                update.effective_message.from_user.id
+            ):
+                sql.disconnected_chat = send_message(
+                    update.effective_message, "Disconnected from chat!"
+                )
+            else:
+                send_message(update.effective_message, "You're not connected!")
+        else:
+            send_message(update.effective_message, "This command is only available in PM.")
 
 
 def connection_status(func):
     @wraps(func)
     def connected_status(update: Update, context: CallbackContext, *args, **kwargs):
-        conn = connected(
+        if conn := connected(
             context.bot,
             update,
             update.effective_chat,
             update.effective_user.id,
             need_admin=False,
-        )
-
-        if conn:
+        ):
             chat = dispatcher.bot.getChat(conn)
             update.__setattr__("_effective_chat", chat)
-            return func(update, context, *args, **kwargs)
-        else:
-            if update.effective_message.chat.type == "private":
-                update.effective_message.reply_text(
-                    "Send /connect in a group that you and I have in common first."
-                )
-                return connected_status
+        elif update.effective_message.chat.type == "private":
+            update.effective_message.reply_text(
+                "Send /connect in a group that you and I have in common first."
+            )
+            return connected_status
 
-            return func(update, context, *args, **kwargs)
+        return func(update, context, *args, **kwargs)
 
     return connected_status
 

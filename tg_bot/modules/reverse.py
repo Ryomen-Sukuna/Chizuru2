@@ -27,8 +27,7 @@ def reverse(update: Update, context: CallbackContext):
     if os.path.isfile(imagename):
         os.remove(imagename)
 
-    reply = msg.reply_to_message
-    if reply:
+    if reply := msg.reply_to_message:
         if reply.sticker:
             file_id = reply.sticker.file_id
         elif reply.photo:
@@ -42,10 +41,10 @@ def reverse(update: Update, context: CallbackContext):
         image_file = context.bot.get_file(file_id)
         image_file.download(imagename)
     else:
-         msg.reply_text(
-             "Please Reply To A Sticker, Or An Image To Search It!", parse_mode=ParseMode.MARKDOWN,
-         )
-         return
+        msg.reply_text(
+            "Please Reply To A Sticker, Or An Image To Search It!", parse_mode=ParseMode.MARKDOWN,
+        )
+        return
 
     MsG = context.bot.send_message(chat_id,
                                    "Let Me See...",
@@ -70,7 +69,9 @@ def reverse(update: Update, context: CallbackContext):
         match = ParseSauce(fetchUrl + "&hl=en")
         guess = match.get("best_guess")
         MsG.edit_text("Uploading...")
-        if match.get("override") and (not match.get("override") == "" or not match.get("override") == None):
+        if match.get("override") and (
+            match.get("override") != "" or not match.get("override") is None
+        ):
             imgspage = match.get("override")
         else:
             imgspage = match.get("similar_images")

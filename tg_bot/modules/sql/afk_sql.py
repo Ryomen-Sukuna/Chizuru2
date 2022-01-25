@@ -64,7 +64,12 @@ def update_afk(user_id: int, reason: str = "" or None, chat_id: int = None, msg_
             curr.reason = reason
         if chat_id:
             curr.messageid = f'{chat_id} {msg_id}'
-        AFK_USERS[user_id] = {"reason": reason if reason else curr.reason, "time": curr.time, "messageid": f"{chat_id} {msg_id}" if chat_id else ""}
+        AFK_USERS[user_id] = {
+            "reason": reason or curr.reason,
+            "time": curr.time,
+            "messageid": f"{chat_id} {msg_id}" if chat_id else "",
+        }
+
 
         SESSION.add(curr)
         SESSION.commit()
@@ -72,8 +77,7 @@ def update_afk(user_id: int, reason: str = "" or None, chat_id: int = None, msg_
 
 def rm_afk(user_id) -> bool:
     with INSERTION_LOCK:
-        curr = SESSION.query(AFK).get(user_id)
-        if curr:
+        if curr := SESSION.query(AFK).get(user_id):
             if user_id in AFK_USERS:  # sanity check
                 del AFK_USERS[user_id]
 
@@ -92,7 +96,7 @@ def toggle_afk(user_id: int, reason: str = ""):
             curr = AFK(user_id, reason, '', True)
         elif curr.is_afk:
             curr.is_afk = False
-        elif not curr.is_afk:
+        else:
             curr.is_afk = True
         SESSION.add(curr)
         SESSION.commit()

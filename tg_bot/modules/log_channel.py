@@ -8,23 +8,22 @@ from telegram.error import BadRequest, Unauthorized
 def gloggable(func):
         @wraps(func)
         def glog_action(update, context, *args, **kwargs):
-            result = func(update, context, *args, **kwargs)
-            chat = update.effective_chat
-            message = update.effective_message
+                result = func(update, context, *args, **kwargs)
+                chat = update.effective_chat
+                message = update.effective_message
 
-            if result:
-                datetime_fmt = "%H:%M - %d-%m-%Y"
-                result += "\n<b>Event Stamp</b>: <code>{}</code>".format(
-                    datetime.utcnow().strftime(datetime_fmt)
-                )
+                if result:
+                        datetime_fmt = "%H:%M - %d-%m-%Y"
+                        result += "\n<b>Event Stamp</b>: <code>{}</code>".format(
+                            datetime.utcnow().strftime(datetime_fmt)
+                        )
 
-                if message.chat.type == chat.SUPERGROUP and message.chat.username:
-                    result += f'\n<b>Link:</b> <a href="https://t.me/{chat.username}/{message.message_id}">click here</a>'
-                log_chat = str(GBAN_LOGS)
-                if log_chat:
-                    send_log(context, log_chat, chat.id, result)
+                        if message.chat.type == chat.SUPERGROUP and message.chat.username:
+                            result += f'\n<b>Link:</b> <a href="https://t.me/{chat.username}/{message.message_id}">click here</a>'
+                        if log_chat := str(GBAN_LOGS):
+                                send_log(context, log_chat, chat.id, result)
 
-            return result
+                return result
 
         return glog_action
 

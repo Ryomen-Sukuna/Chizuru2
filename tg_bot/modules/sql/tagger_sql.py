@@ -39,8 +39,7 @@ def is_tag(chat_id, user_id):
 
 def untag(chat_id, user_id):
     with TAG_INSERTION_LOCK:
-        untag_user = SESSION.query(Tagger).get((str(chat_id), user_id))
-        if untag_user:
+        if untag_user := SESSION.query(Tagger).get((str(chat_id), user_id)):
             SESSION.delete(untag_user)
             SESSION.commit()
             return True

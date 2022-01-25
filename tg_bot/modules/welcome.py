@@ -147,8 +147,7 @@ def send(update, message, keyboard, backup_message):
             )
             log.exception()
 
-    cleanserv = sql.clean_service(chat.id)
-    if cleanserv:
+    if cleanserv := sql.clean_service(chat.id):
         try:
             dispatcher.bot.delete_message(chat.id, update.message.message_id)
         except BadRequest:

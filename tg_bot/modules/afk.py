@@ -89,8 +89,7 @@ def no_longer_afk(update: Update, context: CallbackContext):
     except BadRequest:
         pass
 
-    res = sql.rm_afk(user.id)
-    if res: 
+    if res := sql.rm_afk(user.id):
         try:
             options = [
                 # "{} Is Ready To Fight!",
@@ -156,42 +155,44 @@ def reply_afk(update: Update, context: CallbackContext):
 
 
 def check_afk(update: Update, context: CallbackContext, user_id: int, fst_name: str, userc_id: int):
-    if sql.is_afk(user_id):
-        if int(userc_id) == int(user_id):
-            return
+    if not sql.is_afk(user_id):
+        return
 
-        user = sql.check_afk_status(user_id)
-        fname = "My Master" if int(user_id) == OWNER_ID else f"User *{escape_markdown(fst_name)}*"
-        since_afk = humanize.naturaldelta(datetime.datetime.now() - user.time)
-        textmsg = f"{fname} is AFK since {since_afk} ago!"
+    if int(userc_id) == int(user_id):
+        return
 
+    user = sql.check_afk_status(user_id)
+    fname = "My Master" if int(user_id) == OWNER_ID else f"User *{escape_markdown(fst_name)}*"
+    since_afk = humanize.naturaldelta(datetime.datetime.now() - user.time)
+    textmsg = f"{fname} is AFK since {since_afk} ago!"
+
+    try:
+        DND = update.effective_message.reply_text(
+                    textmsg,
+                    parse_mode=ParseMode.MARKDOWN,
+              )
+    except BadRequest:
+        return
+
+    if user.reason:
+        reason = user.reason
+        if "%%%" in reason:
+            split = reason.split("%%%")
+            reason = random.choice(split) if all(split) else reason
+
+        textmsg += f"\n\n*Reason:*\n{reason}"
         try:
-            DND = update.effective_message.reply_text(
-                        textmsg,
-                        parse_mode=ParseMode.MARKDOWN,
-                  )
-        except BadRequest:
-            return
-
-        if user.reason:
-            reason = user.reason
-            if "%%%" in reason:
-                split = reason.split("%%%")
-                reason = random.choice(split) if all(split) else reason
-
-            textmsg += f"\n\n*Reason:*\n{reason}"
-            try:
-                DND.edit_text(textmsg, disable_web_page_preview=True, parse_mode=ParseMode.MARKDOWN)
-            except:
-                pass
-
-        try:
-            if user.messageid != (None, ""):
-                context.bot.delete_message(int(user.messageid.split(' ', 1)[0]), int(user.messageid.split(' ', 1)[1]))
-        except BadRequest:
+            DND.edit_text(textmsg, disable_web_page_preview=True, parse_mode=ParseMode.MARKDOWN)
+        except:
             pass
 
-        sql.update_afk(user_id, chat_id=update.effective_chat.id, msg_id=DND.message_id)
+    try:
+        if user.messageid != (None, ""):
+            context.bot.delete_message(int(user.messageid.split(' ', 1)[0]), int(user.messageid.split(' ', 1)[1]))
+    except BadRequest:
+        pass
+
+    sql.update_afk(user_id, chat_id=update.effective_chat.id, msg_id=DND.message_id)
 
 
 

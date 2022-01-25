@@ -10,12 +10,13 @@ async def purge_from(event):
     if event.fwd_from or event.from_id is None:
         return
 
-    if ( not await is_user_admin(
-                 user_id=event.sender_id,
-                 message=event,
-             )
-             and not event.from_id == 1087968824
-       ):
+    if (
+        not await is_user_admin(
+            user_id=event.sender_id,
+            message=event,
+        )
+        and event.from_id != 1087968824
+    ):
         await event.reply("Only Admins are allowed to use this command")
         return
 
@@ -39,12 +40,13 @@ async def purge_to(event):
     if event.fwd_from or event.from_id is None:
         return
 
-    if ( not await is_user_admin(
-                 user_id=event.sender_id,
-                 message=event,
-             )
-             and not event.from_id == 1087968824
-       ):
+    if (
+        not await is_user_admin(
+            user_id=event.sender_id,
+            message=event,
+        )
+        and event.from_id != 1087968824
+    ):
         await event.reply("Only Admins are allowed to use this command")
         return
 
@@ -89,8 +91,10 @@ async def purge_to(event):
     except MessageDeleteForbiddenError:
         await event.client.delete_messages(event.chat_id, purge_from[1])
         PURGE.pop(event.chat_id)
-        text = "Failed to delete messages.\n"
-        text += "Messages maybe too old or I'm not admin! or dont have delete rights!"
+        text = (
+            "Failed to delete messages.\n"
+            + "Messages maybe too old or I'm not admin! or dont have delete rights!"
+        )
 
     except Exception as e:
         await event.client.delete_messages(event.chat_id, purge_from[1])
@@ -103,12 +107,13 @@ async def purge_messages(event):
     if event.fwd_from or event.from_id is None:
         return
 
-    if ( not await is_user_admin(
-                 user_id=event.sender_id,
-                 message=event,
-             )
-             and not event.from_id == 1087968824
-       ):
+    if (
+        not await is_user_admin(
+            user_id=event.sender_id,
+            message=event,
+        )
+        and event.from_id != 1087968824
+    ):
         await event.reply("Only Admins are allowed to use this command")
         return
 
@@ -146,8 +151,11 @@ async def purge_messages(event):
             await event.client.send_message(event.chat_id, text)
 
     except MessageDeleteForbiddenError:
-        text = "Failed to delete messages.\n"
-        text += "Messages maybe too old or I'm not admin! or dont have delete rights!"
+        text = (
+            "Failed to delete messages.\n"
+            + "Messages maybe too old or I'm not admin! or dont have delete rights!"
+        )
+
         await event.respond(text)
 
 # Message Deleting
@@ -155,12 +163,13 @@ async def delete_messages(event):
     if event.fwd_from or event.from_id is None:
         return
 
-    if ( not await is_user_admin(
-                 user_id=event.sender_id,
-                 message=event,
-             )
-             and not event.from_id == 1087968824
-       ):
+    if (
+        not await is_user_admin(
+            user_id=event.sender_id,
+            message=event,
+        )
+        and event.from_id != 1087968824
+    ):
         await event.reply("Only Admins are allowed to use this command")
         return
 

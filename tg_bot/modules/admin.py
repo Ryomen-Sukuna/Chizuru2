@@ -39,8 +39,9 @@ def fullpromote(update: Update, context: CallbackContext) -> str:
     promoter = chat.get_member(user.id)
 
     if (
-        not (promoter.can_promote_members or promoter.status == "creator")
-        and not user.id in SUDO_USERS
+        not promoter.can_promote_members
+        and promoter.status != "creator"
+        and user.id not in SUDO_USERS
     ):
         message.reply_text("You don't have the necessary rights to do that!")
         return
@@ -123,8 +124,9 @@ def promote(update: Update, context: CallbackContext) -> str:
     promoter = chat.get_member(user.id)
 
     if (
-        not (promoter.can_promote_members or promoter.status == "creator")
-        and not user.id in SUDO_USERS
+        not promoter.can_promote_members
+        and promoter.status != "creator"
+        and user.id not in SUDO_USERS
     ):
         message.reply_text("You don't have the necessary rights to do that!")
         return
@@ -353,7 +355,7 @@ def pin(update: Update, context: CallbackContext) -> str:
     user = update.effective_user
     chat = update.effective_chat
 
-    is_group = chat.type != "private" and chat.type != "channel"
+    is_group = chat.type not in ["private", "channel"]
     prev_message = update.effective_message.reply_to_message
 
     is_silent = True
@@ -370,9 +372,7 @@ def pin(update: Update, context: CallbackContext) -> str:
                 chat.id, prev_message.message_id, disable_notification=is_silent
             )
         except BadRequest as excp:
-            if excp.message == "Chat_not_modified":
-                pass
-            else:
+            if excp.message != "Chat_not_modified":
                 raise
 
 
@@ -406,9 +406,7 @@ def unpinall(update: Update, context: CallbackContext) -> str:
     try:
         bot.unpinAllChatMessages(chat.id)
     except BadRequest as excp:
-        if excp.message == "Chat_not_modified":
-            pass
-        else:
+        if excp.message != "Chat_not_modified":
             raise
 
 
@@ -422,7 +420,7 @@ def invite(update: Update, context: CallbackContext):
 
     if chat.username:
         update.effective_message.reply_text(f"https://t.me/{chat.username}")
-    elif chat.type == chat.SUPERGROUP or chat.type == chat.CHANNEL:
+    elif chat.type in [chat.SUPERGROUP, chat.CHANNEL]:
         bot_member = chat.get_member(bot.id)
         if bot_member.can_invite_users:
             invitelink = bot.exportChatInviteLink(chat.id)
@@ -604,13 +602,18 @@ def adminlist(update: Update, context: CallbackContext):
         status = admin.status
         custom_title = admin.custom_title
 
-        name = mention_html(user.id, html.escape(custom_title if custom_title else user.first_name)) if not user.first_name == '' else "💀"
+        name = (
+            mention_html(user.id, html.escape(custom_title or user.first_name))
+            if user.first_name != ''
+            else "💀"
+        )
 
-        if status == "creator":
-            text += f"\n<b>{name}</b> 👑\n"
 
         if status == "administrator":
             admins_list.append(name)
+
+        elif status == "creator":
+            text += f"\n<b>{name}</b> 👑\n"
 
     text += "\n• <b>Administrators</b>:"
     for admin in admins_list:
@@ -647,7 +650,7 @@ def admim_button(update: Update, context: CallbackContext):
         if member.status == "creator":
             query.answer("This Person Is A Chat Creator! How am I meant to promote him?", show_alert=True)
             return
-        elif member.status == "kicked" or member.status == "left":
+        elif member.status in ["kicked", "left"]:
             query.answer("This Person Is Not Even A Member In This Chat! How am I meant to promote him?", show_alert=True)
             return
         elif member.status == "administrator":
@@ -694,7 +697,7 @@ def admim_button(update: Update, context: CallbackContext):
         if member.status == "creator":
             query.answer("This Person Is A Chat Creator! How am I meant to demote him?", show_alert=True)
             return
-        elif member.status == "kicked" or member.status == "left":
+        elif member.status in ["kicked", "left"]:
             query.answer("This Person Is Not Even A Member In This Chat! How am I meant to demote him?", show_alert=True)
             return
         elif member.status != "administrator":

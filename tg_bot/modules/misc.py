@@ -68,11 +68,10 @@ def id(update: Update, context: CallbackContext):
             user = bot.get_chat(user_id)
             txt += f"<b>Chat ID:</b> <code>{chat.id}</code>\n\n{html.escape(user.first_name)} - (<code>{user.id}</code>)"
 
+    elif chat.type == "private":
+        txt += f"Your id is <code>{chat.id}</code>."
     else:
-        if chat.type == "private":
-            txt += f"Your id is <code>{chat.id}</code>."
-        else:
-            txt += f"<b>Chat ID:</b> <code>{chat.id}</code>\n\n<b>Your ID:</b> <code>{message.from_user.id}</code>"
+        txt += f"<b>Chat ID:</b> <code>{chat.id}</code>\n\n<b>Your ID:</b> <code>{message.from_user.id}</code>"
 
     ID.edit_text(txt, parse_mode=ParseMode.HTML)
 
@@ -95,9 +94,7 @@ def info(update: Update, context: CallbackContext):
     args = context.args
     chat = update.effective_chat
     message = update.effective_message
-    user_id = extract_user(message, args)
-
-    if user_id:
+    if user_id := extract_user(message, args):
         user = bot.get_chat(user_id)
 
     elif not message.reply_to_message and not args:
@@ -142,16 +139,15 @@ def info(update: Update, context: CallbackContext):
 
     try:
         if chat.type != 'private':
-           status = bot.get_chat_member(chat.id, user.id).status
-           if status:
-               if status in "left":
-                   text += "\n∘ Chat Status: Not Here!"
-               elif status == "member":
-                   text += "\n∘ Chat Status: Member!"
-               elif status in "administrator":
-                   text += "\n∘ Chat Status: Admin!"
-               elif status in "creator": 
-                   text += "\n∘ Chat Status: Creator!"
+            if status := bot.get_chat_member(chat.id, user.id).status:
+                if status in "left":
+                    text += "\n∘ Chat Status: Not Here!"
+                elif status == "member":
+                    text += "\n∘ Chat Status: Member!"
+                elif status in "administrator":
+                    text += "\n∘ Chat Status: Admin!"
+                elif status in "creator": 
+                    text += "\n∘ Chat Status: Creator!"
     except BadRequest:
         pass
 
@@ -168,20 +164,20 @@ def info(update: Update, context: CallbackContext):
     except BadRequest:
         pass
 
-   
+
     if user.id == OWNER_ID:
       # text += "\n<b>This Person Is My Creator!</b>"
         text += ""
 
     elif user.id in DEV_USERS:
         text += "\n∘ <b>DEV USER: </b>Yes!"
-        
+
     elif user.id in SUDO_USERS:
         text += "\n∘ <b>SUDO USER: </b>Yes!"
-        
+
     elif user.id in SUPPORT_USERS:
         text += "\n∘ <b>SUPPORT USER: </b>Yes!"
-       
+
     elif user.id in WHITELIST_USERS:
         text += "\n∘ <b>WHITELIST USER: </b>Yes!"
 
