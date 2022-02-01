@@ -11,9 +11,7 @@ from .helper_funcs.decorators import kigcmd, kigcallback
 
 # Text Shorter
 def shorten(des: str = '', short: int = 500):
-    msg = des
-    if len(des) > int(short):
-        msg = des[0:int(short)]
+    msg = des[:int(short)] if len(des) > int(short) else des
     return escape(msg)
 
 # Drama
@@ -45,7 +43,7 @@ def drama(update: Update, context: CallbackContext):
        if len(buttons) > 4:
            break
 
-    if len(buttons) < 1:
+    if not buttons:
         message.reply_text("No Results Found!")
         return
 
@@ -66,10 +64,10 @@ def drama_button(update: Update, context: CallbackContext):
     # Split data from query
     splitter = query.data.split()
     query_match = splitter[0]
-    user_id = splitter[1]
-    slug = splitter[2]
-
     if query_match == "drama-detail":
+        user_id = splitter[1]
+        slug = splitter[2]
+
         if int(query.from_user.id) != int(user_id):
             query.answer("You Aren't Allowed!")
             return
@@ -121,10 +119,10 @@ def casts_button(update: Update, context: CallbackContext):
     # Split data from query
     splitter = query.data.split()
     query_match = splitter[0]
-    user_id = splitter[1]
-    slug = splitter[2]
-
     if query_match == "drama-cast-detail":
+        user_id = splitter[1]
+        slug = splitter[2]
+
         if int(query.from_user.id) != int(user_id):
             query.answer("You Aren't Allowed!")
             return
@@ -142,14 +140,14 @@ def casts_button(update: Update, context: CallbackContext):
 
         txt = f"List Casts Of <a href='https://mydramalist.com/{slug}'>{title}</a>\n"
         if mainroles:
-          txt += f"\n\n● <u><b>Main</b></u>"
-          for cast in mainroles:
-             txt += f"\n⚬ {cast['role']['name'].replace('[', '').replace(']', '')}\n   (<a href='{cast['link']}'>{cast['name']}</a>)"
+            txt += '\n\n● <u><b>Main</b></u>'
+            for cast in mainroles:
+               txt += f"\n⚬ {cast['role']['name'].replace('[', '').replace(']', '')}\n   (<a href='{cast['link']}'>{cast['name']}</a>)"
 
         if supportroles:
-          txt += f"\n\n● <u><b>Support</b></u>"
-          for cast in supportroles:
-             txt += f"\n⚬ {cast['role']['name'].replace('[', '').replace(']', '')}\n   (<a href='{cast['link']}'>{cast['name']}</a>)"
+            txt += '\n\n● <u><b>Support</b></u>'
+            for cast in supportroles:
+               txt += f"\n⚬ {cast['role']['name'].replace('[', '').replace(']', '')}\n   (<a href='{cast['link']}'>{cast['name']}</a>)"
 
         query.message.edit_text(
             text=txt,

@@ -37,37 +37,6 @@ def inlinequery(update: Update, _) -> None:
     user = update.effective_user
 
     results: List = []
-    inline_help_dicts = [
-        {
-            "title": "Anime",
-            "description": "Search Anime & Manga On AniList.co",
-            "message_text": "Search anime and manga on AniList.co",
-            "thumb_urL": "https://telegra.ph/file/a546976e6f3ebf21a131a.jpg",
-            "keyboard": ".anime ",
-        },
-        {
-            "title": "Character",
-            "description": "Search Characters on AniList.co",
-            "message_text": "Search character on AniList.co",
-            "thumb_urL": "https://telegra.ph/file/a546976e6f3ebf21a131a.jpg",
-            "keyboard": ".char ",
-        },
-        {
-            "title": "Account info",
-            "description": "Look up a Telegram account in my database",
-            "message_text": "Look up a person in my database using their Telegram ID",
-            "thumb_urL": "https://telegra.ph/file/57d5522a9d8fa56e3be27.jpg",
-            "keyboard": ".info ",
-        },
-        {
-            "title": "Applications",
-            "description": "Search Any Application on play.google.com",
-            "message_text": "Search Application On Playstore",
-            "thumb_urL": "https://telegra.ph/file/6b84acef0f4b6770940b5.jpg",
-            "keyboard": ".app ",
-        },
-    ]
-
     inline_funcs = {
         ".anime": media_query,
         ".char": character_query,
@@ -79,6 +48,37 @@ def inlinequery(update: Update, _) -> None:
         inline_funcs[f](remove_prefix(query, f).strip(), update, user)
 
     else:
+        inline_help_dicts = [
+            {
+                "title": "Anime",
+                "description": "Search Anime & Manga On AniList.co",
+                "message_text": "Search anime and manga on AniList.co",
+                "thumb_urL": "https://telegra.ph/file/a546976e6f3ebf21a131a.jpg",
+                "keyboard": ".anime ",
+            },
+            {
+                "title": "Character",
+                "description": "Search Characters on AniList.co",
+                "message_text": "Search character on AniList.co",
+                "thumb_urL": "https://telegra.ph/file/a546976e6f3ebf21a131a.jpg",
+                "keyboard": ".char ",
+            },
+            {
+                "title": "Account info",
+                "description": "Look up a Telegram account in my database",
+                "message_text": "Look up a person in my database using their Telegram ID",
+                "thumb_urL": "https://telegra.ph/file/57d5522a9d8fa56e3be27.jpg",
+                "keyboard": ".info ",
+            },
+            {
+                "title": "Applications",
+                "description": "Search Any Application on play.google.com",
+                "message_text": "Search Application On Playstore",
+                "thumb_urL": "https://telegra.ph/file/6b84acef0f4b6770940b5.jpg",
+                "keyboard": ".app ",
+            },
+        ]
+
         for ihelp in inline_help_dicts:
             results.append(
                 article(
@@ -119,9 +119,8 @@ def info_query(query: str, update: Update, context: CallbackContext) -> None:
         if search.isdigit() or search.isnumeric():
             user = bot.get_chat(int(search))
         elif search.startswith("@"):
-            getuser = get_user_id(str(search))
-            if getuser:
-               user = bot.get_chat(int(getuser))
+            if getuser := get_user_id(str(search)):
+                user = bot.get_chat(int(getuser))
         else:
             user = bot.get_chat(user.id)
     except (BadRequest, ValueError):
@@ -332,7 +331,7 @@ def media_query(query: str, update: Update, context: CallbackContext) -> None:
                 description = description or "N/A"
 
             if len((str(description))) > 700:
-                description = description [0:700] + "....."
+                description = description[:700] + "....."
 
             avgsc = data.get("averageScore") or "N/A"
             status = data.get("status") or "N/A"
@@ -466,9 +465,7 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
 
             try:
                 alt_name = data.get('name').get('alternative')
-                neme = ""
-                for altname in alt_name:
-                     neme += f"`{altname}` ,"
+                neme = "".join(f"`{altname}` ," for altname in alt_name)
                 alt_name = f"{neme}"
             except:
                 alt_name = data.get('name').get('alternative') or "N/A"
@@ -480,7 +477,7 @@ def character_query(query: str, update: Update, context: CallbackContext) -> Non
                 description = data.get("description")
 
             if len((str(description))) > 700:
-                description = description [0:700] + "....."
+                description = description[:700] + "....."
 
             txt = f"*{name}* - (*{nati_name or 'N/A'}*)\n"
             txt += f"\n*Alternative*: {alt_name or 'N/A'}"

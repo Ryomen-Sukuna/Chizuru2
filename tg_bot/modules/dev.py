@@ -22,7 +22,10 @@ def leave(update: Update, context: CallbackContext):
                 return
         if update.effective_chat.id != chat_id:
             with suppress(Unauthorized):
-                update.effective_message.reply_text(f"I Could Not Leave That Group(Dunno Why Thooo).")
+                update.effective_message.reply_text(
+                    'I Could Not Leave That Group(Dunno Why Thooo).'
+                )
+
     else:
         update.effective_message.reply_text("Send a valid Chat Id.")
 
@@ -42,8 +45,7 @@ def pip_install(update: Update, context: CallbackContext):
         stdout, stderr = process.communicate()
         reply = ""
         stderr = stderr.decode()
-        stdout = stdout.decode()
-        if stdout:
+        if stdout := stdout.decode():
             reply += f"*Stdout*\n`{stdout}`\n"
         if stderr:
             reply += f"*Stderr*\n`{stderr}`\n"
